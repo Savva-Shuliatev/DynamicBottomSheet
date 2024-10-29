@@ -1,0 +1,15 @@
+//
+//  Comparable+clamped.swift
+//  DynamicBottomSheetApp
+//
+//  Created by Savva Shuliatev.
+//
+
+import Foundation
+
+internal extension Comparable {
+  
+  func clamped(to limits: ClosedRange<Self>) -> Self {
+    return min(max(self, limits.lowerBound), limits.upperBound)
+  }
+}
