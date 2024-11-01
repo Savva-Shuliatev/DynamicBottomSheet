@@ -641,27 +641,27 @@ extension UIBottomSheet {
 
 // MARK: AnchorableBottomSheetDelegate default
 
-extension UIBottomSheetSubscriber {
+public extension UIBottomSheetSubscriber {
   func bottomSheet(
-    _ anchorableBottomSheet: UIBottomSheet,
+    _ bottomSheet: UIBottomSheet,
     willBeginUpdatingY y: CGFloat,
     source: UIBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ anchorableBottomSheet: UIBottomSheet,
+    _ bottomSheet: UIBottomSheet,
     didUpdateY y: CGFloat,
     source: UIBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ anchorableBottomSheet: UIBottomSheet,
+    _ bottomSheet: UIBottomSheet,
     didEndUpdatingY y: CGFloat,
     source: UIBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ anchorableBottomSheet: UIBottomSheet,
+    _ bottomSheet: UIBottomSheet,
     willBeginAnimation animation: UIBottomSheetAnimation,
     source: UIBottomSheet.YChangeSource
   ) {}
