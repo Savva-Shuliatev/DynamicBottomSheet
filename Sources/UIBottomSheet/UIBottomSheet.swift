@@ -49,7 +49,7 @@ open class UIBottomSheet: UIView {
 
   open private(set) var y: CGFloat = 0 {
     didSet {
-      containerYConstraint?.constant = y
+      visibleViewYConstraint?.constant = y
     }
   }
 
@@ -158,7 +158,7 @@ open class UIBottomSheet: UIView {
     }
   }
 
-  private var containerYConstraint: NSLayoutConstraint?
+  private var visibleViewYConstraint: NSLayoutConstraint?
   private var viewTopConstraint: NSLayoutConstraint?
   private var viewHeightConstraint: NSLayoutConstraint?
 
@@ -260,7 +260,7 @@ extension UIBottomSheet {
 
   private func setInitialLayout() {
     let initialY = detents.y(for: detents.initialPosition)
-    containerYConstraint = visibleView.constraint(.top, constant: initialY)
+    visibleViewYConstraint = visibleView.constraint(.top, constant: initialY)
     updateY(initialY, source: .program)
     viewTopConstraint = view.constraint(.top, constant: 0)
     viewHeightConstraint = view.constraint(.height, equalTo: updateViewHeight())
