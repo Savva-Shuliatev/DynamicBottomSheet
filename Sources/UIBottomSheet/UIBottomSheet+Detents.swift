@@ -123,7 +123,28 @@ extension UIBottomSheet {
       }
     }
 
+    open func value(
+      from position1: RelativePosition,
+      to position2: RelativePosition
+    ) -> Double {
+      guard let bottomSheet,bottomSheet.didLayoutSubviews else { return 0 }
+
+      let y1 = y(for: position1)
+      let y2 = y(for: position2)
+      let y = bottomSheet.y
+
+      if y1 == y2 {
+        return 1
+
+      } else if y1 > y2 {
+        return 1.0 - min(max(y - y2, 0) / (y1 - y2), 1)
+
+      } else {
+        return min(max(y - y1, 0) / (y2 - y1), 1)
+      }
+    }
   }
+
 }
 
 // MARK: UIBottomSheetSubscriber
