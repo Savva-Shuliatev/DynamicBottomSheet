@@ -16,6 +16,13 @@ public protocol UIBottomSheetDetentsSubscriber: UIBottomSheetSubscriber {
     didChangePosition position: RelativePosition,
     source: UIBottomSheet.YChangeSource
   )
+
+  func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    height: CGFloat,
+    bottomSafeAreaInset: CGFloat,
+    source: UIBottomSheet.YChangeSource
+  )
 }
 
 extension UIBottomSheet {
@@ -148,6 +155,15 @@ extension UIBottomSheet.Detents: UIBottomSheetSubscriber {
         source: source
       )
     }
+
+    subscribers.forEach {
+      $0.bottomSheet(
+        bottomSheet,
+        height: bottomSheet.bounds.height - y,
+        bottomSafeAreaInset: bottomSheet.safeAreaInsets.bottom,
+        source: source
+      )
+    }
   }
 
   public func bottomSheet(
@@ -199,6 +215,13 @@ public extension UIBottomSheetDetentsSubscriber {
   func bottomSheet(
     _ bottomSheet: UIBottomSheet,
     didChangePosition position: RelativePosition,
+    source: UIBottomSheet.YChangeSource
+  ) {}
+
+  func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    height: CGFloat,
+    bottomSafeAreaInset: CGFloat,
     source: UIBottomSheet.YChangeSource
   ) {}
 }
