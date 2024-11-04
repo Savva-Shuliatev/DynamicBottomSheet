@@ -591,9 +591,12 @@ extension UIBottomSheet {
     }
 
     let diff = y - bottomBarConnectedY
-    let barAreaHeight: CGFloat = safeAreaBottomInset + bottomBarHeight - diff
+    let _barAreaHeight: CGFloat = safeAreaBottomInset + bottomBarHeight - diff
+    let barAreaHeight = max(_barAreaHeight, 0)
 
-    return max(barAreaHeight, 0)
+    bottomBarAreaHeightConstraint?.constant = barAreaHeight
+
+    return barAreaHeight
   }
 }
 

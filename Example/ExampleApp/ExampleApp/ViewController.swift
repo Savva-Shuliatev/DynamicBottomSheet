@@ -61,7 +61,7 @@ final class ViewController: UIViewController {
       break
 
     case .bottomBar:
-      break
+      show(BottomBarViewController())
 
     case .dynamicSettings:
       break
@@ -75,6 +75,11 @@ final class ViewController: UIViewController {
     case .changeStaticToScrollContent:
       break
     }
+  }
+
+  private func show(_ viewController: UIViewController) {
+    viewController.modalPresentationStyle = .fullScreen
+    present(viewController, animated: true)
   }
 }
 
