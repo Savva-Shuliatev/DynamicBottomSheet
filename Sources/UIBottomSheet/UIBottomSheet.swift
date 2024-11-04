@@ -137,7 +137,7 @@ open class UIBottomSheet: UIView {
     }
   }
 
-  open private(set) var bottomBarHeight: CGFloat = 46 {
+  open private(set) var bottomBarHeight: CGFloat = 64 {
     didSet {
       bottomBarHeightConstraint?.constant = bottomBarHeight
     }
