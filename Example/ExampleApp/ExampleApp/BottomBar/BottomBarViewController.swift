@@ -28,6 +28,7 @@ final class BottomBarViewController: ExampleViewController {
 
     bottomSheet.detents.initialPosition = .fromTop(100)
     bottomSheet.detents.positions = [.fromTop(100), .middle(), .fromBottom(100)]
+    bottomSheet.detents.bottomBarConnectedPosition = .middle()
   }
 
 }

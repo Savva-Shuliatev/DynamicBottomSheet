@@ -274,7 +274,6 @@ extension UIBottomSheet {
     visibleView.constraints([.leading, .trailing, .bottom])
 
     bottomBarArea.constraints([.leading, .trailing, .bottom])
-    bottomBarArea.constraint(.height, equalTo: 0)
     bottomBarAreaHeightConstraint = bottomBarArea.constraint(.height, equalTo: updateBottomBarAreaHeight())
 
     bottomBar.constraints([.leading, .trailing, .top])
@@ -579,14 +578,18 @@ extension UIBottomSheet {
       bottomBarConnectedY = detents.y(for: bottomBarConnectedPosition)
     } else {
 
-      guard !anchors.isEmpty, let min = anchors.min() else { return 0 }
-      bottomBarConnectedY = min
+      guard !anchors.isEmpty, let max = anchors.max() else {
+        bottomBarAreaHeightConstraint?.constant = 0
+        return 0
+      }
+      bottomBarConnectedY = max
     }
 
     let safeAreaBottomInset = safeAreaInsets.bottom
     let bottomBarHeight = bottomBarHeight
 
     guard y > bottomBarConnectedY else {
+      bottomBarAreaHeightConstraint?.constant = safeAreaBottomInset + bottomBarHeight
       return safeAreaBottomInset + bottomBarHeight
     }
 
@@ -595,7 +598,6 @@ extension UIBottomSheet {
     let barAreaHeight = max(_barAreaHeight, 0)
 
     bottomBarAreaHeightConstraint?.constant = barAreaHeight
-
     return barAreaHeight
   }
 }
