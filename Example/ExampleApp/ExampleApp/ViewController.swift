@@ -2,7 +2,8 @@
 //  ViewController.swift
 //  ExampleApp
 //
-//  Created by Savva Shuliatev on 01.11.2024.
+//  Copyright (c) 2024 Savva Shuliatev
+//  This code is covered by the MIT License.
 //
 
 import UIKit
@@ -15,6 +16,7 @@ enum Example {
   case music
   case googleMaps
 
+  case bottomBar
   case dynamicSettings
   case theme
   case changeScrollContent
@@ -58,6 +60,9 @@ final class ViewController: UIViewController {
     case .googleMaps:
       break
 
+    case .bottomBar:
+      break
+
     case .dynamicSettings:
       break
 
@@ -89,6 +94,7 @@ struct ListView: View {
         }
 
         Section(header: Text("Cases")) {
+          Button("Bottom bar", action: show(.bottomBar))
           Button("Dynamic settings", action: show(.dynamicSettings))
           Button("Change App theme", action: show(.theme))
           Button("Change scroll content", action: show(.changeScrollContent))
