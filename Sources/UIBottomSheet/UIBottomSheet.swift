@@ -95,21 +95,10 @@ open class UIBottomSheet: UIView {
     }
   }
 
-  open var cornerRadius: CGFloat {
-    get {
-      return _cornerRadius
-    }
-    set {
-      if newValue > 0 {
-        _cornerRadius = newValue
-
-        if didLayoutSubviews {
-          setCornerRadius()
-        }
-
-      } else {
-        _cornerRadius = 0
-      }
+  open var cornerRadius: CGFloat = 10 {
+    didSet {
+      guard didLayoutSubviews else { return }
+      updateCornerRadius()
     }
   }
 
@@ -184,8 +173,6 @@ open class UIBottomSheet: UIView {
 
   private var subscribers = Subscribers<UIBottomSheetSubscriber>()
 
-  private var _cornerRadius: CGFloat = 10
-
   // MARK: - Init
 
   public init() {
@@ -208,7 +195,7 @@ open class UIBottomSheet: UIView {
 
       setInitialLayout()
       anchors = detents.positions.map { detents.y(for: $0) }
-      setCornerRadius()
+      updateCornerRadius()
 
       layer.shadowColor = shadowColor
       layer.shadowOpacity = shadowOpacity
@@ -294,15 +281,14 @@ extension UIBottomSheet {
     bottomBarHeightConstraint = bottomBar.constraint(.height, equalTo: bottomBarHeight)
   }
 
-  private func setCornerRadius() {
-    guard bounds != .zero else { return }
+  private func updateCornerRadius() {
+    guard didLayoutSubviews else { return }
 
-    if _cornerRadius > 0 {
-      visibleView.mask = CornerRadiusMaskView(radius: _cornerRadius)
+    if cornerRadius > 0 {
+      visibleView.mask = CornerRadiusMaskView(radius: cornerRadius)
       visibleView.mask?.frame = bounds
     } else {
       visibleView.mask = nil
-      _cornerRadius = 0
     }
   }
 }
