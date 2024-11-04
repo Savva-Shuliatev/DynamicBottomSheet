@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "UIBottomSheet",
-  platforms: [.iOS(.v14)],
+  platforms: [.iOS(.v13)],
   products: [
     .library(
       name: "UIBottomSheet",
