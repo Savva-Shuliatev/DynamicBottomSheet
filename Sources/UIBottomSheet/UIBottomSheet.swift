@@ -79,6 +79,8 @@ open class UIBottomSheet: UIView {
 
   public let visibleView = UIView()
   public let view = UIView()
+  public let bottomBarArea = UIView()
+  public let bottomBar = UIView()
 
   public let grabber: UIView = {
     let grabber = UIView()
@@ -146,6 +148,12 @@ open class UIBottomSheet: UIView {
     }
   }
 
+  open private(set) var bottomBarHeight: CGFloat = 46 {
+    didSet {
+      bottomBarHeightConstraint?.constant = bottomBarHeight
+    }
+  }
+
   internal var anchors: [CGFloat] = []
 
   internal var didLayoutSubviews = false
@@ -161,6 +169,9 @@ open class UIBottomSheet: UIView {
   private var visibleViewYConstraint: NSLayoutConstraint?
   private var viewTopConstraint: NSLayoutConstraint?
   private var viewHeightConstraint: NSLayoutConstraint?
+
+  private var bottomBarHeightConstraint: NSLayoutConstraint?
+  private var bottomBarAreaHeightConstraint: NSLayoutConstraint?
 
   private var panRecognizerState: PanRecognizerState = .empty
   private let panRecognizer = UIPanGestureRecognizer()
@@ -227,6 +238,11 @@ open class UIBottomSheet: UIView {
     move(to: newY, source: .program, animated: animated, completion: completion)
   }
 
+  open func updateBottomBarHeight(_ height: CGFloat) {
+    bottomBarHeight = max(height, 0)
+    updateBottomBarAreaHeight()
+  }
+
   open func subscribe(_ subscriber: UIBottomSheetSubscriber) {
     subscribers.subscribe(subscriber)
   }
@@ -242,10 +258,14 @@ extension UIBottomSheet {
   private func setupUI() {
     visibleView.backgroundColor = .systemBackground
     view.backgroundColor = .systemBackground
+    bottomBarArea.backgroundColor = .systemBackground
+    bottomBar.backgroundColor = .systemBackground
 
     addSubview(visibleView)
     visibleView.addSubview(view)
     visibleView.addSubview(grabber)
+    addSubview(bottomBarArea)
+    bottomBarArea.addSubview(bottomBar)
 
     view.constraints([.leading, .trailing])
 
@@ -265,6 +285,13 @@ extension UIBottomSheet {
     viewTopConstraint = view.constraint(.top, constant: 0)
     viewHeightConstraint = view.constraint(.height, equalTo: updateViewHeight())
     visibleView.constraints([.leading, .trailing, .bottom])
+
+    bottomBarArea.constraints([.leading, .trailing, .bottom])
+    bottomBarArea.constraint(.height, equalTo: 0)
+    bottomBarAreaHeightConstraint = bottomBarArea.constraint(.height, equalTo: updateBottomBarAreaHeight())
+
+    bottomBar.constraints([.leading, .trailing, .top])
+    bottomBarHeightConstraint = bottomBar.constraint(.height, equalTo: bottomBarHeight)
   }
 
   private func setCornerRadius() {
@@ -510,7 +537,7 @@ extension UIBottomSheet {
 
 extension UIBottomSheet {
   @discardableResult
-  func updateViewTopAnchor() -> CGFloat {
+  internal func updateViewTopAnchor() -> CGFloat {
     let topConstraint: CGFloat
 
     if y < safeAreaInsets.top, !viewIgnoresTopSafeArea {
@@ -527,7 +554,7 @@ extension UIBottomSheet {
   }
 
   @discardableResult
-  func updateViewHeight() -> CGFloat {
+  internal func updateViewHeight() -> CGFloat {
     guard let minY = anchors.min() else { return 0 }
 
     var viewHeight: CGFloat
@@ -557,6 +584,31 @@ extension UIBottomSheet {
 
     return viewHeight
   }
+
+  @discardableResult
+  internal func updateBottomBarAreaHeight() -> CGFloat {
+    let bottomBarConnectedY: CGFloat
+
+    if let bottomBarConnectedPosition = detents.bottomBarConnectedPosition {
+      bottomBarConnectedY = detents.y(for: bottomBarConnectedPosition)
+    } else {
+
+      guard !anchors.isEmpty, let min = anchors.min() else { return 0 }
+      bottomBarConnectedY = min
+    }
+
+    let safeAreaBottomInset = safeAreaInsets.bottom
+    let bottomBarHeight = bottomBarHeight
+
+    guard y > bottomBarConnectedY else {
+      return safeAreaBottomInset + bottomBarHeight
+    }
+
+    let diff = y - bottomBarConnectedY
+    let barAreaHeight: CGFloat = safeAreaBottomInset + bottomBarHeight - diff
+
+    return max(barAreaHeight, 0)
+  }
 }
 
 // MARK: Moving
@@ -566,6 +618,7 @@ extension UIBottomSheet {
     y = newY
     updateViewTopAnchor()
     updateViewHeight()
+    updateBottomBarAreaHeight()
     sendDidUpdateY(with: source)
   }
 

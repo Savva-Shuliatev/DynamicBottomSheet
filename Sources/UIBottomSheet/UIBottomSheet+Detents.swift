@@ -39,6 +39,14 @@ extension UIBottomSheet {
       }
     }
 
+    /// If value is nil, then substitute the last position from positions or full height of container
+    open var bottomBarConnectedPosition: RelativePosition? {
+      didSet {
+        guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
+        bottomSheet.updateBottomBarAreaHeight()
+      }
+    }
+
     open var initialPosition: RelativePosition = .fromBottom(0, ignoresSafeArea: true)
 
     private var subscribers = Subscribers<UIBottomSheetDetentsSubscriber>()
