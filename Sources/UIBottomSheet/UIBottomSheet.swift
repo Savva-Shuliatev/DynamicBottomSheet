@@ -84,6 +84,9 @@ open class UIBottomSheet: UIView {
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters = .spring(.default)
 
+  open var onFirstAppear: (() -> Void)?
+  open var onChangeY: ((CGFloat) -> Void)?
+
   public let visibleView = UIView()
   public let view = UIView()
   public let bottomBarArea = UIView()
@@ -209,6 +212,8 @@ open class UIBottomSheet: UIView {
       layer.shadowOffset = shadowOffset
       layer.shadowRadius = shadowRadius
       layer.shadowPath = shadowPath
+
+      onFirstAppear?()
     }
 
     updateViewHeight()
@@ -677,6 +682,7 @@ extension UIBottomSheet {
     subscribers.forEach {
       $0.bottomSheet(self, didUpdateY: y, source: source)
     }
+    onChangeY?(y)
   }
 
   private func sendDidEndUpdatingY(with source: YChangeSource) {
