@@ -17,7 +17,7 @@ open class UIBottomSheetController: UIViewController {
     super.init(nibName: nil, bundle: nil)
     modalPresentationStyle = .overFullScreen
 
-    bottonSheet.detents.positions = [.top(),]
+    bottonSheet.detents.positions = [.top()]
   }
 
   @available(*, unavailable)
