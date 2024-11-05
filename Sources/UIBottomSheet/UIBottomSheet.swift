@@ -58,7 +58,14 @@ open class UIBottomSheet: UIView {
 
   open var bouncesFactor: CGFloat = 0.1
 
-  open var viewIgnoresTopSafeArea: Bool = false {
+  open var viewIgnoresTopSafeArea: Bool = true {
+    didSet {
+      guard didLayoutSubviews else { return }
+      layoutSubviews()
+    }
+  }
+
+  open var viewIgnoresBottomBarHeight: Bool = false {
     didSet {
       guard didLayoutSubviews else { return }
       layoutSubviews()
@@ -545,12 +552,16 @@ extension UIBottomSheet {
     var viewHeight: CGFloat
     if viewIgnoresTopSafeArea {
 
-      let bottomOffset: CGFloat
+      var bottomOffset: CGFloat
 
       if viewIgnoresBottomSafeArea {
         bottomOffset = 0
       } else {
         bottomOffset = safeAreaInsets.bottom
+      }
+
+      if !viewIgnoresBottomBarHeight {
+        bottomOffset += bottomBarHeight
       }
 
       viewHeight = bounds.height - minY - bottomOffset
