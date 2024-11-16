@@ -9,10 +9,13 @@
 import SwiftUI
 
 struct AllSettingsView: View {
+
+  @ObservedObject var viewModel: AllSettingsViewModel
+
   var body: some View {
     List {
       Section("") {
-        
+
       }
     }
   }

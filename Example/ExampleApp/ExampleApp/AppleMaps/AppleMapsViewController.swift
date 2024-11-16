@@ -10,7 +10,7 @@ import UIKit
 import UIBottomSheet
 import MapKit
 
-final class AppleMapsViewController: UIViewController {
+final class AppleMapsViewController: ExampleViewController {
 
   private let mapView = MKMapView(frame: .zero)
   private let bottomSheet = UIBottomSheet()

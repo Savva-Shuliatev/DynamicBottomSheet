@@ -10,6 +10,8 @@ import UIKit
 import SwiftUI
 
 enum Example {
+  case allSettings
+
   case appleMaps
   case voiceMemos
   case stocks
@@ -46,6 +48,9 @@ final class ViewController: UIViewController {
 
   private func show(_ example: Example) {
     switch example {
+    case .allSettings:
+      show(AllSettingsViewController())
+
     case .appleMaps:
       break
 
@@ -62,9 +67,7 @@ final class ViewController: UIViewController {
       break
 
     case .bottomBar:
-      let bottomBarViewController = BottomBarViewController()
-      bottomBarViewController.modalPresentationStyle = .fullScreen
-      show(bottomBarViewController)
+      show(BottomBarViewController())
 
     case .dynamicSettings:
       break
@@ -94,6 +97,10 @@ struct ListView: View {
   var body: some View {
     NavigationView {
       List {
+        Section {
+          Button("All settings", action: show(.allSettings))
+        }
+
         Section(header: Text("Apps")) {
           Button("Apple Maps", action: show(.appleMaps))
           Button("Voice Memos", action: show(.voiceMemos))
