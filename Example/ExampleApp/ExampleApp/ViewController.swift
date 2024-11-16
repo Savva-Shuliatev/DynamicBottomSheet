@@ -16,9 +16,10 @@ enum Example {
   case music
   case googleMaps
 
+  case theme
+
   case bottomBar
   case dynamicSettings
-  case theme
   case changeScrollContent
   case changeStaticToScrollContent
 }
@@ -61,13 +62,17 @@ final class ViewController: UIViewController {
       break
 
     case .bottomBar:
-      show(BottomBarViewController())
+      let bottomBarViewController = BottomBarViewController()
+      bottomBarViewController.modalPresentationStyle = .fullScreen
+      show(bottomBarViewController)
 
     case .dynamicSettings:
       break
 
     case .theme:
-      break
+      let themeViewController = ThemeViewController()
+      themeViewController.modalPresentationStyle = .overFullScreen
+      show(themeViewController)
 
     case .changeScrollContent:
       break
@@ -78,7 +83,6 @@ final class ViewController: UIViewController {
   }
 
   private func show(_ viewController: UIViewController) {
-    viewController.modalPresentationStyle = .fullScreen
     present(viewController, animated: true)
   }
 }

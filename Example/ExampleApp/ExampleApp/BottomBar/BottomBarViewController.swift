@@ -12,7 +12,10 @@ import MapKit
 
 final class BottomBarViewController: ExampleViewController {
 
-  let bottomSheet = UIBottomSheet()
+  private lazy var bottomSheet: UIBottomSheet = {
+    let bottomSheet = UIBottomSheet()
+    return bottomSheet
+  }()
 
   override func viewDidLoad() {
     super.viewDidLoad()

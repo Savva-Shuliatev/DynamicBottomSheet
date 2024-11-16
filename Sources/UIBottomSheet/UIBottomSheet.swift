@@ -147,6 +147,15 @@ open class UIBottomSheet: UIView {
     }
   }
 
+  open var bottomBarIsHidden: Bool = true {
+    didSet {
+      bottomBarArea.isHidden = bottomBarIsHidden
+      bottomBar.isHidden = bottomBarIsHidden
+      guard didLayoutSubviews else { return }
+      layoutSubviews()
+    }
+  }
+
   open private(set) var bottomBarHeight: CGFloat = 64 {
     didSet {
       bottomBarHeightConstraint?.constant = bottomBarHeight
@@ -218,6 +227,7 @@ open class UIBottomSheet: UIView {
 
     updateViewHeight()
     updateViewTopAnchor()
+    updateBottomBarAreaHeight()
   }
 
   override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
@@ -260,6 +270,8 @@ extension UIBottomSheet {
     view.backgroundColor = .systemBackground
     bottomBarArea.backgroundColor = .systemBackground
     bottomBar.backgroundColor = .systemBackground
+    bottomBarArea.isHidden = bottomBarIsHidden
+    bottomBar.isHidden = bottomBarIsHidden
 
     addSubview(visibleView)
     visibleView.addSubview(view)
@@ -566,7 +578,7 @@ extension UIBottomSheet {
         bottomOffset = safeAreaInsets.bottom
       }
 
-      if !viewIgnoresBottomBarHeight {
+      if !bottomBarIsHidden, !viewIgnoresBottomBarHeight {
         bottomOffset += bottomBarHeight
       }
 
