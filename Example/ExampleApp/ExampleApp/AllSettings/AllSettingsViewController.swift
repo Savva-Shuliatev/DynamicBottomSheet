@@ -17,6 +17,8 @@ final class AllSettingsViewController: ExampleViewController {
 
   private lazy var bottomSheet: UIBottomSheet = {
     let bottomSheet = UIBottomSheet()
+    bottomSheet.view.backgroundColor = .red
+    bottomSheet.visibleView.backgroundColor = .blue
     bottomSheet.detents.subscribe(self)
     bottomSheet.detents.initialPosition = .fromBottom(200)
     bottomSheet.detents.positions = [
@@ -30,12 +32,22 @@ final class AllSettingsViewController: ExampleViewController {
 
   private var cancellables = Set<AnyCancellable>()
 
+  override init() {
+    super.init()
+    viewModel.closeAction = { [weak self] in
+      self?.dismiss(animated: true)
+    }
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     add(AllSettingsView(viewModel: viewModel))
     view.addSubview(bottomSheet)
     bottomSheet.constraints([.top, .bottom, .leading, .trailing])
-    addCloseButton()
     sink()
   }
 

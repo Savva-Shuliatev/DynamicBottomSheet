@@ -11,6 +11,8 @@ import UIKit
 @MainActor
 final class AllSettingsViewModel: ObservableObject {
 
+  var closeAction: (() -> Void)?
+
   @Published var y: CGFloat = 0
 
   @Published var height: CGFloat = 0
@@ -29,7 +31,7 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var prefersGrabberVisible: Bool = true
 
-  @Published var cornerRadius: CGFloat = 10
+  @Published var cornerRadius: CGFloat = 0
 
   @Published var shadowColor: CGColor? = UIColor.black.withAlphaComponent(0.5).cgColor
 
@@ -44,4 +46,8 @@ final class AllSettingsViewModel: ObservableObject {
   @Published var bottomBarIsHidden: Bool = true
 
   @Published var bottomBarHeight: CGFloat = 64
+
+  func closeDidTap() {
+    closeAction?()
+  }
 }
