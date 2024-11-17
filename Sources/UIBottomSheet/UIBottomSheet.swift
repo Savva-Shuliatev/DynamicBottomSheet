@@ -190,6 +190,8 @@ open class UIBottomSheet: UIView {
 
   private var yAnimation: UIBottomSheetDefaultSpringAnimation?
 
+  private var lastViewGeometry: ViewGeometry = .zero
+
   private var subscribers = Subscribers<UIBottomSheetSubscriber>()
 
   // MARK: - Init
@@ -225,9 +227,16 @@ open class UIBottomSheet: UIView {
       onFirstAppear?()
     }
 
-    updateViewHeight()
-    updateViewTopAnchor()
-    updateBottomBarAreaHeight()
+    if lastViewGeometry != ViewGeometry(of: self) {
+      lastViewGeometry = ViewGeometry(of: self)
+
+      anchors = detents.positions.map { detents.y(for: $0) }
+      updateCornerRadius()
+      updateViewHeight()
+      updateViewTopAnchor()
+      updateBottomBarAreaHeight()
+    }
+
   }
 
   override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
@@ -307,13 +316,16 @@ extension UIBottomSheet {
 
   private func updateCornerRadius() {
     guard didLayoutSubviews else { return }
+    let cornerRadius = max(0, cornerRadius)
 
-    if cornerRadius > 0 {
-      visibleView.mask = CornerRadiusMaskView(radius: cornerRadius)
-      visibleView.mask?.frame = bounds
-    } else {
-      visibleView.mask = nil
-    }
+    let path = UIBezierPath(
+      roundedRect: bounds,
+      byRoundingCorners: [.topLeft, .topRight],
+      cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
+    )
+    let mask = CAShapeLayer()
+    mask.path = path.cgPath
+    visibleView.layer.mask = mask
   }
 }
 
@@ -446,7 +458,7 @@ extension UIBottomSheet {
         scrollingState = .dragging(lastContentOffset: scrollingContent.contentOffset)
       }
 
-    } else if diff > 0, y >= 771 {
+    } else if diff > 0, y >= limits.lowerBound {
 
       scrollingListening = false
       scrollingContent?.contentOffset.y = contentInset.top
@@ -739,4 +751,36 @@ public extension UIBottomSheetSubscriber {
     willBeginAnimation animation: UIBottomSheetAnimation,
     source: UIBottomSheet.YChangeSource
   ) {}
+}
+
+// MARK: ViewGeomerty
+
+internal struct ViewGeometry: Equatable {
+  let frame: CGRect
+  let bounds: CGRect
+  let safeAreaInsets: UIEdgeInsets
+
+  static let zero = ViewGeometry(
+    frame: .zero,
+    bounds: .zero,
+    safeAreaInsets: .zero
+  )
+
+  init(
+    frame: CGRect,
+    bounds: CGRect,
+    safeAreaInsets: UIEdgeInsets
+  ) {
+    self.frame = frame
+    self.bounds = bounds
+    self.safeAreaInsets = safeAreaInsets
+  }
+
+  @MainActor
+  init(of view: UIView) {
+    self.frame = view.frame
+    self.bounds = view.bounds
+    self.safeAreaInsets = view.safeAreaInsets
+  }
+
 }
