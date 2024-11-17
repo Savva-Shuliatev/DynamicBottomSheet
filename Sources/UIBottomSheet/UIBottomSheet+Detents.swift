@@ -2,15 +2,28 @@
 //  UIBottomSheet+Detents.swift
 //  DynamicBottomSheetApp
 //
-//  Modified based on code covered by the MIT License.
-//  Original code by Ilya Lobanov, available at https://github.com/super-ultra/UltraDrawerView.
-//  Copyright (c) 2019 Ilya Lobanov
-//
-//  Modifications by Savva Shuliatev, 2024
-//  This code is also covered by the MIT License.
+//  Copyright (c) 2024 Savva Shuliatev
+//  This code is covered by the MIT License.
 //
 
+
 import Foundation
+
+@MainActor
+public protocol UIBottomSheetDetentsSubscriber: UIBottomSheetSubscriber {
+  func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    didChangePosition position: RelativePosition,
+    source: UIBottomSheet.YChangeSource
+  )
+
+  func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    height: CGFloat,
+    bottomSafeAreaInset: CGFloat,
+    source: UIBottomSheet.YChangeSource
+  )
+}
 
 extension UIBottomSheet {
 
@@ -26,10 +39,31 @@ extension UIBottomSheet {
       }
     }
 
+    /// If value is nil, then substitute the last position from positions or full height of container
+    open var bottomBarConnectedPosition: RelativePosition? {
+      didSet {
+        guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
+        bottomSheet.updateBottomBarAreaHeight()
+      }
+    }
+
     open var initialPosition: RelativePosition = .fromBottom(0, ignoresSafeArea: true)
 
-    init(bottomSheet: UIBottomSheet) {
+    private var subscribers = Subscribers<UIBottomSheetDetentsSubscriber>()
+
+    public init(bottomSheet: UIBottomSheet) {
       self.bottomSheet = bottomSheet
+      bottomSheet.subscribe(self)
+    }
+
+    // MARK: - Public methods
+
+    open func subscribe(_ subscriber: UIBottomSheetDetentsSubscriber) {
+      subscribers.subscribe(subscriber)
+    }
+
+    open func unsubscribe(_ subscriber: UIBottomSheetDetentsSubscriber) {
+      subscribers.unsubscribe(subscriber)
     }
 
     open func move(
@@ -98,5 +132,126 @@ extension UIBottomSheet {
       }
     }
 
+    open func value(
+      from position1: RelativePosition,
+      to position2: RelativePosition
+    ) -> Double {
+      guard let bottomSheet,bottomSheet.didLayoutSubviews else { return 0 }
+
+      let y1 = y(for: position1)
+      let y2 = y(for: position2)
+      let y = bottomSheet.y
+
+      if y1 == y2 {
+        return 1
+
+      } else if y1 > y2 {
+        return 1.0 - min(max(y - y2, 0) / (y1 - y2), 1)
+
+      } else {
+        return min(max(y - y1, 0) / (y2 - y1), 1)
+      }
+    }
   }
+
+}
+
+// MARK: UIBottomSheetSubscriber
+
+extension UIBottomSheet.Detents: UIBottomSheetSubscriber {
+  public func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    willBeginUpdatingY y: CGFloat,
+    source: UIBottomSheet.YChangeSource
+  ) {
+    subscribers.forEach {
+      $0.bottomSheet(
+        bottomSheet,
+        willBeginUpdatingY: y,
+        source: source
+      )
+    }
+  }
+
+  public func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    didUpdateY y: CGFloat,
+    source: UIBottomSheet.YChangeSource
+  ) {
+    subscribers.forEach {
+      $0.bottomSheet(
+        bottomSheet,
+        didUpdateY: y,
+        source: source
+      )
+    }
+
+    subscribers.forEach {
+      $0.bottomSheet(
+        bottomSheet,
+        height: bottomSheet.bounds.height - y,
+        bottomSafeAreaInset: bottomSheet.safeAreaInsets.bottom,
+        source: source
+      )
+    }
+  }
+
+  public func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    didEndUpdatingY y: CGFloat,
+    source: UIBottomSheet.YChangeSource
+  ) {
+    subscribers.forEach {
+      $0.bottomSheet(
+        bottomSheet,
+        didEndUpdatingY: y,
+        source: source
+      )
+    }
+
+    positions.forEach { position in
+      if self.y(for: position).isEqual(to: y, eps: 1) {
+        subscribers.forEach {
+          $0.bottomSheet(
+            bottomSheet,
+            didChangePosition: position,
+            source: source
+          )
+        }
+
+        return
+      }
+    }
+  }
+
+  public func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    willBeginAnimation animation: UIBottomSheetAnimation,
+    source: UIBottomSheet.YChangeSource
+  ) {
+    subscribers.forEach {
+      $0.bottomSheet(
+        bottomSheet,
+        willBeginAnimation: animation,
+        source: source
+      )
+    }
+  }
+}
+
+// MARK: Default UIBottomSheetDetentsSubscriber
+
+public extension UIBottomSheetDetentsSubscriber {
+  func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    didChangePosition position: RelativePosition,
+    source: UIBottomSheet.YChangeSource
+  ) {}
+
+  func bottomSheet(
+    _ bottomSheet: UIBottomSheet,
+    height: CGFloat,
+    bottomSafeAreaInset: CGFloat,
+    source: UIBottomSheet.YChangeSource
+  ) {}
 }

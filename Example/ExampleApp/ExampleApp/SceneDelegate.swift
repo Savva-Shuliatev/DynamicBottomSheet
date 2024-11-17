@@ -2,7 +2,8 @@
 //  SceneDelegate.swift
 //  ExampleApp
 //
-//  Created by Savva Shuliatev on 30.10.2024.
+//  Copyright (c) 2024 Savva Shuliatev
+//  This code is covered by the MIT License.
 //
 
 import UIKit
@@ -11,12 +12,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   var window: UIWindow?
 
-  func scene(
-    _ scene: UIScene,
-    willConnectTo session: UISceneSession,
-    options connectionOptions: UIScene.ConnectionOptions
-  ) {
-    guard let _ = (scene as? UIWindowScene) else { return }
-  }
 }
-

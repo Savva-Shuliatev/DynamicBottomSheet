@@ -2,7 +2,8 @@
 //  AppDelegate.swift
 //  ExampleApp
 //
-//  Created by Savva Shuliatev on 30.10.2024.
+//  Copyright (c) 2024 Savva Shuliatev
+//  This code is covered by the MIT License.
 //
 
 import UIKit
@@ -12,8 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(
     _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     return true
   }
 
@@ -29,5 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       sessionRole: connectingSceneSession.role
     )
   }
+
 }
 

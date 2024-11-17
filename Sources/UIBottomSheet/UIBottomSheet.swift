@@ -49,7 +49,7 @@ open class UIBottomSheet: UIView {
 
   open private(set) var y: CGFloat = 0 {
     didSet {
-      containerYConstraint?.constant = y
+      visibleViewYConstraint?.constant = y
     }
   }
 
@@ -58,7 +58,14 @@ open class UIBottomSheet: UIView {
 
   open var bouncesFactor: CGFloat = 0.1
 
-  open var viewIgnoresTopSafeArea: Bool = false {
+  open var viewIgnoresTopSafeArea: Bool = true {
+    didSet {
+      guard didLayoutSubviews else { return }
+      layoutSubviews()
+    }
+  }
+
+  open var viewIgnoresBottomBarHeight: Bool = false {
     didSet {
       guard didLayoutSubviews else { return }
       layoutSubviews()
@@ -77,8 +84,13 @@ open class UIBottomSheet: UIView {
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters = .spring(.default)
 
+  open var onFirstAppear: (() -> Void)?
+  open var onChangeY: ((CGFloat) -> Void)?
+
   public let visibleView = UIView()
   public let view = UIView()
+  public let bottomBarArea = UIView()
+  public let bottomBar = UIView()
 
   public let grabber: UIView = {
     let grabber = UIView()
@@ -93,21 +105,10 @@ open class UIBottomSheet: UIView {
     }
   }
 
-  open var cornerRadius: CGFloat {
-    get {
-      return _cornerRadius
-    }
-    set {
-      if newValue > 0 {
-        _cornerRadius = newValue
-
-        if didLayoutSubviews {
-          setCornerRadius()
-        }
-
-      } else {
-        _cornerRadius = 0
-      }
+  open var cornerRadius: CGFloat = 10 {
+    didSet {
+      guard didLayoutSubviews else { return }
+      updateCornerRadius()
     }
   }
 
@@ -146,6 +147,21 @@ open class UIBottomSheet: UIView {
     }
   }
 
+  open var bottomBarIsHidden: Bool = true {
+    didSet {
+      bottomBarArea.isHidden = bottomBarIsHidden
+      bottomBar.isHidden = bottomBarIsHidden
+      guard didLayoutSubviews else { return }
+      layoutSubviews()
+    }
+  }
+
+  open private(set) var bottomBarHeight: CGFloat = 64 {
+    didSet {
+      bottomBarHeightConstraint?.constant = bottomBarHeight
+    }
+  }
+
   internal var anchors: [CGFloat] = []
 
   internal var didLayoutSubviews = false
@@ -158,9 +174,12 @@ open class UIBottomSheet: UIView {
     }
   }
 
-  private var containerYConstraint: NSLayoutConstraint?
+  private var visibleViewYConstraint: NSLayoutConstraint?
   private var viewTopConstraint: NSLayoutConstraint?
   private var viewHeightConstraint: NSLayoutConstraint?
+
+  private var bottomBarHeightConstraint: NSLayoutConstraint?
+  private var bottomBarAreaHeightConstraint: NSLayoutConstraint?
 
   private var panRecognizerState: PanRecognizerState = .empty
   private let panRecognizer = UIPanGestureRecognizer()
@@ -171,9 +190,9 @@ open class UIBottomSheet: UIView {
 
   private var yAnimation: UIBottomSheetDefaultSpringAnimation?
 
-  private var subscribers = Subscribers<UIBottomSheetSubscriber>()
+  private var lastViewGeometry: ViewGeometry = .zero
 
-  private var _cornerRadius: CGFloat = 10
+  private var subscribers = Subscribers<UIBottomSheetSubscriber>()
 
   // MARK: - Init
 
@@ -197,17 +216,27 @@ open class UIBottomSheet: UIView {
 
       setInitialLayout()
       anchors = detents.positions.map { detents.y(for: $0) }
-      setCornerRadius()
+      updateCornerRadius()
 
       layer.shadowColor = shadowColor
       layer.shadowOpacity = shadowOpacity
       layer.shadowOffset = shadowOffset
       layer.shadowRadius = shadowRadius
       layer.shadowPath = shadowPath
+
+      onFirstAppear?()
     }
 
-    updateViewHeight()
-    updateViewTopAnchor()
+    if lastViewGeometry != ViewGeometry(of: self) {
+      lastViewGeometry = ViewGeometry(of: self)
+
+      anchors = detents.positions.map { detents.y(for: $0) }
+      updateCornerRadius()
+      updateViewHeight()
+      updateViewTopAnchor()
+      updateBottomBarAreaHeight()
+    }
+
   }
 
   override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
@@ -227,6 +256,12 @@ open class UIBottomSheet: UIView {
     move(to: newY, source: .program, animated: animated, completion: completion)
   }
 
+  open func updateBottomBarHeight(_ height: CGFloat) {
+    bottomBarHeight = max(height, 0)
+    guard didLayoutSubviews else { return }
+    layoutSubviews()
+  }
+
   open func subscribe(_ subscriber: UIBottomSheetSubscriber) {
     subscribers.subscribe(subscriber)
   }
@@ -242,10 +277,16 @@ extension UIBottomSheet {
   private func setupUI() {
     visibleView.backgroundColor = .systemBackground
     view.backgroundColor = .systemBackground
+    bottomBarArea.backgroundColor = .systemBackground
+    bottomBar.backgroundColor = .systemBackground
+    bottomBarArea.isHidden = bottomBarIsHidden
+    bottomBar.isHidden = bottomBarIsHidden
 
     addSubview(visibleView)
     visibleView.addSubview(view)
     visibleView.addSubview(grabber)
+    addSubview(bottomBarArea)
+    bottomBarArea.addSubview(bottomBar)
 
     view.constraints([.leading, .trailing])
 
@@ -260,23 +301,31 @@ extension UIBottomSheet {
 
   private func setInitialLayout() {
     let initialY = detents.y(for: detents.initialPosition)
-    containerYConstraint = visibleView.constraint(.top, constant: initialY)
+    visibleViewYConstraint = visibleView.constraint(.top, constant: initialY)
     updateY(initialY, source: .program)
     viewTopConstraint = view.constraint(.top, constant: 0)
     viewHeightConstraint = view.constraint(.height, equalTo: updateViewHeight())
     visibleView.constraints([.leading, .trailing, .bottom])
+
+    bottomBarArea.constraints([.leading, .trailing, .bottom])
+    bottomBarAreaHeightConstraint = bottomBarArea.constraint(.height, equalTo: updateBottomBarAreaHeight())
+
+    bottomBar.constraints([.leading, .trailing, .top])
+    bottomBarHeightConstraint = bottomBar.constraint(.height, equalTo: bottomBarHeight)
   }
 
-  private func setCornerRadius() {
-    guard bounds != .zero else { return }
+  private func updateCornerRadius() {
+    guard didLayoutSubviews else { return }
+    let cornerRadius = max(0, cornerRadius)
 
-    if _cornerRadius > 0 {
-      visibleView.mask = CornerRadiusMaskView(radius: _cornerRadius)
-      visibleView.mask?.frame = bounds
-    } else {
-      visibleView.mask = nil
-      _cornerRadius = 0
-    }
+    let path = UIBezierPath(
+      roundedRect: bounds,
+      byRoundingCorners: [.topLeft, .topRight],
+      cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
+    )
+    let mask = CAShapeLayer()
+    mask.path = path.cgPath
+    visibleView.layer.mask = mask
   }
 }
 
@@ -409,7 +458,7 @@ extension UIBottomSheet {
         scrollingState = .dragging(lastContentOffset: scrollingContent.contentOffset)
       }
 
-    } else if diff > 0, y >= 771 {
+    } else if diff > 0, y >= limits.lowerBound {
 
       scrollingListening = false
       scrollingContent?.contentOffset.y = contentInset.top
@@ -510,7 +559,7 @@ extension UIBottomSheet {
 
 extension UIBottomSheet {
   @discardableResult
-  func updateViewTopAnchor() -> CGFloat {
+  internal func updateViewTopAnchor() -> CGFloat {
     let topConstraint: CGFloat
 
     if y < safeAreaInsets.top, !viewIgnoresTopSafeArea {
@@ -527,18 +576,22 @@ extension UIBottomSheet {
   }
 
   @discardableResult
-  func updateViewHeight() -> CGFloat {
+  internal func updateViewHeight() -> CGFloat {
     guard let minY = anchors.min() else { return 0 }
 
     var viewHeight: CGFloat
     if viewIgnoresTopSafeArea {
 
-      let bottomOffset: CGFloat
+      var bottomOffset: CGFloat
 
       if viewIgnoresBottomSafeArea {
         bottomOffset = 0
       } else {
         bottomOffset = safeAreaInsets.bottom
+      }
+
+      if !bottomBarIsHidden, !viewIgnoresBottomBarHeight {
+        bottomOffset += bottomBarHeight
       }
 
       viewHeight = bounds.height - minY - bottomOffset
@@ -557,6 +610,37 @@ extension UIBottomSheet {
 
     return viewHeight
   }
+
+  @discardableResult
+  internal func updateBottomBarAreaHeight() -> CGFloat {
+    let bottomBarConnectedY: CGFloat
+
+    if let bottomBarConnectedPosition = detents.bottomBarConnectedPosition {
+      bottomBarConnectedY = detents.y(for: bottomBarConnectedPosition)
+    } else {
+
+      guard !anchors.isEmpty, let max = anchors.max() else {
+        bottomBarAreaHeightConstraint?.constant = 0
+        return 0
+      }
+      bottomBarConnectedY = max
+    }
+
+    let safeAreaBottomInset = safeAreaInsets.bottom
+    let bottomBarHeight = bottomBarHeight
+
+    guard y > bottomBarConnectedY else {
+      bottomBarAreaHeightConstraint?.constant = safeAreaBottomInset + bottomBarHeight
+      return safeAreaBottomInset + bottomBarHeight
+    }
+
+    let diff = y - bottomBarConnectedY
+    let _barAreaHeight: CGFloat = safeAreaBottomInset + bottomBarHeight - diff
+    let barAreaHeight = max(_barAreaHeight, 0)
+
+    bottomBarAreaHeightConstraint?.constant = barAreaHeight
+    return barAreaHeight
+  }
 }
 
 // MARK: Moving
@@ -566,6 +650,7 @@ extension UIBottomSheet {
     y = newY
     updateViewTopAnchor()
     updateViewHeight()
+    updateBottomBarAreaHeight()
     sendDidUpdateY(with: source)
   }
 
@@ -621,6 +706,7 @@ extension UIBottomSheet {
     subscribers.forEach {
       $0.bottomSheet(self, didUpdateY: y, source: source)
     }
+    onChangeY?(y)
   }
 
   private func sendDidEndUpdatingY(with source: YChangeSource) {
@@ -641,28 +727,60 @@ extension UIBottomSheet {
 
 // MARK: AnchorableBottomSheetDelegate default
 
-extension UIBottomSheetSubscriber {
+public extension UIBottomSheetSubscriber {
   func bottomSheet(
-    _ anchorableBottomSheet: UIBottomSheet,
+    _ bottomSheet: UIBottomSheet,
     willBeginUpdatingY y: CGFloat,
     source: UIBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ anchorableBottomSheet: UIBottomSheet,
+    _ bottomSheet: UIBottomSheet,
     didUpdateY y: CGFloat,
     source: UIBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ anchorableBottomSheet: UIBottomSheet,
+    _ bottomSheet: UIBottomSheet,
     didEndUpdatingY y: CGFloat,
     source: UIBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ anchorableBottomSheet: UIBottomSheet,
+    _ bottomSheet: UIBottomSheet,
     willBeginAnimation animation: UIBottomSheetAnimation,
     source: UIBottomSheet.YChangeSource
   ) {}
+}
+
+// MARK: ViewGeomerty
+
+internal struct ViewGeometry: Equatable {
+  let frame: CGRect
+  let bounds: CGRect
+  let safeAreaInsets: UIEdgeInsets
+
+  static let zero = ViewGeometry(
+    frame: .zero,
+    bounds: .zero,
+    safeAreaInsets: .zero
+  )
+
+  init(
+    frame: CGRect,
+    bounds: CGRect,
+    safeAreaInsets: UIEdgeInsets
+  ) {
+    self.frame = frame
+    self.bounds = bounds
+    self.safeAreaInsets = safeAreaInsets
+  }
+
+  @MainActor
+  init(of view: UIView) {
+    self.frame = view.frame
+    self.bounds = view.bounds
+    self.safeAreaInsets = view.safeAreaInsets
+  }
+
 }
