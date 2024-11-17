@@ -32,7 +32,7 @@ struct LeaksTests {
   }
 
   @Test @MainActor
-  func detentsLeak() throws {
+  func detentsLeak() {
     let bottomSheet = UIBottomSheet()
     #expect(bottomSheet.detents.bottomSheet === bottomSheet)
   }
