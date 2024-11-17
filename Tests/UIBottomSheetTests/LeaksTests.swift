@@ -37,5 +37,22 @@ struct LeaksTests {
     #expect(bottomSheet.detents.bottomSheet === bottomSheet)
   }
 
+  @Test @MainActor
+  func scrollViewIntegrationTests() {
+    var bottomSheet: UIBottomSheet? = UIBottomSheet()
+    var scrollView: TestScrollContent? = TestScrollContent()
+
+    bottomSheet!.scrollingContent = scrollView!
+
+    scrollView = nil
+    #expect(bottomSheet!.scrollingContent == nil)
+  }
+
+  private final class TestScrollContent: UIBottomSheet.ScrollingContent {
+    var contentOffset: CGPoint = .zero
+    func stopScrolling() {}
+  }
+
 }
+
 
