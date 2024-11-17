@@ -53,6 +53,7 @@ extension UIBottomSheet {
 
     public init(bottomSheet: UIBottomSheet) {
       self.bottomSheet = bottomSheet
+      bottomSheet.subscribe(self)
     }
 
     // MARK: - Public methods
