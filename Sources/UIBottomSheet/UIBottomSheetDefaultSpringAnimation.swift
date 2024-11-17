@@ -14,7 +14,7 @@ import Foundation
 import CoreGraphics
 
 extension UIBottomSheet {
-  public enum AnimationParameters {
+  public enum AnimationParameters: Equatable {
     case spring(Spring)
   }
 }
