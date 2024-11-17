@@ -12,6 +12,8 @@ import UIKit
 
 class ExampleViewController: UIViewController {
 
+  private let closeButton = UIButton(type: .close)
+
   init() {
     super.init(nibName: nil, bundle: nil)
     modalPresentationStyle = .fullScreen
@@ -21,20 +23,19 @@ class ExampleViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
 
-  func addBackButton() {
-    let closeButton = UIButton(type: .close)
-    closeButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
+  func addCloseButton() {
+    closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
     view.addSubview(closeButton)
-    NSLayoutConstraint.activate([
-      closeButton.widthAnchor.constraint(equalToConstant: 28),
-      closeButton.heightAnchor.constraint(equalToConstant: 28),
-      closeButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-      closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16)
-    ])
+
+    closeButton.translatesAutoresizingMaskIntoConstraints = false
+    closeButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
+    closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16).isActive = true
+    closeButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
+    closeButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
   }
 
   @objc
-  private func tapped() {
+  private func closeButtonTapped() {
     dismiss(animated: true)
   }
 

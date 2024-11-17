@@ -16,5 +16,6 @@ final class AllSettingsViewController: ExampleViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     add(AllSettingsView(viewModel: viewModel))
+    addCloseButton()
   }
 }
