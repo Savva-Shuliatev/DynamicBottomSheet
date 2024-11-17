@@ -18,16 +18,35 @@ struct AllSettingsView: View {
         cell("y", value: viewModel.y)
         cell("Height", value: viewModel.height)
         cell("bottomSafeAreaInset", value: viewModel.bottomSafeAreaInset)
-        cell("bounces", value: viewModel.bounces)
+
+        Toggle("bounces", isOn: Binding(
+          get: { viewModel.bounces },
+          set: { viewModel.bounces = $0 }
+        ))
+
         cell("bouncesFactor", value: viewModel.bouncesFactor)
-        cell("prefersGrabberVisible", value: viewModel.prefersGrabberVisible)
+
+        Toggle("prefersGrabberVisible", isOn: Binding(
+          get: { viewModel.prefersGrabberVisible },
+          set: { viewModel.prefersGrabberVisible = $0 }
+        ))
+
         cell("cornerRadius", value: viewModel.cornerRadius)
       }
 
       Section("Ignores") {
-        cell("Top safeArea", value: viewModel.viewIgnoresTopSafeArea)
-        cell("Bottom safeArea", value: viewModel.viewIgnoresBottomSafeArea)
-        cell("Bottom bar height", value: viewModel.viewIgnoresBottomBarHeight)
+        Toggle("Top safeArea", isOn: Binding(
+          get: { viewModel.viewIgnoresTopSafeArea },
+          set: { viewModel.viewIgnoresTopSafeArea = $0 }
+        ))
+        Toggle("Bottom safeArea", isOn: Binding(
+          get: { viewModel.viewIgnoresBottomSafeArea },
+          set: { viewModel.viewIgnoresBottomSafeArea = $0 }
+        ))
+        Toggle("Bottom bar height", isOn: Binding(
+          get: { viewModel.viewIgnoresBottomBarHeight },
+          set: { viewModel.viewIgnoresBottomBarHeight = $0 }
+        ))
       }
 
       Section("Shadow") {
@@ -39,11 +58,14 @@ struct AllSettingsView: View {
       }
 
         Section("Bottom bar") {
-        cell("Is hidden", value: viewModel.bottomBarIsHidden)
+          Toggle("Is hidden", isOn: Binding(
+            get: { viewModel.bottomBarIsHidden },
+            set: { viewModel.bottomBarIsHidden = $0 }
+          ))
         cell("Height", value: viewModel.bottomBarHeight)
       }
     }
-    .padding(.bottom, 60)
+    .padding(.bottom, max(0, viewModel.height - viewModel.bottomSafeAreaInset))
   }
 
   @ViewBuilder
@@ -54,4 +76,5 @@ struct AllSettingsView: View {
       Text("\(value)")
     }
   }
+
 }

@@ -28,12 +28,87 @@ final class AllSettingsViewController: ExampleViewController {
     return bottomSheet
   }()
 
+  private var cancellables = Set<AnyCancellable>()
+
   override func viewDidLoad() {
     super.viewDidLoad()
     add(AllSettingsView(viewModel: viewModel))
     view.addSubview(bottomSheet)
     bottomSheet.constraints([.top, .bottom, .leading, .trailing])
     addCloseButton()
+    sink()
+  }
+
+  private func sink() {
+    viewModel.$bounces.sink { [weak self] in
+      self?.bottomSheet.bounces = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$bouncesFactor.sink { [weak self] in
+      self?.bottomSheet.bouncesFactor = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$viewIgnoresTopSafeArea.sink { [weak self] in
+      self?.bottomSheet.viewIgnoresTopSafeArea = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$viewIgnoresBottomBarHeight.sink { [weak self] in
+      self?.bottomSheet.viewIgnoresBottomBarHeight = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$viewIgnoresBottomSafeArea.sink { [weak self] in
+      self?.bottomSheet.viewIgnoresBottomSafeArea = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$prefersGrabberVisible.sink { [weak self] in
+      self?.bottomSheet.prefersGrabberVisible = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$cornerRadius.sink { [weak self] in
+      self?.bottomSheet.cornerRadius = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$shadowColor.sink { [weak self] in
+      self?.bottomSheet.shadowColor = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$shadowOpacity.sink { [weak self] in
+      self?.bottomSheet.shadowOpacity = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$shadowOffset.sink { [weak self] in
+      self?.bottomSheet.shadowOffset = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$shadowRadius.sink { [weak self] in
+      self?.bottomSheet.shadowRadius = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$shadowPath.sink { [weak self] in
+      self?.bottomSheet.shadowPath = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$bottomBarIsHidden.sink { [weak self] in
+      self?.bottomSheet.bottomBarIsHidden = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$bottomBarHeight.sink { [weak self] in
+      self?.bottomSheet.updateBottomBarHeight($0)
+    }
+    .store(in: &cancellables)
   }
 }
 
