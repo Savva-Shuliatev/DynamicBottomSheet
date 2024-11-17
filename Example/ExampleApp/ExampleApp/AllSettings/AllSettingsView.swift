@@ -24,7 +24,10 @@ struct AllSettingsView: View {
           set: { viewModel.bounces = $0 }
         ))
 
-        cell("bouncesFactor", value: viewModel.bouncesFactor)
+        stepperCell("bouncesFactor", step: 0.1, transitionStep: 0.01, value: Binding(
+          get: { CGFloat(viewModel.bouncesFactor) },
+          set: { viewModel.bouncesFactor = CGFloat(min(max($0, 0), 0.99)) }
+        ))
 
         Toggle("prefersGrabberVisible", isOn: Binding(
           get: { viewModel.prefersGrabberVisible },
@@ -74,6 +77,16 @@ struct AllSettingsView: View {
       Text(title)
       Spacer()
       Text("\(value)")
+    }
+  }
+
+  @ViewBuilder
+  private func stepperCell(_ title: String, step: Double, transitionStep: Double, value: Binding<Double>) -> some View {
+    HStack {
+      Text(title)
+      Spacer()
+      StepperView(step: step, transitionStep: transitionStep, value: value)
+      Text("\(value.wrappedValue)")
     }
   }
 
