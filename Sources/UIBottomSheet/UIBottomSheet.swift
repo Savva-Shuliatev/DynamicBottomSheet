@@ -259,6 +259,7 @@ open class UIBottomSheet: UIView {
   open func updateBottomBarHeight(_ height: CGFloat) {
     bottomBarHeight = max(height, 0)
     guard didLayoutSubviews else { return }
+    updateBottomBarAreaHeight()
     layoutSubviews()
   }
 

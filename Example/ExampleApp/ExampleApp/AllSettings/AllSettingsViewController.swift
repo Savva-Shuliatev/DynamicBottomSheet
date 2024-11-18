@@ -17,8 +17,10 @@ final class AllSettingsViewController: ExampleViewController {
 
   private lazy var bottomSheet: UIBottomSheet = {
     let bottomSheet = UIBottomSheet()
-    bottomSheet.view.backgroundColor = .red
-    bottomSheet.visibleView.backgroundColor = .blue
+    bottomSheet.view.backgroundColor = .systemBackground
+    bottomSheet.visibleView.backgroundColor = .systemGray
+    bottomSheet.bottomBar.backgroundColor = .systemGray2
+    bottomSheet.bottomBarArea.backgroundColor = .systemGray3
     bottomSheet.detents.subscribe(self)
     bottomSheet.detents.initialPosition = .fromBottom(200)
     bottomSheet.detents.positions = [
@@ -27,6 +29,7 @@ final class AllSettingsViewController: ExampleViewController {
       .fromBottom(200),
       .fromBottom(60)
     ]
+    bottomSheet.detents.bottomBarConnectedPosition = .fromBottom(200)
     return bottomSheet
   }()
 

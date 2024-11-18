@@ -64,9 +64,18 @@ struct AllSettingsView: View {
 
           Section("Shadow") {
             cell("Color", value: viewModel.shadowColor)
-            cell("Opacity", value: viewModel.shadowOpacity)
-            cell("Offset", value: viewModel.shadowOffset)
-            cell("Radius", value: viewModel.shadowRadius)
+            stepperCell("Opacity", step: 0.1, transitionStep: 0.02, value: Binding(
+              get: { Double(viewModel.shadowOpacity) },
+              set: { viewModel.shadowOpacity = Float($0) }
+            ))
+            stepperCell("Offset", step: 0.1, transitionStep: 0.02, value: Binding(
+              get: { Double(viewModel.shadowOffset.height) },
+              set: { viewModel.shadowOffset = CGSize(width: $0, height: $0) }
+            ))
+            stepperCell("Radius", step: 0.25, transitionStep: 0.02, value: Binding(
+              get: { Double(viewModel.shadowRadius) },
+              set: { viewModel.shadowRadius = CGFloat($0) }
+            ))
             cell("Path", value: viewModel.shadowPath)
           }
 
@@ -75,7 +84,10 @@ struct AllSettingsView: View {
               get: { viewModel.bottomBarIsHidden },
               set: { viewModel.bottomBarIsHidden = $0 }
             ))
-            cell("Height", value: viewModel.bottomBarHeight)
+            stepperCell("Height", step: 1, transitionStep: 0.1, value: Binding(
+              get: { Double(viewModel.bottomBarHeight) },
+              set: { viewModel.bottomBarHeight = CGFloat($0) }
+            ))
           }
         }
         .padding(.bottom, max(0, viewModel.height - viewModel.bottomSafeAreaInset))

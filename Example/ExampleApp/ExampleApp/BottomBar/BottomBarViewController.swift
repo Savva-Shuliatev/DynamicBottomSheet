@@ -37,6 +37,8 @@ final class BottomBarViewController: ExampleViewController {
     bottomSheet.detents.positions = [.top(), .fromTop(120), .fromBottom(200), .fromBottom(60)]
     bottomSheet.detents.bottomBarConnectedPosition = .fromBottom(200)
 
+    bottomSheet.bottomBarIsHidden = false
+
     addCloseButton()
   }
 
