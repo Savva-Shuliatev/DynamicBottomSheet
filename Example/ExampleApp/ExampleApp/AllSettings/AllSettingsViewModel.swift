@@ -31,7 +31,7 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var prefersGrabberVisible: Bool = true
 
-  @Published var cornerRadius: CGFloat = 0
+  @Published var cornerRadius: CGFloat = 10
 
   @Published var shadowColor: CGColor? = UIColor.black.withAlphaComponent(0.5).cgColor
 
