@@ -4,20 +4,20 @@
 import PackageDescription
 
 let package = Package(
-  name: "UIBottomSheet",
+  name: "DynamicBottomSheet",
   platforms: [.iOS(.v13)],
   products: [
     .library(
-      name: "UIBottomSheet",
-      targets: ["UIBottomSheet"]
+      name: "DynamicBottomSheet",
+      targets: ["DynamicBottomSheet"]
     ),
   ],
   targets: [
     .target(
-      name: "UIBottomSheet"),
+      name: "DynamicBottomSheet"),
     .testTarget(
-      name: "UIBottomSheetTests",
-      dependencies: ["UIBottomSheet"]
+      name: "DynamicBottomSheetTests",
+      dependencies: ["DynamicBottomSheet"]
     ),
   ]
 )

@@ -7,13 +7,13 @@
 //
 
 import UIKit
-import UIBottomSheet
+import DynamicBottomSheet
 import MapKit
 
 final class BottomBarViewController: ExampleViewController {
 
-  private lazy var bottomSheet: UIBottomSheet = {
-    let bottomSheet = UIBottomSheet()
+  private lazy var bottomSheet: DynamicBottomSheet = {
+    let bottomSheet = DynamicBottomSheet()
     return bottomSheet
   }()
 

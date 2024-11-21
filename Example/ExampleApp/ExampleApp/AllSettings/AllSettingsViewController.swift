@@ -9,14 +9,14 @@
 import UIKit
 import SwiftUI
 import Combine
-import UIBottomSheet
+import DynamicBottomSheet
 
 final class AllSettingsViewController: ExampleViewController {
 
   private let viewModel = AllSettingsViewModel()
 
-  private lazy var bottomSheet: UIBottomSheet = {
-    let bottomSheet = UIBottomSheet()
+  private lazy var bottomSheet: DynamicBottomSheet = {
+    let bottomSheet = DynamicBottomSheet()
     bottomSheet.view.backgroundColor = .systemBackground
     bottomSheet.visibleView.backgroundColor = .systemGray
     bottomSheet.bottomBar.backgroundColor = .systemGray2
@@ -127,48 +127,48 @@ final class AllSettingsViewController: ExampleViewController {
   }
 }
 
-extension AllSettingsViewController: UIBottomSheetDetentsSubscriber {
+extension AllSettingsViewController: DynamicBottomSheetDetentsSubscriber {
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     willBeginUpdatingY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {
     viewModel.y = y
   }
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didUpdateY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {
     viewModel.y = y
   }
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didEndUpdatingY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {
     viewModel.y = y
   }
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
-    willBeginAnimation animation: UIBottomSheetAnimation,
-    source: UIBottomSheet.YChangeSource
+    _ bottomSheet: DynamicBottomSheet,
+    willBeginAnimation animation: DynamicBottomSheetAnimation,
+    source: DynamicBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didChangePosition position: RelativePosition,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     height: CGFloat,
     bottomSafeAreaInset: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {
     viewModel.height = height
     viewModel.bottomSafeAreaInset = bottomSafeAreaInset

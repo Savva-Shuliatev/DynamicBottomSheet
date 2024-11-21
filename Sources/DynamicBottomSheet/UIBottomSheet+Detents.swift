@@ -1,6 +1,6 @@
 //
-//  UIBottomSheet+Detents.swift
-//  DynamicBottomSheetApp
+//  DynamicBottomSheet+Detents.swift
+//  DynamicBottomSheet
 //
 //  Copyright (c) 2024 Savva Shuliatev
 //  This code is covered by the MIT License.
@@ -10,27 +10,27 @@
 import Foundation
 
 @MainActor
-public protocol UIBottomSheetDetentsSubscriber: UIBottomSheetSubscriber {
+public protocol DynamicBottomSheetDetentsSubscriber: DynamicBottomSheetSubscriber {
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didChangePosition position: RelativePosition,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   )
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     height: CGFloat,
     bottomSafeAreaInset: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   )
 }
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
 
   @MainActor
   open class Detents {
 
-    internal private(set) weak var bottomSheet: UIBottomSheet?
+    internal private(set) weak var bottomSheet: DynamicBottomSheet?
 
     open var positions: [RelativePosition] = [] {
       didSet {
@@ -49,20 +49,20 @@ extension UIBottomSheet {
 
     open var initialPosition: RelativePosition = .fromBottom(0, ignoresSafeArea: true)
 
-    private var subscribers = Subscribers<UIBottomSheetDetentsSubscriber>()
+    private var subscribers = Subscribers<DynamicBottomSheetDetentsSubscriber>()
 
-    public init(bottomSheet: UIBottomSheet) {
+    public init(bottomSheet: DynamicBottomSheet) {
       self.bottomSheet = bottomSheet
       bottomSheet.subscribe(self)
     }
 
     // MARK: - Public methods
 
-    open func subscribe(_ subscriber: UIBottomSheetDetentsSubscriber) {
+    open func subscribe(_ subscriber: DynamicBottomSheetDetentsSubscriber) {
       subscribers.subscribe(subscriber)
     }
 
-    open func unsubscribe(_ subscriber: UIBottomSheetDetentsSubscriber) {
+    open func unsubscribe(_ subscriber: DynamicBottomSheetDetentsSubscriber) {
       subscribers.unsubscribe(subscriber)
     }
 
@@ -156,13 +156,13 @@ extension UIBottomSheet {
 
 }
 
-// MARK: UIBottomSheetSubscriber
+// MARK: DynamicBottomSheetSubscriber
 
-extension UIBottomSheet.Detents: UIBottomSheetSubscriber {
+extension DynamicBottomSheet.Detents: DynamicBottomSheetSubscriber {
   public func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     willBeginUpdatingY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {
     subscribers.forEach {
       $0.bottomSheet(
@@ -174,9 +174,9 @@ extension UIBottomSheet.Detents: UIBottomSheetSubscriber {
   }
 
   public func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didUpdateY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {
     subscribers.forEach {
       $0.bottomSheet(
@@ -197,9 +197,9 @@ extension UIBottomSheet.Detents: UIBottomSheetSubscriber {
   }
 
   public func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didEndUpdatingY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {
     subscribers.forEach {
       $0.bottomSheet(
@@ -225,9 +225,9 @@ extension UIBottomSheet.Detents: UIBottomSheetSubscriber {
   }
 
   public func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
-    willBeginAnimation animation: UIBottomSheetAnimation,
-    source: UIBottomSheet.YChangeSource
+    _ bottomSheet: DynamicBottomSheet,
+    willBeginAnimation animation: DynamicBottomSheetAnimation,
+    source: DynamicBottomSheet.YChangeSource
   ) {
     subscribers.forEach {
       $0.bottomSheet(
@@ -239,19 +239,19 @@ extension UIBottomSheet.Detents: UIBottomSheetSubscriber {
   }
 }
 
-// MARK: Default UIBottomSheetDetentsSubscriber
+// MARK: Default DynamicBottomSheetDetentsSubscriber
 
-public extension UIBottomSheetDetentsSubscriber {
+public extension DynamicBottomSheetDetentsSubscriber {
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didChangePosition position: RelativePosition,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     height: CGFloat,
     bottomSafeAreaInset: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {}
 }

@@ -1,6 +1,6 @@
 //
-//  UIBottomSheetController.swift
-//  UIBottomSheet
+//  DynamicBottomSheetController.swift
+//  DynamicBottomSheet
 //
 //  Copyright (c) 2024 Savva Shuliatev
 //  This code is covered by the MIT License.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-open class UIBottomSheetController: UIViewController {
+open class DynamicBottomSheetController: UIViewController {
 
-  open var bottonSheet = UIBottomSheet()
+  open var bottonSheet = DynamicBottomSheet()
 
-  public init(_ bottonSheet: UIBottomSheet = UIBottomSheet()) {
+  public init(_ bottonSheet: DynamicBottomSheet = DynamicBottomSheet()) {
     self.bottonSheet = bottonSheet
     super.init(nibName: nil, bundle: nil)
     modalPresentationStyle = .overFullScreen
@@ -50,12 +50,12 @@ open class UIBottomSheetController: UIViewController {
 
 }
 
-extension UIBottomSheetController {
+extension DynamicBottomSheetController {
   open class TouchProviderView: UIView {
 
-    let bottomSheet: UIBottomSheet
+    let bottomSheet: DynamicBottomSheet
 
-    init(bottomSheet: UIBottomSheet) {
+    init(bottomSheet: DynamicBottomSheet) {
       self.bottomSheet = bottomSheet
       super.init(frame: .zero)
     }

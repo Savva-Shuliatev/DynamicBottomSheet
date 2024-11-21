@@ -1,6 +1,6 @@
 //
-//  Collection+nearestElement.swift
-//  DynamicBottomSheetApp
+//  ClosedRange+contains.swift
+//  DynamicBottomSheet
 //
 //  Modified based on code covered by the MIT License.
 //  Original code by Ilya Lobanov, available at https://github.com/super-ultra/UltraDrawerView.
@@ -12,9 +12,9 @@
 
 import Foundation
 
-internal extension Collection where Element: Comparable & SignedNumeric {
+internal extension ClosedRange where Bound: FloatingPoint {
   
-  func nearestElement(to value: Element) -> Element? {
-    return self.min(by: { abs($0 - value) < abs($1 - value) })
+  func contains(_ element: Bound, eps: Bound) -> Bool {
+    return element.isGreater(than: lowerBound, eps: eps) && element.isLess(than: upperBound, eps: eps)
   }
 }

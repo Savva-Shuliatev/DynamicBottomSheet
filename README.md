@@ -1,6 +1,6 @@
-# UIBottomSheet
+# DynamicBottomSheet
 
-A highly customizable UIBottomSheet UIView for iOS apps, built using Swift. This Swift package provides a flexible and easy-to-integrate bottom sheet view that supports dynamic height selection, allowing developers to create adaptive and interactive UI experiences seamlessly.
+A highly customizable DynamicBottomSheet UIView for iOS apps, built using Swift. This Swift package provides a flexible and easy-to-integrate bottom sheet view that supports dynamic height selection, allowing developers to create adaptive and interactive UI experiences seamlessly.
 
 ### Features
 

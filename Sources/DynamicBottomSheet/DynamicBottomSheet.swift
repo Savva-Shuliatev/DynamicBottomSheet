@@ -1,6 +1,6 @@
 //
-//  UIBottomSheet.swift
-//  DynamicBottomSheetApp
+//  DynamicBottomSheet.swift
+//  DynamicBottomSheet
 //
 //  Modified based on code covered by the MIT License.
 //  Original code by Ilya Lobanov, available at https://github.com/super-ultra/UltraDrawerView.
@@ -12,38 +12,38 @@
 
 import UIKit
 
-/// UIBottomSheetAnimation allows to control y during animation.
+/// DynamicBottomSheetAnimation allows to control y during animation.
 @MainActor
-public protocol UIBottomSheetAnimation: AnyObject {
+public protocol DynamicBottomSheetAnimation: AnyObject {
   var y: CGFloat { get set }
   var isDone: Bool { get }
 }
 
 @MainActor
-public protocol UIBottomSheetSubscriber: AnyObject {
+public protocol DynamicBottomSheetSubscriber: AnyObject {
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     willBeginUpdatingY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   )
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didUpdateY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   )
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didEndUpdatingY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   )
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
-    willBeginAnimation animation: UIBottomSheetAnimation,
-    source: UIBottomSheet.YChangeSource
+    _ bottomSheet: DynamicBottomSheet,
+    willBeginAnimation animation: DynamicBottomSheetAnimation,
+    source: DynamicBottomSheet.YChangeSource
   )
 }
 
-open class UIBottomSheet: UIView {
+open class DynamicBottomSheet: UIView {
 
   open lazy private(set) var detents = Detents(bottomSheet: self)
 
@@ -188,11 +188,11 @@ open class UIBottomSheet: UIView {
   private var scrollingListening: Bool = true
   private var scrollingOffsetUnderLastAnchor: CGFloat = 0
 
-  private var yAnimation: UIBottomSheetDefaultSpringAnimation?
+  private var yAnimation: DynamicBottomSheetDefaultSpringAnimation?
 
   private var lastViewGeometry: ViewGeometry = .zero
 
-  private var subscribers = Subscribers<UIBottomSheetSubscriber>()
+  private var subscribers = Subscribers<DynamicBottomSheetSubscriber>()
 
   // MARK: - Init
 
@@ -263,18 +263,18 @@ open class UIBottomSheet: UIView {
     layoutSubviews()
   }
 
-  open func subscribe(_ subscriber: UIBottomSheetSubscriber) {
+  open func subscribe(_ subscriber: DynamicBottomSheetSubscriber) {
     subscribers.subscribe(subscriber)
   }
 
-  open func unsubscribe(_ subscriber: UIBottomSheetSubscriber) {
+  open func unsubscribe(_ subscriber: DynamicBottomSheetSubscriber) {
     subscribers.unsubscribe(subscriber)
   }
 }
 
 // MARK: Setup UI
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
   private func setupUI() {
     visibleView.backgroundColor = .systemBackground
     view.backgroundColor = .systemBackground
@@ -332,7 +332,7 @@ extension UIBottomSheet {
 
 // MARK: Pan Recognizer
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
 
   private enum PanRecognizerState: Equatable {
     case empty
@@ -394,7 +394,7 @@ extension UIBottomSheet {
 
 // MARK: Scroll integration
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
 
   @MainActor
   public protocol ScrollingContent: AnyObject {
@@ -506,7 +506,7 @@ extension UIBottomSheet {
 
 // MARK: Anchors
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
   public enum YChangeSource {
     case panGestureInteraction
     case scrollDragging
@@ -558,7 +558,7 @@ extension UIBottomSheet {
 
 // MARK: Content height
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
   @discardableResult
   internal func updateViewTopAnchor() -> CGFloat {
     let topConstraint: CGFloat
@@ -646,7 +646,7 @@ extension UIBottomSheet {
 
 // MARK: Moving
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
   private func updateY(_ newY: CGFloat, source: YChangeSource) {
     y = newY
     updateViewTopAnchor()
@@ -669,7 +669,7 @@ extension UIBottomSheet {
       return
     }
 
-    let yAnimation = UIBottomSheetDefaultSpringAnimation(
+    let yAnimation = DynamicBottomSheetDefaultSpringAnimation(
       initialOrigin: y,
       targetOrigin: newY,
       initialVelocity: velocity ?? 0,
@@ -696,7 +696,7 @@ extension UIBottomSheet {
 
 // MARK: Sending to subscribers
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
   private func sendWillBeginUpdatingY(with source: YChangeSource) {
     subscribers.forEach {
       $0.bottomSheet(self, willBeginUpdatingY: y, source: source)
@@ -717,7 +717,7 @@ extension UIBottomSheet {
   }
 
   private func sendWillBeginAnimation(
-    willBeginAnimation animation: UIBottomSheetAnimation,
+    willBeginAnimation animation: DynamicBottomSheetAnimation,
     source: YChangeSource
   ) {
     subscribers.forEach {
@@ -728,29 +728,29 @@ extension UIBottomSheet {
 
 // MARK: AnchorableBottomSheetDelegate default
 
-public extension UIBottomSheetSubscriber {
+public extension DynamicBottomSheetSubscriber {
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     willBeginUpdatingY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didUpdateY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
+    _ bottomSheet: DynamicBottomSheet,
     didEndUpdatingY y: CGFloat,
-    source: UIBottomSheet.YChangeSource
+    source: DynamicBottomSheet.YChangeSource
   ) {}
 
   func bottomSheet(
-    _ bottomSheet: UIBottomSheet,
-    willBeginAnimation animation: UIBottomSheetAnimation,
-    source: UIBottomSheet.YChangeSource
+    _ bottomSheet: DynamicBottomSheet,
+    willBeginAnimation animation: DynamicBottomSheetAnimation,
+    source: DynamicBottomSheet.YChangeSource
   ) {}
 }
 

@@ -1,6 +1,6 @@
 //
-//  UIBottomSheetDefaultSpringAnimation.swift
-//  DynamicBottomSheetApp
+//  DynamicBottomSheetDefaultSpringAnimation.swift
+//  DynamicBottomSheet
 //
 //  Modified based on code covered by the MIT License.
 //  Original code by Ilya Lobanov, available at https://github.com/super-ultra/UltraDrawerView.
@@ -13,26 +13,26 @@
 import Foundation
 import CoreGraphics
 
-extension UIBottomSheet {
+extension DynamicBottomSheet {
   public enum AnimationParameters: Equatable {
     case spring(Spring)
   }
 }
 
-public extension UIBottomSheet.AnimationParameters {
+public extension DynamicBottomSheet.AnimationParameters {
 
-  static func spring(mass: CGFloat, stiffness: CGFloat, dampingRatio: CGFloat) -> UIBottomSheet.AnimationParameters {
+  static func spring(mass: CGFloat, stiffness: CGFloat, dampingRatio: CGFloat) -> DynamicBottomSheet.AnimationParameters {
     return .spring(Spring(mass: mass, stiffness: stiffness, dampingRatio: dampingRatio))
   }
 }
 
-internal final class UIBottomSheetDefaultSpringAnimation: UIBottomSheetAnimation {
+internal final class DynamicBottomSheetDefaultSpringAnimation: DynamicBottomSheetAnimation {
 
   init(
     initialOrigin: CGFloat,
     targetOrigin: CGFloat,
     initialVelocity: CGFloat,
-    parameters: UIBottomSheet.AnimationParameters,
+    parameters: DynamicBottomSheet.AnimationParameters,
     onUpdate: @escaping (CGFloat) -> Void,
     completion: @escaping (Bool) -> Void
   ) {
@@ -51,7 +51,7 @@ internal final class UIBottomSheetDefaultSpringAnimation: UIBottomSheetAnimation
     animation?.invalidate()
   }
 
-  // MARK: - UIBottomSheetAnimation
+  // MARK: - DynamicBottomSheetAnimation
 
   var y: CGFloat {
     didSet {
@@ -67,7 +67,7 @@ internal final class UIBottomSheetDefaultSpringAnimation: UIBottomSheetAnimation
 
   private var currentOrigin: CGFloat
   private var currentVelocity: CGFloat
-  private let parameters: UIBottomSheet.AnimationParameters
+  private let parameters: DynamicBottomSheet.AnimationParameters
   private let threshold: CGFloat
   private let onUpdate: (CGFloat) -> Void
   private let completion: (Bool) -> Void

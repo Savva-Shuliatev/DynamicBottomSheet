@@ -1,6 +1,6 @@
 //
-//  DampingTimingParameters.swift
-//  DynamicBottomSheetApp
+//  Collection+nearestElement.swift
+//  DynamicBottomSheet
 //
 //  Modified based on code covered by the MIT License.
 //  Original code by Ilya Lobanov, available at https://github.com/super-ultra/UltraDrawerView.
@@ -11,11 +11,10 @@
 //
 
 import Foundation
-import CoreGraphics
 
-/// `amplitude` of the damping system towards zero.
-internal protocol DampingTimingParameters {
-  var duration: TimeInterval { get }
-  func value(at time: TimeInterval) -> CGFloat
-  func amplitude(at time: TimeInterval) -> CGFloat
+internal extension Collection where Element: Comparable & SignedNumeric {
+  
+  func nearestElement(to value: Element) -> Element? {
+    return self.min(by: { abs($0 - value) < abs($1 - value) })
+  }
 }

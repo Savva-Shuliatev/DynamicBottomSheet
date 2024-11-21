@@ -7,12 +7,12 @@
 //
 
 import UIKit
-import UIBottomSheet
+import DynamicBottomSheet
 
 final class ThemeViewController: UIViewController {
 
-  private lazy var bottomSheet: UIBottomSheet = {
-    let bottomSheet = UIBottomSheet()
+  private lazy var bottomSheet: DynamicBottomSheet = {
+    let bottomSheet = DynamicBottomSheet()
     bottomSheet.visibleView.backgroundColor = .clear
     bottomSheet.view.backgroundColor = .green
     bottomSheet.detents.positions = [.fromBottom(410, ignoresSafeArea: true)]

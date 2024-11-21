@@ -1,6 +1,6 @@
 //
-//  ClosedRange+contains.swift
-//  DynamicBottomSheetApp
+//  DampingTimingParameters.swift
+//  DynamicBottomSheet
 //
 //  Modified based on code covered by the MIT License.
 //  Original code by Ilya Lobanov, available at https://github.com/super-ultra/UltraDrawerView.
@@ -11,10 +11,11 @@
 //
 
 import Foundation
+import CoreGraphics
 
-internal extension ClosedRange where Bound: FloatingPoint {
-  
-  func contains(_ element: Bound, eps: Bound) -> Bool {
-    return element.isGreater(than: lowerBound, eps: eps) && element.isLess(than: upperBound, eps: eps)
-  }
+/// `amplitude` of the damping system towards zero.
+internal protocol DampingTimingParameters {
+  var duration: TimeInterval { get }
+  func value(at time: TimeInterval) -> CGFloat
+  func amplitude(at time: TimeInterval) -> CGFloat
 }

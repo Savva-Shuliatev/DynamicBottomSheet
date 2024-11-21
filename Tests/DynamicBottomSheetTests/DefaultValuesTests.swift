@@ -1,13 +1,13 @@
 //
 //  DefaultValuesTests.swift
-//  UIBottomSheet
+//  DynamicBottomSheet
 //
 //  Copyright (c) 2024 Savva Shuliatev
 //  This code is covered by the MIT License.
 //
 
 import Testing
-@testable import UIBottomSheet
+@testable import DynamicBottomSheet
 import UIKit
 
 @Suite("Default values Tests")
@@ -16,7 +16,7 @@ struct DefaultValuesTests {
   /// After exiting beta, when changing default values,
   /// we should think about implementing a static default setting, like
   ///
-  /// extension UIBottomSheet {
+  /// extension DynamicBottomSheet {
   ///   @MainActor
   ///   public struct Defaults {
   ///     public static var bounces = true
@@ -27,7 +27,7 @@ struct DefaultValuesTests {
 
   @Test @MainActor
   func defaultValues() {
-    let bottomSheet = UIBottomSheet()
+    let bottomSheet = DynamicBottomSheet()
 
     #expect(bottomSheet.y == 0)
     #expect(bottomSheet.bounces)
@@ -50,7 +50,7 @@ struct DefaultValuesTests {
 
   @Test @MainActor
   func defaultDetentsValues() {
-    let bottomSheet = UIBottomSheet()
+    let bottomSheet = DynamicBottomSheet()
     #expect(bottomSheet.detents.positions.isEmpty)
     #expect(bottomSheet.detents.bottomBarConnectedPosition == nil)
     #expect(bottomSheet.detents.initialPosition == .fromBottom(0, ignoresSafeArea: true))
@@ -58,7 +58,7 @@ struct DefaultValuesTests {
 
   @Test @MainActor
   func realizationValues() {
-    let bottomSheet = UIBottomSheet()
+    let bottomSheet = DynamicBottomSheet()
     #expect(bottomSheet.anchors.isEmpty)
     #expect(!bottomSheet.didLayoutSubviews)
   }

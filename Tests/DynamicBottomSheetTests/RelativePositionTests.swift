@@ -1,19 +1,19 @@
 //
 //  RelativePositionTests.swift
-//  UIBottomSheet
+//  DynamicBottomSheet
 //
 //  Copyright (c) 2024 Savva Shuliatev
 //  This code is covered by the MIT License.
 //
 
 import Testing
-@testable import UIBottomSheet
+@testable import DynamicBottomSheet
 import UIKit
 
 @Suite("Test RelativePosition calculation and moving") @MainActor
 struct RelativePositionTests {
 
-  let bottomSheet = UIBottomSheet()
+  let bottomSheet = DynamicBottomSheet()
 
   init() {
     bottomSheet.frame = CGRect(x: 0, y: 0, width: 1000, height: 1000)

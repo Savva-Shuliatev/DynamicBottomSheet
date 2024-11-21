@@ -1,13 +1,13 @@
 //
 //  LeaksTests.swift
-//  UIBottomSheet
+//  DynamicBottomSheet
 //
 //  Copyright (c) 2024 Savva Shuliatev
 //  This code is covered by the MIT License.
 //
 
 import Testing
-@testable import UIBottomSheet
+@testable import DynamicBottomSheet
 import UIKit
 
 @Suite("Leaks Tests")
@@ -15,8 +15,8 @@ struct LeaksTests {
 
   @Test @MainActor
   func memoryLeak() async throws {
-    var bottomSheet: UIBottomSheet? = UIBottomSheet()
-    weak var weakBottomSheet: UIBottomSheet? = bottomSheet
+    var bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
+    weak var weakBottomSheet: DynamicBottomSheet? = bottomSheet
 
     let view = UIView()
     view.addSubview(bottomSheet!)
@@ -33,13 +33,13 @@ struct LeaksTests {
 
   @Test @MainActor
   func detentsLeak() {
-    let bottomSheet = UIBottomSheet()
+    let bottomSheet = DynamicBottomSheet()
     #expect(bottomSheet.detents.bottomSheet === bottomSheet)
   }
 
   @Test @MainActor
   func scrollViewIntegrationTests() {
-    var bottomSheet: UIBottomSheet? = UIBottomSheet()
+    var bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
     var scrollView: TestScrollContent? = TestScrollContent()
 
     bottomSheet!.scrollingContent = scrollView!
@@ -48,7 +48,7 @@ struct LeaksTests {
     #expect(bottomSheet!.scrollingContent == nil)
   }
 
-  private final class TestScrollContent: UIBottomSheet.ScrollingContent {
+  private final class TestScrollContent: DynamicBottomSheet.ScrollingContent {
     var contentOffset: CGPoint = .zero
     func stopScrolling() {}
   }

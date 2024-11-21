@@ -7,13 +7,13 @@
 //
 
 import UIKit
-import UIBottomSheet
+import DynamicBottomSheet
 import MapKit
 
 final class AppleMapsViewController: ExampleViewController {
 
   private let mapView = MKMapView(frame: .zero)
-  private let bottomSheet = UIBottomSheet()
+  private let bottomSheet = DynamicBottomSheet()
 
   override func viewDidLoad() {
     super.viewDidLoad()

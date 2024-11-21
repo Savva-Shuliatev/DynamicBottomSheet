@@ -1,6 +1,6 @@
 //
 //  TimerAnimation.swift
-//  DynamicBottomSheetApp
+//  DynamicBottomSheet
 //
 //  Modified based on code covered by the MIT License.
 //  Original code by Ilya Lobanov, available at https://github.com/super-ultra/UltraDrawerView.
