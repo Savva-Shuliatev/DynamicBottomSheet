@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4DB9A1CF2CD44D1E008D0FC1 /* UIBottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 4DB9A1CE2CD44D1E008D0FC1 /* UIBottomSheet */; };
+		4DC880D22CEFFFD6000AF2C6 /* DynamicBottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 4DC880D12CEFFFD6000AF2C6 /* DynamicBottomSheet */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4DB9A1CF2CD44D1E008D0FC1 /* UIBottomSheet in Frameworks */,
+				4DC880D22CEFFFD6000AF2C6 /* DynamicBottomSheet in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +83,7 @@
 			);
 			name = ExampleApp;
 			packageProductDependencies = (
-				4DB9A1CE2CD44D1E008D0FC1 /* UIBottomSheet */,
+				4DC880D12CEFFFD6000AF2C6 /* DynamicBottomSheet */,
 			);
 			productName = ExampleApp;
 			productReference = 4DB9A1B52CD44CDF008D0FC1 /* ExampleApp.app */;
@@ -114,7 +114,7 @@
 			mainGroup = 4DB9A1AC2CD44CDF008D0FC1;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				4DB9A1CD2CD44D1E008D0FC1 /* XCLocalSwiftPackageReference "../../../UIBottomSheet" */,
+				4DC880D02CEFFFD6000AF2C6 /* XCLocalSwiftPackageReference "../../../DynamicBottomSheet" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4DB9A1B62CD44CDF008D0FC1 /* Products */;
@@ -346,16 +346,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		4DB9A1CD2CD44D1E008D0FC1 /* XCLocalSwiftPackageReference "../../../UIBottomSheet" */ = {
+		4DC880D02CEFFFD6000AF2C6 /* XCLocalSwiftPackageReference "../../../DynamicBottomSheet" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../../UIBottomSheet;
+			relativePath = ../../../DynamicBottomSheet;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4DB9A1CE2CD44D1E008D0FC1 /* UIBottomSheet */ = {
+		4DC880D12CEFFFD6000AF2C6 /* DynamicBottomSheet */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = UIBottomSheet;
+			productName = DynamicBottomSheet;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
