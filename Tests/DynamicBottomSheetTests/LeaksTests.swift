@@ -39,7 +39,7 @@ struct LeaksTests {
 
   @Test @MainActor
   func scrollViewIntegrationTests() {
-    var bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
+    let bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
     var scrollView: TestScrollContent? = TestScrollContent()
 
     bottomSheet!.scrollingContent = scrollView!
