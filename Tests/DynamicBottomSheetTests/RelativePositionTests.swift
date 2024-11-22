@@ -150,4 +150,18 @@ struct RelativePositionTests {
     #expect(bottomSheet.y == 1100)
   }
 
+  @Test
+  func hidden() {
+    let hiddenPosition: RelativePosition = .hidden
+    #expect(bottomSheet.detents.y(for: hiddenPosition) == 1000)
+    bottomSheet.detents.move(to: hiddenPosition, animated: false)
+    #expect(bottomSheet.y == 1000)
+  }
+
+  @Test
+  func proportions() {
+    let position: RelativePosition = .proportion(100)
+
+  }
+
 }
