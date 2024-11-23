@@ -215,7 +215,7 @@ open class DynamicBottomSheet: UIView {
       didLayoutSubviews = true
 
       setInitialLayout()
-      anchors = detents.positions.map { detents.y(for: $0) }
+      detents.updateAnchors()
       updateCornerRadius()
 
       layer.shadowColor = shadowColor
@@ -230,7 +230,7 @@ open class DynamicBottomSheet: UIView {
     if lastViewGeometry != ViewGeometry(of: self) {
       lastViewGeometry = ViewGeometry(of: self)
 
-      anchors = detents.positions.map { detents.y(for: $0) }
+      detents.updateAnchors()
       updateCornerRadius()
       updateViewHeight()
       updateViewTopAnchor()

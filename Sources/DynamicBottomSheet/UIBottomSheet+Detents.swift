@@ -35,7 +35,16 @@ extension DynamicBottomSheet {
     open var positions: [RelativePosition] = [] {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
-        bottomSheet.anchors = positions.map { y(for: $0) }
+        updateAnchors()
+      }
+    }
+
+    /// Restricts the `move` method and filters `positions: [RelativePosition]`.
+    /// By default, it is nil, indicating that all positions are available.
+    open var availablePositions: [RelativePosition]? {
+      didSet {
+        guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
+        updateAnchors()
       }
     }
 
@@ -150,6 +159,22 @@ extension DynamicBottomSheet {
 
       } else {
         return min(max(y - y1, 0) / (y2 - y1), 1)
+      }
+    }
+
+    // MARK: - Private methods
+
+    internal func updateAnchors() {
+      guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
+
+      if let availablePositions {
+        bottomSheet.anchors = positions
+          .filter { availablePositions.contains($0) }
+          .map { y(for: $0) }
+
+      } else {
+        bottomSheet.anchors = positions
+          .map { y(for: $0) }
       }
     }
   }

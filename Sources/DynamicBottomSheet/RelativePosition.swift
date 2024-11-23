@@ -83,7 +83,7 @@ public struct RelativePosition: Equatable {
   @MainActor
   public static let hidden: RelativePosition = .bottom(ignoresSafeArea: true)
 
-  public func proportion(_ proportion: Double, offset: CGFloat = 0, withSafeArea: Bool = true) -> RelativePosition {
+  public static func proportion(_ proportion: Double, offset: CGFloat = 0, withSafeArea: Bool = true) -> RelativePosition {
     return RelativePosition(
       offset: offset,
       edge: .proportion(proportion),

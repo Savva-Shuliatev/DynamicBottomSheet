@@ -158,10 +158,4 @@ struct RelativePositionTests {
     #expect(bottomSheet.y == 1000)
   }
 
-  @Test
-  func proportions() {
-    let position: RelativePosition = .proportion(100)
-
-  }
-
 }

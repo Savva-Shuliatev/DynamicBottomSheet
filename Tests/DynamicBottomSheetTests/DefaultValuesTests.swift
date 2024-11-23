@@ -54,6 +54,7 @@ struct DefaultValuesTests {
     #expect(bottomSheet.detents.positions.isEmpty)
     #expect(bottomSheet.detents.bottomBarConnectedPosition == nil)
     #expect(bottomSheet.detents.initialPosition == .fromBottom(0, ignoresSafeArea: true))
+    #expect(bottomSheet.detents.availablePositions == nil)
   }
 
   @Test @MainActor
