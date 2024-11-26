@@ -10,22 +10,10 @@ import Testing
 @testable import DynamicBottomSheet
 import UIKit
 
-@Suite("Default values Tests")
+@Suite("Default values Tests") @MainActor
 struct DefaultValuesTests {
 
-  /// After exiting beta, when changing default values,
-  /// we should think about implementing a static default setting, like
-  ///
-  /// extension DynamicBottomSheet {
-  ///   @MainActor
-  ///   public struct Defaults {
-  ///     public static var bounces = true
-  ///   }
-  /// }
-  ///
-  /// For best expirience of library <3
-
-  @Test @MainActor
+  @Test
   func defaultValues() {
     let bottomSheet = DynamicBottomSheet()
 
@@ -48,7 +36,7 @@ struct DefaultValuesTests {
     #expect(bottomSheet.bottomBarHeight == 64)
   }
 
-  @Test @MainActor
+  @Test
   func defaultDetentsValues() {
     let bottomSheet = DynamicBottomSheet()
     #expect(bottomSheet.detents.positions.isEmpty)
@@ -57,13 +45,75 @@ struct DefaultValuesTests {
     #expect(bottomSheet.detents.availablePositions == nil)
   }
 
-  @Test @MainActor
+  @Test
+  func valuesInSheet() {
+    let bottomSheet = DynamicBottomSheet()
+    #expect(bottomSheet.bounces == DynamicBottomSheet.Values.default.bounces)
+  }
+
+  @Test
   func realizationValues() {
     let bottomSheet = DynamicBottomSheet()
     #expect(bottomSheet.anchors.isEmpty)
     #expect(!bottomSheet.didLayoutSubviews)
   }
 
+  @Test
+  func equalDefaultValues() {
+    expectingDefaultValues(values: .default)
+
+    let mockValues = mockValues()
+    DynamicBottomSheet.Values.default = mockValues
+    expectingDefaultValues(values: mockValues)
+  }
+
+}
+
+extension DefaultValuesTests {
+  func expectingDefaultValues(values: DynamicBottomSheet.Values) {
+    let bottomSheet = DynamicBottomSheet()
+    #expect(bottomSheet.bounces == values.bounces)
+    #expect(bottomSheet.bouncesFactor == values.bouncesFactor)
+    #expect(bottomSheet.viewIgnoresTopSafeArea == values.viewIgnoresTopSafeArea)
+    #expect(bottomSheet.viewIgnoresBottomBarHeight == values.viewIgnoresBottomBarHeight)
+    #expect(bottomSheet.viewIgnoresBottomSafeArea == values.viewIgnoresBottomSafeArea)
+    #expect(bottomSheet.prefersGrabberVisible == values.prefersGrabberVisible)
+    #expect(bottomSheet.cornerRadius == values.cornerRadius)
+    #expect(bottomSheet.shadowColor == values.shadowColor)
+    #expect(bottomSheet.shadowOpacity == values.shadowOpacity)
+    #expect(bottomSheet.shadowOffset == values.shadowOffset)
+    #expect(bottomSheet.shadowRadius == values.shadowRadius)
+    #expect(bottomSheet.shadowPath == values.shadowPath)
+    #expect(bottomSheet.bottomBarIsHidden == values.bottomBarIsHidden)
+    #expect(bottomSheet.bottomBarHeight == values.bottomBarHeight)
+    #expect(bottomSheet.animationParameters == values.animationParameters)
+    #expect(bottomSheet.detents.positions == values.detentsValues.positions)
+    #expect(bottomSheet.detents.availablePositions == values.detentsValues.availablePositions)
+    #expect(bottomSheet.detents.bottomBarConnectedPosition == values.detentsValues.bottomBarConnectedPosition)
+  }
+
+  func mockValues() -> DynamicBottomSheet.Values {
+    var values = DynamicBottomSheet.Values.default
+    values.bounces.toggle()
+    values.bouncesFactor = 0.5
+    values.viewIgnoresTopSafeArea.toggle()
+    values.viewIgnoresBottomBarHeight.toggle()
+    values.viewIgnoresBottomSafeArea.toggle()
+    values.prefersGrabberVisible.toggle()
+    values.cornerRadius = 0
+    values.shadowColor = UIColor.black.cgColor
+    values.shadowOpacity = 0
+    values.shadowOffset = CGSize(width: 1, height: 1)
+    values.shadowRadius += 10
+    values.shadowPath = nil
+    values.bottomBarIsHidden.toggle()
+    values.bottomBarHeight += 10
+    values.animationParameters = .spring(mass: 0.1, stiffness: 0.1, dampingRatio: 0.1)
+    values.detentsValues.positions = [.hidden]
+    values.detentsValues.availablePositions = [.hidden]
+    values.detentsValues.bottomBarConnectedPosition = .hidden
+    return values
+  }
 }
 
 

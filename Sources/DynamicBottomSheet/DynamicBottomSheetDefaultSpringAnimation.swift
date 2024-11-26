@@ -14,7 +14,7 @@ import Foundation
 import CoreGraphics
 
 extension DynamicBottomSheet {
-  public enum AnimationParameters: Equatable {
+  public enum AnimationParameters: Equatable, Sendable {
     case spring(Spring)
   }
 }

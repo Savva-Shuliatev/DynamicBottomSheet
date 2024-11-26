@@ -54,25 +54,25 @@ open class DynamicBottomSheet: UIView {
   }
 
   /// A Boolean value that controls whether the scroll view bounces past the edge of content and back again.
-  open var bounces: Bool = true
+  open var bounces: Bool = Values.default.bounces
 
-  open var bouncesFactor: CGFloat = 0.1
+  open var bouncesFactor: CGFloat = Values.default.bouncesFactor
 
-  open var viewIgnoresTopSafeArea: Bool = true {
+  open var viewIgnoresTopSafeArea: Bool = Values.default.viewIgnoresTopSafeArea {
     didSet {
       guard didLayoutSubviews else { return }
       layoutSubviews()
     }
   }
 
-  open var viewIgnoresBottomBarHeight: Bool = false {
+  open var viewIgnoresBottomBarHeight: Bool = Values.default.viewIgnoresBottomBarHeight {
     didSet {
       guard didLayoutSubviews else { return }
       layoutSubviews()
     }
   }
 
-  open var viewIgnoresBottomSafeArea: Bool = false {
+  open var viewIgnoresBottomSafeArea: Bool = Values.default.viewIgnoresBottomSafeArea {
     didSet {
       guard didLayoutSubviews else { return }
       layoutSubviews()
@@ -82,7 +82,7 @@ open class DynamicBottomSheet: UIView {
   open weak var scrollingContent: ScrollingContent?
 
   /// Animation parameters for the transitions between anchors
-  open var animationParameters: AnimationParameters = .spring(.default)
+  open var animationParameters: AnimationParameters = Values.default.animationParameters
 
   open var onFirstAppear: (() -> Void)?
   open var onChangeY: ((CGFloat) -> Void)?
@@ -99,55 +99,55 @@ open class DynamicBottomSheet: UIView {
     return grabber
   }()
 
-  open var prefersGrabberVisible = true {
+  open var prefersGrabberVisible = Values.default.prefersGrabberVisible {
     didSet {
       grabber.isHidden = !prefersGrabberVisible
     }
   }
 
-  open var cornerRadius: CGFloat = 10 {
+  open var cornerRadius: CGFloat = Values.default.cornerRadius {
     didSet {
       guard didLayoutSubviews else { return }
       updateCornerRadius()
     }
   }
 
-  open var shadowColor: CGColor? = UIColor.black.withAlphaComponent(0.5).cgColor {
+  open var shadowColor: CGColor? = Values.default.shadowColor {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowColor = shadowColor
     }
   }
 
-  open var shadowOpacity: Float = 0.5 {
+  open var shadowOpacity: Float = Values.default.shadowOpacity {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowOpacity = shadowOpacity
     }
   }
 
-  open var shadowOffset = CGSize(width: 1.5, height: 1.5) {
+  open var shadowOffset: CGSize = Values.default.shadowOffset {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowOffset = shadowOffset
     }
   }
 
-  open var shadowRadius: CGFloat = 3.0 {
+  open var shadowRadius: CGFloat = Values.default.shadowRadius {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowRadius = shadowRadius
     }
   }
 
-  open var shadowPath: CGPath? {
+  open var shadowPath: CGPath? = Values.default.shadowPath {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowPath = shadowPath
     }
   }
 
-  open var bottomBarIsHidden: Bool = true {
+  open var bottomBarIsHidden: Bool = Values.default.bottomBarIsHidden {
     didSet {
       bottomBarArea.isHidden = bottomBarIsHidden
       bottomBar.isHidden = bottomBarIsHidden
@@ -156,7 +156,7 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  open private(set) var bottomBarHeight: CGFloat = 64 {
+  open private(set) var bottomBarHeight: CGFloat = Values.default.bottomBarHeight {
     didSet {
       bottomBarHeightConstraint?.constant = bottomBarHeight
     }

@@ -32,7 +32,7 @@ extension DynamicBottomSheet {
 
     internal private(set) weak var bottomSheet: DynamicBottomSheet?
 
-    open var positions: [RelativePosition] = [] {
+    open var positions: [RelativePosition] = DynamicBottomSheet.Values.default.detentsValues.positions {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
         updateAnchors()
@@ -41,7 +41,7 @@ extension DynamicBottomSheet {
 
     /// Restricts the `move` method and filters `positions: [RelativePosition]`.
     /// By default, it is nil, indicating that all positions are available.
-    open var availablePositions: [RelativePosition]? {
+    open var availablePositions: [RelativePosition]? = DynamicBottomSheet.Values.default.detentsValues.availablePositions {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
         updateAnchors()
@@ -49,7 +49,7 @@ extension DynamicBottomSheet {
     }
 
     /// If value is nil, then substitute the last position from positions or full height of container
-    open var bottomBarConnectedPosition: RelativePosition? {
+    open var bottomBarConnectedPosition: RelativePosition? = DynamicBottomSheet.Values.default.detentsValues.bottomBarConnectedPosition {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
         bottomSheet.updateBottomBarAreaHeight()

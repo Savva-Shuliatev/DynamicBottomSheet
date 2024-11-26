@@ -32,7 +32,7 @@ import CoreGraphics
 /// beta = damping / (2 * mass)
 /// w0 = sqrt(stiffness / mass) - natural frequency
 /// w' = sqrt(w0 * w0 - beta * beta) - damped natural frequency
-public struct Spring: Equatable {
+public struct Spring: Equatable, Sendable {
   public var mass: CGFloat
   public var stiffness: CGFloat
   public var dampingRatio: CGFloat

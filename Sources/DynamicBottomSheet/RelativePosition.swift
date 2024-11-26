@@ -12,8 +12,8 @@
 
 import Foundation
 
-public struct RelativePosition: Equatable {
-  public enum Edge: Equatable {
+public struct RelativePosition: Equatable, Sendable {
+  public enum Edge: Equatable, Sendable {
     case top
     case middle
     case bottom
