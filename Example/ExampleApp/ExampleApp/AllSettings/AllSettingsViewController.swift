@@ -19,12 +19,12 @@ final class AllSettingsViewController: ExampleViewController {
     let bottomSheet = DynamicBottomSheet()
     bottomSheet.view.backgroundColor = .systemBackground
     bottomSheet.visibleView.backgroundColor = .systemGray
-    bottomSheet.bottomBar.backgroundColor = .systemGray2
-    bottomSheet.bottomBarArea.backgroundColor = .systemGray3
+    bottomSheet.bottomBar.view.backgroundColor = .systemGray2.withAlphaComponent(0.35)
+    bottomSheet.bottomBar.area.backgroundColor = .systemGray3.withAlphaComponent(0.35)
     bottomSheet.detents.subscribe(self)
     bottomSheet.detents.initialPosition = .fromBottom(200)
     bottomSheet.detents.positions = AllSettingsPositions.allCases.map { $0.position }
-    bottomSheet.detents.bottomBarConnectedPosition = .fromBottom(200)
+    bottomSheet.bottomBar.connectedPosition = .fromBottom(200)
     return bottomSheet
   }()
 
@@ -71,7 +71,7 @@ final class AllSettingsViewController: ExampleViewController {
     .store(in: &cancellables)
 
     viewModel.$viewIgnoresBottomBarHeight.sink { [weak self] in
-      self?.bottomSheet.viewIgnoresBottomBarHeight = $0
+      self?.bottomSheet.bottomBar.viewIgnoresBottomBarHeight = $0
     }
     .store(in: &cancellables)
 
@@ -116,12 +116,12 @@ final class AllSettingsViewController: ExampleViewController {
     .store(in: &cancellables)
 
     viewModel.$bottomBarIsHidden.sink { [weak self] in
-      self?.bottomSheet.bottomBarIsHidden = $0
+      self?.bottomSheet.bottomBar.isHidden = $0
     }
     .store(in: &cancellables)
 
     viewModel.$bottomBarHeight.sink { [weak self] in
-      self?.bottomSheet.updateBottomBarHeight($0)
+      self?.bottomSheet.bottomBar.updateHeight($0)
     }
     .store(in: &cancellables)
   }

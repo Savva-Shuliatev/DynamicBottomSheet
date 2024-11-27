@@ -16,6 +16,8 @@ open class DynamicBottomSheet: UIView {
 
   open lazy private(set) var detents = Detents(bottomSheet: self)
 
+  open lazy private(set) var bottomBar = BottomBar(bottomSheet: self)
+
   open private(set) var y: CGFloat = 0 {
     didSet {
       visibleViewYConstraint?.constant = y
@@ -30,21 +32,14 @@ open class DynamicBottomSheet: UIView {
   open var viewIgnoresTopSafeArea: Bool = Values.default.viewIgnoresTopSafeArea {
     didSet {
       guard didLayoutSubviews else { return }
-      layoutSubviews()
-    }
-  }
-
-  open var viewIgnoresBottomBarHeight: Bool = Values.default.viewIgnoresBottomBarHeight {
-    didSet {
-      guard didLayoutSubviews else { return }
-      layoutSubviews()
+      updateViewHeight()
     }
   }
 
   open var viewIgnoresBottomSafeArea: Bool = Values.default.viewIgnoresBottomSafeArea {
     didSet {
       guard didLayoutSubviews else { return }
-      layoutSubviews()
+      updateViewHeight()
     }
   }
 
@@ -58,8 +53,6 @@ open class DynamicBottomSheet: UIView {
 
   public let visibleView = UIView()
   public let view = UIView()
-  public let bottomBarArea = UIView()
-  public let bottomBar = UIView()
 
   public let grabber: UIView = {
     let grabber = UIView()
@@ -116,21 +109,6 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  open var bottomBarIsHidden: Bool = Values.default.bottomBarIsHidden {
-    didSet {
-      bottomBarArea.isHidden = bottomBarIsHidden
-      bottomBar.isHidden = bottomBarIsHidden
-      guard didLayoutSubviews else { return }
-      layoutSubviews()
-    }
-  }
-
-  open private(set) var bottomBarHeight: CGFloat = Values.default.bottomBarHeight {
-    didSet {
-      bottomBarHeightConstraint?.constant = bottomBarHeight
-    }
-  }
-
   internal var anchors: [CGFloat] = []
 
   internal var didLayoutSubviews = false
@@ -147,7 +125,7 @@ open class DynamicBottomSheet: UIView {
   private var viewTopConstraint: NSLayoutConstraint?
   private var viewHeightConstraint: NSLayoutConstraint?
 
-  private var bottomBarHeightConstraint: NSLayoutConstraint?
+  internal var bottomBarHeightConstraint: NSLayoutConstraint?
   private var bottomBarAreaHeightConstraint: NSLayoutConstraint?
 
   private var panRecognizerState: PanRecognizerState = .empty
@@ -225,13 +203,6 @@ open class DynamicBottomSheet: UIView {
     move(to: newY, source: .program, animated: animated, completion: completion)
   }
 
-  open func updateBottomBarHeight(_ height: CGFloat) {
-    bottomBarHeight = max(height, 0)
-    guard didLayoutSubviews else { return }
-    updateBottomBarAreaHeight()
-    layoutSubviews()
-  }
-
   open func subscribe(_ subscriber: DynamicBottomSheetSubscriber) {
     subscribers.subscribe(subscriber)
   }
@@ -247,16 +218,16 @@ extension DynamicBottomSheet {
   private func setupUI() {
     visibleView.backgroundColor = .systemBackground
     view.backgroundColor = .systemBackground
-    bottomBarArea.backgroundColor = .systemBackground
-    bottomBar.backgroundColor = .systemBackground
-    bottomBarArea.isHidden = bottomBarIsHidden
-    bottomBar.isHidden = bottomBarIsHidden
+    bottomBar.area.backgroundColor = .systemBackground
+    bottomBar.view.backgroundColor = .systemBackground
+    bottomBar.area.isHidden = bottomBar.isHidden
+    bottomBar.view.isHidden = bottomBar.isHidden
 
     addSubview(visibleView)
     visibleView.addSubview(view)
     visibleView.addSubview(grabber)
-    addSubview(bottomBarArea)
-    bottomBarArea.addSubview(bottomBar)
+    addSubview(bottomBar.area)
+    bottomBar.area.addSubview(bottomBar.view)
 
     view.constraints([.leading, .trailing])
 
@@ -277,11 +248,11 @@ extension DynamicBottomSheet {
     viewHeightConstraint = view.constraint(.height, equalTo: updateViewHeight())
     visibleView.constraints([.leading, .trailing, .bottom])
 
-    bottomBarArea.constraints([.leading, .trailing, .bottom])
-    bottomBarAreaHeightConstraint = bottomBarArea.constraint(.height, equalTo: updateBottomBarAreaHeight())
+    bottomBar.area.constraints([.leading, .trailing, .bottom])
+    bottomBarAreaHeightConstraint = bottomBar.area.constraint(.height, equalTo: updateBottomBarAreaHeight())
 
-    bottomBar.constraints([.leading, .trailing, .top])
-    bottomBarHeightConstraint = bottomBar.constraint(.height, equalTo: bottomBarHeight)
+    bottomBar.view.constraints([.leading, .trailing, .top])
+    bottomBarHeightConstraint = bottomBar.view.constraint(.height, equalTo: bottomBar.height)
   }
 
   private func updateCornerRadius() {
@@ -560,8 +531,8 @@ extension DynamicBottomSheet {
         bottomOffset = safeAreaInsets.bottom
       }
 
-      if !bottomBarIsHidden, !viewIgnoresBottomBarHeight {
-        bottomOffset += bottomBarHeight
+      if !bottomBar.isHidden, !bottomBar.viewIgnoresBottomBarHeight {
+        bottomOffset += bottomBar.height
       }
 
       viewHeight = bounds.height - minY - bottomOffset
@@ -585,7 +556,7 @@ extension DynamicBottomSheet {
   internal func updateBottomBarAreaHeight() -> CGFloat {
     let bottomBarConnectedY: CGFloat
 
-    if let bottomBarConnectedPosition = detents.bottomBarConnectedPosition {
+    if let bottomBarConnectedPosition = bottomBar.connectedPosition {
       bottomBarConnectedY = detents.y(for: bottomBarConnectedPosition)
     } else {
 
@@ -597,7 +568,7 @@ extension DynamicBottomSheet {
     }
 
     let safeAreaBottomInset = safeAreaInsets.bottom
-    let bottomBarHeight = bottomBarHeight
+    let bottomBarHeight = bottomBar.height
 
     guard y > bottomBarConnectedY else {
       bottomBarAreaHeightConstraint?.constant = safeAreaBottomInset + bottomBarHeight

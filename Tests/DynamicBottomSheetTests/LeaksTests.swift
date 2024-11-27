@@ -38,6 +38,12 @@ struct LeaksTests {
   }
 
   @Test @MainActor
+  func bottomBarLeak() {
+    let bottomSheet = DynamicBottomSheet()
+    #expect(bottomSheet.bottomBar.bottomSheet === bottomSheet)
+  }
+
+  @Test @MainActor
   func scrollViewIntegrationTests() {
     let bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
     var scrollView: TestScrollContent? = TestScrollContent()
