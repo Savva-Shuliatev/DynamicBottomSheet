@@ -10,14 +10,14 @@ import UIKit
 import DynamicBottomSheet
 
 enum AllSettingsPositions: CaseIterable {
-  //case top
+  case top
   case fromTop120
   case fromBottom200
   case fromBottom60
 
   var position: RelativePosition {
     switch self {
-    //case .top: return .top()
+    case .top: return .top()
     case .fromTop120: return .fromTop(120)
     case .fromBottom200: return .fromBottom(200)
     case .fromBottom60: return .fromBottom(60)
