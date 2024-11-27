@@ -109,15 +109,6 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  open var bottomBarIsHidden: Bool = Values.default.bottomBarIsHidden {
-    didSet {
-      bottomBar.area.isHidden = bottomBarIsHidden
-      bottomBar.view.isHidden = bottomBarIsHidden
-      guard didLayoutSubviews else { return }
-      layoutSubviews()
-    }
-  }
-
   open private(set) var bottomBarHeight: CGFloat = Values.default.bottomBarHeight {
     didSet {
       bottomBarHeightConstraint?.constant = bottomBarHeight
@@ -242,8 +233,8 @@ extension DynamicBottomSheet {
     view.backgroundColor = .systemBackground
     bottomBar.area.backgroundColor = .systemBackground
     bottomBar.view.backgroundColor = .systemBackground
-    bottomBar.area.isHidden = bottomBarIsHidden
-    bottomBar.view.isHidden = bottomBarIsHidden
+    bottomBar.area.isHidden = bottomBar.isHidden
+    bottomBar.view.isHidden = bottomBar.isHidden
 
     addSubview(visibleView)
     visibleView.addSubview(view)
@@ -553,7 +544,7 @@ extension DynamicBottomSheet {
         bottomOffset = safeAreaInsets.bottom
       }
 
-      if !bottomBarIsHidden, !bottomBar.viewIgnoresBottomBarHeight {
+      if !bottomBar.isHidden, !bottomBar.viewIgnoresBottomBarHeight {
         bottomOffset += bottomBarHeight
       }
 
@@ -578,7 +569,7 @@ extension DynamicBottomSheet {
   internal func updateBottomBarAreaHeight() -> CGFloat {
     let bottomBarConnectedY: CGFloat
 
-    if let bottomBarConnectedPosition = detents.bottomBarConnectedPosition {
+    if let bottomBarConnectedPosition = bottomBar.connectedPosition {
       bottomBarConnectedY = detents.y(for: bottomBarConnectedPosition)
     } else {
 
