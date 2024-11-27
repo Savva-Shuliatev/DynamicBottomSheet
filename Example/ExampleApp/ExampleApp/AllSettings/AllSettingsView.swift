@@ -50,7 +50,7 @@ struct AllSettingsView: View {
 
           Section("Move") {
             Button {
-              viewModel.moveTo?(AllSettingsPositions.top.position)
+              //viewModel.moveTo?(AllSettingsPositions.top.position)
             } label: {
               Text("Move to top position")
             }

@@ -17,10 +17,16 @@ extension DynamicBottomSheet {
     public let area = UIView()
     public let view = UIView()
 
+    open private(set) var height: CGFloat = Values.default.bottomBarHeight {
+      didSet {
+        bottomSheet?.bottomBarHeightConstraint?.constant = height
+      }
+    }
+
     open var viewIgnoresBottomBarHeight: Bool = Values.default.viewIgnoresBottomBarHeight {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
-        bottomSheet.layoutSubviews()
+        bottomSheet.updateViewHeight()
       }
     }
 
@@ -30,7 +36,7 @@ extension DynamicBottomSheet {
         area.isHidden = isHidden
         view.isHidden = isHidden
         guard bottomSheet.didLayoutSubviews else { return }
-        bottomSheet.layoutSubviews()
+        bottomSheet.updateViewHeight()
       }
     }
 
@@ -44,6 +50,13 @@ extension DynamicBottomSheet {
 
     public init(bottomSheet: DynamicBottomSheet) {
       self.bottomSheet = bottomSheet
+    }
+
+    open func updateHeight(_ height: CGFloat) {
+      self.height = max(height, 0)
+      guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
+      bottomSheet.updateBottomBarAreaHeight()
+      bottomSheet.updateViewHeight()
     }
 
   }

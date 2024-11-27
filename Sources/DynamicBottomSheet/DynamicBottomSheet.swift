@@ -109,12 +109,6 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  open private(set) var bottomBarHeight: CGFloat = Values.default.bottomBarHeight {
-    didSet {
-      bottomBarHeightConstraint?.constant = bottomBarHeight
-    }
-  }
-
   internal var anchors: [CGFloat] = []
 
   internal var didLayoutSubviews = false
@@ -131,7 +125,7 @@ open class DynamicBottomSheet: UIView {
   private var viewTopConstraint: NSLayoutConstraint?
   private var viewHeightConstraint: NSLayoutConstraint?
 
-  private var bottomBarHeightConstraint: NSLayoutConstraint?
+  internal var bottomBarHeightConstraint: NSLayoutConstraint?
   private var bottomBarAreaHeightConstraint: NSLayoutConstraint?
 
   private var panRecognizerState: PanRecognizerState = .empty
@@ -209,13 +203,6 @@ open class DynamicBottomSheet: UIView {
     move(to: newY, source: .program, animated: animated, completion: completion)
   }
 
-  open func updateBottomBarHeight(_ height: CGFloat) {
-    bottomBarHeight = max(height, 0)
-    guard didLayoutSubviews else { return }
-    updateBottomBarAreaHeight()
-    layoutSubviews()
-  }
-
   open func subscribe(_ subscriber: DynamicBottomSheetSubscriber) {
     subscribers.subscribe(subscriber)
   }
@@ -265,7 +252,7 @@ extension DynamicBottomSheet {
     bottomBarAreaHeightConstraint = bottomBar.area.constraint(.height, equalTo: updateBottomBarAreaHeight())
 
     bottomBar.view.constraints([.leading, .trailing, .top])
-    bottomBarHeightConstraint = bottomBar.view.constraint(.height, equalTo: bottomBarHeight)
+    bottomBarHeightConstraint = bottomBar.view.constraint(.height, equalTo: bottomBar.height)
   }
 
   private func updateCornerRadius() {
@@ -545,7 +532,7 @@ extension DynamicBottomSheet {
       }
 
       if !bottomBar.isHidden, !bottomBar.viewIgnoresBottomBarHeight {
-        bottomOffset += bottomBarHeight
+        bottomOffset += bottomBar.height
       }
 
       viewHeight = bounds.height - minY - bottomOffset
@@ -581,7 +568,7 @@ extension DynamicBottomSheet {
     }
 
     let safeAreaBottomInset = safeAreaInsets.bottom
-    let bottomBarHeight = bottomBarHeight
+    let bottomBarHeight = bottomBar.height
 
     guard y > bottomBarConnectedY else {
       bottomBarAreaHeightConstraint?.constant = safeAreaBottomInset + bottomBarHeight

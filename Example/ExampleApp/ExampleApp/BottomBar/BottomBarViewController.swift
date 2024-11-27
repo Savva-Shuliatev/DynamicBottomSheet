@@ -26,8 +26,8 @@ final class BottomBarViewController: ExampleViewController {
     view.addSubview(bottomSheet)
     bottomSheet.frame = view.bounds
 
-    bottomSheet.bottomBar.backgroundColor = .red.withAlphaComponent(0.35)
-    bottomSheet.bottomBarArea.backgroundColor = .blue.withAlphaComponent(0.35)
+    bottomSheet.bottomBar.view.backgroundColor = .red.withAlphaComponent(0.35)
+    bottomSheet.bottomBar.area.backgroundColor = .blue.withAlphaComponent(0.35)
 
     bottomSheet.view.backgroundColor = .yellow
 
@@ -35,9 +35,9 @@ final class BottomBarViewController: ExampleViewController {
 
     bottomSheet.detents.initialPosition = .fromBottom(200)
     bottomSheet.detents.positions = [.top(), .fromTop(120), .fromBottom(200), .fromBottom(60)]
-    bottomSheet.detents.bottomBarConnectedPosition = .fromBottom(200)
+    bottomSheet.bottomBar.connectedPosition = .fromBottom(200)
 
-    bottomSheet.bottomBarIsHidden = false
+    bottomSheet.bottomBar.isHidden = false
 
     addCloseButton()
   }
