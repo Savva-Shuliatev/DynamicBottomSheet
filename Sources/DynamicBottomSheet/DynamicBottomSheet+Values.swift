@@ -2,7 +2,8 @@
 //  DynamicBottomSheet+Values.swift
 //  DynamicBottomSheet
 //
-//  Created by Savva Shuliatev on 24.11.2024.
+//  Copyright (c) 2024 Savva Shuliatev
+//  This code is covered by the MIT License.
 //
 
 @preconcurrency import UIKit
