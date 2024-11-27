@@ -8,6 +8,7 @@
 
 import SwiftUI
 import MapKit
+import DynamicBottomSheet
 
 struct AllSettingsView: View {
 
@@ -45,6 +46,32 @@ struct AllSettingsView: View {
               get: { CGFloat(viewModel.cornerRadius) },
               set: { viewModel.cornerRadius = $0 }
             ))
+          }
+
+          Section("Move") {
+            Button {
+              viewModel.moveTo?(AllSettingsPositions.top.position)
+            } label: {
+              Text("Move to top position")
+            }
+
+            Button {
+              viewModel.moveTo?(AllSettingsPositions.fromTop120.position)
+            } label: {
+              Text("Move to fromTop(120) position")
+            }
+
+            Button {
+              viewModel.moveTo?(AllSettingsPositions.fromBottom200.position)
+            } label: {
+              Text("Move to fromBottom(200) position")
+            }
+
+            Button {
+              viewModel.moveTo?(AllSettingsPositions.fromBottom60.position)
+            } label: {
+              Text("Move to fromBottom(60) position")
+            }
           }
 
           Section("Ignores") {

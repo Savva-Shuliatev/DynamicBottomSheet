@@ -23,12 +23,7 @@ final class AllSettingsViewController: ExampleViewController {
     bottomSheet.bottomBarArea.backgroundColor = .systemGray3
     bottomSheet.detents.subscribe(self)
     bottomSheet.detents.initialPosition = .fromBottom(200)
-    bottomSheet.detents.positions = [
-      .top(),
-      .fromTop(120),
-      .fromBottom(200),
-      .fromBottom(60)
-    ]
+    bottomSheet.detents.positions = AllSettingsPositions.allCases.map { $0.position }
     bottomSheet.detents.bottomBarConnectedPosition = .fromBottom(200)
     return bottomSheet
   }()
@@ -37,8 +32,13 @@ final class AllSettingsViewController: ExampleViewController {
 
   override init() {
     super.init()
+
     viewModel.closeAction = { [weak self] in
       self?.dismiss(animated: true)
+    }
+
+    viewModel.moveTo = { [weak self] position in
+      self?.bottomSheet.detents.move(to: position)
     }
   }
   

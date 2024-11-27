@@ -662,6 +662,8 @@ extension DynamicBottomSheet {
     velocity: CGFloat? = nil,
     completion: ((Bool) -> Void)? = nil
   ) {
+    stopYAnimation()
+
     guard animated else {
       updateY(newY, source: source)
       sendDidEndUpdatingY(with: source)
