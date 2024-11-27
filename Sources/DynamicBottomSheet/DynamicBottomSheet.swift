@@ -32,14 +32,14 @@ open class DynamicBottomSheet: UIView {
   open var viewIgnoresTopSafeArea: Bool = Values.default.viewIgnoresTopSafeArea {
     didSet {
       guard didLayoutSubviews else { return }
-      layoutSubviews()
+      updateViewHeight()
     }
   }
 
   open var viewIgnoresBottomSafeArea: Bool = Values.default.viewIgnoresBottomSafeArea {
     didSet {
       guard didLayoutSubviews else { return }
-      layoutSubviews()
+      updateViewHeight()
     }
   }
 
