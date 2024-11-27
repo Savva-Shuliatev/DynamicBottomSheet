@@ -12,37 +12,6 @@
 
 import UIKit
 
-/// DynamicBottomSheetAnimation allows to control y during animation.
-@MainActor
-public protocol DynamicBottomSheetAnimation: AnyObject {
-  var y: CGFloat { get set }
-  var isDone: Bool { get }
-}
-
-@MainActor
-public protocol DynamicBottomSheetSubscriber: AnyObject {
-  func bottomSheet(
-    _ bottomSheet: DynamicBottomSheet,
-    willBeginUpdatingY y: CGFloat,
-    source: DynamicBottomSheet.YChangeSource
-  )
-  func bottomSheet(
-    _ bottomSheet: DynamicBottomSheet,
-    didUpdateY y: CGFloat,
-    source: DynamicBottomSheet.YChangeSource
-  )
-  func bottomSheet(
-    _ bottomSheet: DynamicBottomSheet,
-    didEndUpdatingY y: CGFloat,
-    source: DynamicBottomSheet.YChangeSource
-  )
-  func bottomSheet(
-    _ bottomSheet: DynamicBottomSheet,
-    willBeginAnimation animation: DynamicBottomSheetAnimation,
-    source: DynamicBottomSheet.YChangeSource
-  )
-}
-
 open class DynamicBottomSheet: UIView {
 
   open lazy private(set) var detents = Detents(bottomSheet: self)
@@ -726,64 +695,4 @@ extension DynamicBottomSheet {
       $0.bottomSheet(self, willBeginAnimation: animation, source: source)
     }
   }
-}
-
-// MARK: AnchorableBottomSheetDelegate default
-
-public extension DynamicBottomSheetSubscriber {
-  func bottomSheet(
-    _ bottomSheet: DynamicBottomSheet,
-    willBeginUpdatingY y: CGFloat,
-    source: DynamicBottomSheet.YChangeSource
-  ) {}
-
-  func bottomSheet(
-    _ bottomSheet: DynamicBottomSheet,
-    didUpdateY y: CGFloat,
-    source: DynamicBottomSheet.YChangeSource
-  ) {}
-
-  func bottomSheet(
-    _ bottomSheet: DynamicBottomSheet,
-    didEndUpdatingY y: CGFloat,
-    source: DynamicBottomSheet.YChangeSource
-  ) {}
-
-  func bottomSheet(
-    _ bottomSheet: DynamicBottomSheet,
-    willBeginAnimation animation: DynamicBottomSheetAnimation,
-    source: DynamicBottomSheet.YChangeSource
-  ) {}
-}
-
-// MARK: ViewGeomerty
-
-internal struct ViewGeometry: Equatable {
-  let frame: CGRect
-  let bounds: CGRect
-  let safeAreaInsets: UIEdgeInsets
-
-  static let zero = ViewGeometry(
-    frame: .zero,
-    bounds: .zero,
-    safeAreaInsets: .zero
-  )
-
-  init(
-    frame: CGRect,
-    bounds: CGRect,
-    safeAreaInsets: UIEdgeInsets
-  ) {
-    self.frame = frame
-    self.bounds = bounds
-    self.safeAreaInsets = safeAreaInsets
-  }
-
-  @MainActor
-  init(of view: UIView) {
-    self.frame = view.frame
-    self.bounds = view.bounds
-    self.safeAreaInsets = view.safeAreaInsets
-  }
-
 }
