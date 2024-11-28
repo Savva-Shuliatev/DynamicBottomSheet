@@ -351,6 +351,8 @@ extension DynamicBottomSheet {
 
 extension DynamicBottomSheet {
 
+  /// func connect(_ scrollView: UIScrollView) {}
+
   @MainActor
   public protocol ScrollingContent: AnyObject {
     var contentOffset: CGPoint { get set }

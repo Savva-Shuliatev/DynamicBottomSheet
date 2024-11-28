@@ -32,15 +32,15 @@ struct DefaultValuesTests {
     #expect(bottomSheet.shadowOffset == CGSize(width: 1.5, height: 1.5))
     #expect(bottomSheet.shadowRadius == 3.0)
     #expect(bottomSheet.shadowPath == nil)
-    #expect(bottomSheet.bottomBarIsHidden)
-    #expect(bottomSheet.bottomBarHeight == 64)
+    #expect(bottomSheet.bottomBar.isHidden)
+    #expect(bottomSheet.bottomBar.height == 64)
   }
 
   @Test
   func defaultDetentsValues() {
     let bottomSheet = DynamicBottomSheet()
     #expect(bottomSheet.detents.positions.isEmpty)
-    #expect(bottomSheet.detents.bottomBarConnectedPosition == nil)
+    #expect(bottomSheet.bottomBar.connectedPosition == nil)
     #expect(bottomSheet.detents.initialPosition == .fromBottom(0, ignoresSafeArea: true))
     #expect(bottomSheet.detents.availablePositions == nil)
   }
@@ -84,12 +84,12 @@ extension DefaultValuesTests {
     #expect(bottomSheet.shadowOffset == values.shadowOffset)
     #expect(bottomSheet.shadowRadius == values.shadowRadius)
     #expect(bottomSheet.shadowPath == values.shadowPath)
-    #expect(bottomSheet.bottomBarIsHidden == values.bottomBarIsHidden)
-    #expect(bottomSheet.bottomBarHeight == values.bottomBarHeight)
+    #expect(bottomSheet.bottomBar.isHidden == values.bottomBarIsHidden)
+    #expect(bottomSheet.bottomBar.height == values.bottomBarHeight)
     #expect(bottomSheet.animationParameters == values.animationParameters)
     #expect(bottomSheet.detents.positions == values.detentsValues.positions)
     #expect(bottomSheet.detents.availablePositions == values.detentsValues.availablePositions)
-    #expect(bottomSheet.detents.bottomBarConnectedPosition == values.detentsValues.bottomBarConnectedPosition)
+    #expect(bottomSheet.bottomBar.connectedPosition == values.detentsValues.bottomBarConnectedPosition)
   }
 
   func mockValues() -> DynamicBottomSheet.Values {
