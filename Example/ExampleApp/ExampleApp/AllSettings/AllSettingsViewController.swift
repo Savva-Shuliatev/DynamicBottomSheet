@@ -169,12 +169,12 @@ extension AllSettingsViewController: TestContentViewControllerDelegate {
 
 extension TestContentViewController: DynamicBottomSheet.ScrollingContent {
   var contentOffset: CGPoint {
-    get { tableView.contentOffset }
-    set { tableView.contentOffset = newValue }
+    get { tableView1.contentOffset }
+    set { tableView1.contentOffset = newValue }
   }
-  
+
   func stopScrolling() {
-    tableView.setContentOffset(.zero, animated: false)
+    tableView1.setContentOffset(.zero, animated: false)
   }
 
 }
