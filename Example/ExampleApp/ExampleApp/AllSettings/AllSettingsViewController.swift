@@ -30,7 +30,7 @@ final class AllSettingsViewController: ExampleViewController {
     bottomSheet.view.addSubview(contentViewController.view)
     contentViewController.view.constraints([.top, .bottom, .leading, .trailing])
     contentViewController.didMove(toParent: self)
-    bottomSheet.scrollingContent = contentViewController
+    bottomSheet.connect(contentViewController)
 
     return bottomSheet
   }()

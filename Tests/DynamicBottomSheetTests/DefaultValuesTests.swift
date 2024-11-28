@@ -23,7 +23,6 @@ struct DefaultValuesTests {
     #expect(bottomSheet.viewIgnoresTopSafeArea)
     #expect(!bottomSheet.bottomBar.viewIgnoresBottomBarHeight)
     #expect(!bottomSheet.viewIgnoresBottomSafeArea)
-    #expect(bottomSheet.scrollingContent == nil)
     #expect(bottomSheet.animationParameters == .spring(.default))
     #expect(bottomSheet.prefersGrabberVisible)
     #expect(bottomSheet.cornerRadius == 10)

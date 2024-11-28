@@ -1,5 +1,5 @@
 //
-//  DynamicBottomSheet+UIScrollView.swift
+//  UIScrollViewHolder.swift
 //  DynamicBottomSheet
 //
 //  Copyright (c) 2024 Savva Shuliatev
@@ -86,4 +86,37 @@ internal final class UIScrollViewHolder: NSObject, UIScrollViewDelegate {
 
 }
 
+extension UIScrollViewHolder: DynamicBottomSheet.ScrollingContent {
+  var contentOffset: CGPoint {
+    get { scrollView?.contentOffset ?? .zero }
+    set { scrollView?.contentOffset = newValue }
+  }
+  
+  func stopScrolling() {
+    scrollView?.setContentOffset(.zero, animated: false)
+  }
 
+}
+
+internal enum ScrollingContentHolder {
+  case scrollViewHolder(UIScrollViewHolder)
+  case scrollingContent(WeakscrollingContentBox)
+
+  var scrollingContent: DynamicBottomSheet.ScrollingContent? {
+    switch self {
+    case .scrollViewHolder(let scrollViewHolder):
+      return scrollViewHolder
+    case .scrollingContent(let scrollingContentBox):
+      return scrollingContentBox.scrollingContent
+    }
+  }
+}
+
+internal struct WeakscrollingContentBox {
+
+  weak var scrollingContent: DynamicBottomSheet.ScrollingContent?
+
+  static func weak(_ scrollingContent: DynamicBottomSheet.ScrollingContent) -> WeakscrollingContentBox {
+    .init(scrollingContent: scrollingContent)
+  }
+}
