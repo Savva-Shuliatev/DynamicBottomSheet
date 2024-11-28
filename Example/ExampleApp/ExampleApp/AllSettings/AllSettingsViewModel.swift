@@ -66,7 +66,7 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var shadowPath: CGPath?
 
-  @Published var bottomBarIsHidden: Bool = true
+  @Published var bottomBarIsHidden: Bool = false
 
   @Published var bottomBarHeight: CGFloat = 64
 

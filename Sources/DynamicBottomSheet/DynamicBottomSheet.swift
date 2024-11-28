@@ -43,8 +43,6 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  open weak var scrollingContent: ScrollingContent?
-
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters = Values.default.animationParameters
 
@@ -131,6 +129,7 @@ open class DynamicBottomSheet: UIView {
   private var panRecognizerState: PanRecognizerState = .empty
   private let panRecognizer = UIPanGestureRecognizer()
 
+  private var scrollingContentHolder: ScrollingContentHolder?
   private var scrollingState: ScrollingState = .empty
   private var scrollingListening: Bool = true
   private var scrollingOffsetUnderLastAnchor: CGFloat = 0
@@ -351,6 +350,28 @@ extension DynamicBottomSheet {
 
 extension DynamicBottomSheet {
 
+  public func connect(_ scrollView: UIScrollView) {
+    let scrollViewHolder = UIScrollViewHolder(
+      scrollView: scrollView,
+      bottomSheet: self
+    )
+    scrollingListening = true
+    scrollingState = .empty
+    scrollingContentHolder = .scrollViewHolder(scrollViewHolder)
+  }
+
+  public func connect(_ scrollingContent: ScrollingContent) {
+    scrollingListening = true
+    scrollingState = .empty
+    scrollingContentHolder = .scrollingContent(.weak(scrollingContent))
+  }
+
+  public func disconnectScroll() {
+    scrollingListening = true
+    scrollingState = .empty
+    scrollingContentHolder = nil
+  }
+
   @MainActor
   public protocol ScrollingContent: AnyObject {
     var contentOffset: CGPoint { get set }
@@ -382,7 +403,7 @@ extension DynamicBottomSheet {
 
       if scrollingListening {
         if contentOffset.y < 0 {
-          scrollingContent?.stopScrolling()
+          scrollingContentHolder?.scrollingContent?.stopScrolling()
         }
       }
 
@@ -404,9 +425,9 @@ extension DynamicBottomSheet {
       // Drop contentOffset changing
       scrollingListening = false
       if diff > 0 {
-        scrollingContent?.contentOffset.y = contentInset.top
+        scrollingContentHolder?.scrollingContent?.contentOffset.y = contentInset.top
       } else {
-        scrollingContent?.contentOffset.y += diff
+        scrollingContentHolder?.scrollingContent?.contentOffset.y += diff
       }
       scrollingListening = true
 
@@ -415,21 +436,21 @@ extension DynamicBottomSheet {
 
       updateY(newY, source: .scrollDragging)
 
-      if let scrollingContent {
+      if let scrollingContent = scrollingContentHolder?.scrollingContent {
         scrollingState = .dragging(lastContentOffset: scrollingContent.contentOffset)
       }
 
     } else if diff > 0, y >= limits.upperBound {
 
       scrollingListening = false
-      scrollingContent?.contentOffset.y = contentInset.top
+      scrollingContentHolder?.scrollingContent?.contentOffset.y = contentInset.top
       scrollingListening = true
 
       let newY = clampY(y + scrollingOffsetUnderLastAnchor + diff)
       scrollingOffsetUnderLastAnchor += diff
       updateY(newY, source: .scrollDragging)
     } else {
-      if let scrollingContent {
+      if let scrollingContent = scrollingContentHolder?.scrollingContent {
         scrollingState = .dragging(lastContentOffset: scrollingContent.contentOffset)
       }
     }
@@ -456,7 +477,7 @@ extension DynamicBottomSheet {
     }
 
     // Stop scrolling
-    if let scrollingContent {
+    if let scrollingContent = scrollingContentHolder?.scrollingContent {
       targetContentOffset?.pointee = scrollingContent.contentOffset
     }
 

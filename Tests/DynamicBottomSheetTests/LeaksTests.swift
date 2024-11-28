@@ -44,14 +44,25 @@ struct LeaksTests {
   }
 
   @Test @MainActor
-  func scrollViewIntegrationTests() {
+  func scrollViewIntegrationLeakTests() {
+    let bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
+    var scrollView: UIScrollView? = UIScrollView()
+
+    bottomSheet!.connect(scrollView!)
+
+    scrollView = nil
+    #expect(scrollView == nil)
+  }
+
+  @Test @MainActor
+  func scrollingContentIntegrationLeakTests() {
     let bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
     var scrollView: TestScrollContent? = TestScrollContent()
 
-    bottomSheet!.scrollingContent = scrollView!
+    bottomSheet!.connect(scrollView!)
 
     scrollView = nil
-    #expect(bottomSheet!.scrollingContent == nil)
+    #expect(scrollView == nil)
   }
 
   private final class TestScrollContent: DynamicBottomSheet.ScrollingContent {
