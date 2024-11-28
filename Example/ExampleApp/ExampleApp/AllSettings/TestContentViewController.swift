@@ -70,11 +70,16 @@ extension TestContentViewController {
 }
 
 extension TestContentViewController: UITableViewDataSource {
+
+  func numberOfSections(in tableView: UITableView) -> Int {
+    return 10
+  }
+
   func tableView(
     _ tableView: UITableView,
     numberOfRowsInSection section: Int
   ) -> Int {
-    100
+    15
   }
 
   func tableView(
@@ -107,5 +112,10 @@ extension TestContentViewController: UITableViewDelegate {
     targetContentOffset: UnsafeMutablePointer<CGPoint>
   ) {
     delegate?.scrollViewWillEndDragging(scrollView, withVelocity: velocity, targetContentOffset: targetContentOffset)
+  }
+
+  func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+      // Верните заголовок для каждой секции
+      return "Section \(section + 1)"
   }
 }
