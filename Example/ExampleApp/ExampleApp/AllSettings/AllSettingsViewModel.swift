@@ -52,6 +52,10 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var cornerRadius: CGFloat = 10
 
+  @Published var panGestureInterrupt: Bool = true
+  @Published var scrollDraggingInterrupt: Bool = true
+  @Published var programInterrupt: Bool = true
+
   @Published var shadowColor: CGColor? = UIColor.black.withAlphaComponent(0.5).cgColor
 
   @Published var shadowOpacity: Float = 0.5

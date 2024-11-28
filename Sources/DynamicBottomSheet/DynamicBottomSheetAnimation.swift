@@ -17,4 +17,5 @@ import Foundation
 public protocol DynamicBottomSheetAnimation: AnyObject {
   var y: CGFloat { get set }
   var isDone: Bool { get }
+  var interruptTriggers: DynamicBottomSheet.InterruptTrigger { get }
 }
