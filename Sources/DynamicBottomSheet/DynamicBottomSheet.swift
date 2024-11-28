@@ -362,7 +362,7 @@ extension DynamicBottomSheet {
     case dragging(lastContentOffset: CGPoint)
   }
 
-  func scrollViewWillBeginDragging(with contentOffset: CGPoint) {
+  public func scrollViewWillBeginDragging(with contentOffset: CGPoint) {
     guard scrollingListening, yAnimation?.interruptTriggers.contains(.scrollDragging) ?? true else {
       scrollingState = .empty
       return
@@ -373,7 +373,7 @@ extension DynamicBottomSheet {
     sendWillBeginUpdatingY(with: .scrollDragging)
   }
 
-  func scrollViewDidScroll(contentOffset: CGPoint, contentInset: UIEdgeInsets) {
+  public func scrollViewDidScroll(contentOffset: CGPoint, contentInset: UIEdgeInsets) {
     guard
       scrollingListening,
       yAnimation?.interruptTriggers.contains(.scrollDragging) ?? true,
@@ -419,7 +419,7 @@ extension DynamicBottomSheet {
         scrollingState = .dragging(lastContentOffset: scrollingContent.contentOffset)
       }
 
-    } else if diff > 0, y >= limits.lowerBound {
+    } else if diff > 0, y >= limits.upperBound {
 
       scrollingListening = false
       scrollingContent?.contentOffset.y = contentInset.top
@@ -435,7 +435,7 @@ extension DynamicBottomSheet {
     }
   }
 
-  func scrollViewWillEndDragging(
+  public func scrollViewWillEndDragging(
     withVelocity velocity: CGPoint,
     targetContentOffset: UnsafeMutablePointer<CGPoint>?
   ) {

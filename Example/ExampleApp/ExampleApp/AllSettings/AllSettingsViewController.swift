@@ -17,14 +17,21 @@ final class AllSettingsViewController: ExampleViewController {
 
   private lazy var bottomSheet: DynamicBottomSheet = {
     let bottomSheet = DynamicBottomSheet()
-    bottomSheet.view.backgroundColor = .systemBackground
-    bottomSheet.visibleView.backgroundColor = .systemGray
     bottomSheet.bottomBar.view.backgroundColor = .systemGray2.withAlphaComponent(0.35)
     bottomSheet.bottomBar.area.backgroundColor = .systemGray3.withAlphaComponent(0.35)
     bottomSheet.detents.subscribe(self)
     bottomSheet.detents.initialPosition = .fromBottom(200)
     bottomSheet.detents.positions = AllSettingsPositions.allCases.map { $0.position }
     bottomSheet.bottomBar.connectedPosition = .fromBottom(200)
+
+    let contentViewController = TestContentViewController()
+    contentViewController.delegate = self
+    addChild(contentViewController)
+    bottomSheet.view.addSubview(contentViewController.view)
+    contentViewController.view.constraints([.top, .bottom, .leading, .trailing])
+    contentViewController.didMove(toParent: self)
+    bottomSheet.scrollingContent = contentViewController
+
     return bottomSheet
   }()
 
@@ -144,6 +151,32 @@ final class AllSettingsViewController: ExampleViewController {
     }
     .store(in: &cancellables)
   }
+}
+
+extension AllSettingsViewController: TestContentViewControllerDelegate {
+  func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    bottomSheet.scrollViewWillBeginDragging(with: scrollView.contentOffset)
+  }
+
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    bottomSheet.scrollViewDidScroll(contentOffset: scrollView.contentOffset, contentInset: scrollView.contentInset)
+  }
+
+  func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    bottomSheet.scrollViewWillEndDragging(withVelocity: velocity, targetContentOffset: targetContentOffset)
+  }
+}
+
+extension TestContentViewController: DynamicBottomSheet.ScrollingContent {
+  var contentOffset: CGPoint {
+    get { tableView.contentOffset }
+    set { tableView.contentOffset = newValue }
+  }
+  
+  func stopScrolling() {
+    tableView.setContentOffset(.zero, animated: false)
+  }
+
 }
 
 extension AllSettingsViewController: DynamicBottomSheetDetentsSubscriber {
