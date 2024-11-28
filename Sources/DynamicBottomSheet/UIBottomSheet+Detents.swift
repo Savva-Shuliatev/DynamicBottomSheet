@@ -70,13 +70,18 @@ extension DynamicBottomSheet {
     open func move(
       to position: RelativePosition,
       animated: Bool = true,
+      interruptTriggers: DynamicBottomSheet.InterruptTrigger = .all,
       completion: ((Bool) -> Void)? = nil
     ) {
-      guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
+      guard let bottomSheet, bottomSheet.didLayoutSubviews else {
+        initialPosition = position
+        return
+      }
 
       bottomSheet.scroll(
         to: y(for: position),
         animated: animated,
+        interruptTriggers: interruptTriggers,
         completion: completion
       )
     }

@@ -198,9 +198,19 @@ open class DynamicBottomSheet: UIView {
 
   // MARK: - Public methods
 
-  open func scroll(to newY: CGFloat, animated: Bool = true, completion: ((Bool) -> Void)? = nil) {
+  open func scroll(
+    to newY: CGFloat,
+    animated: Bool = true,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger = .all,
+    completion: ((Bool) -> Void)? = nil
+  ) {
+    guard yAnimation?.interruptTriggers.contains(.program) ?? true else {
+      completion?(false)
+      return
+    }
+    stopYAnimation()
     sendWillBeginUpdatingY(with: .program)
-    move(to: newY, source: .program, animated: animated, completion: completion)
+    move(to: newY, source: .program, animated: animated, interruptTriggers: interruptTriggers, completion: completion)
   }
 
   open func subscribe(_ subscriber: DynamicBottomSheetSubscriber) {
@@ -280,6 +290,11 @@ extension DynamicBottomSheet {
   }
 
   @objc private func handlePanRecognizer(_ sender: UIPanGestureRecognizer) {
+    guard yAnimation?.interruptTriggers.contains(.panGesture) ?? true else {
+      panRecognizerState = .empty
+      return
+    }
+
     switch sender.state {
     case .began:
       stopYAnimation()
@@ -348,7 +363,11 @@ extension DynamicBottomSheet {
   }
 
   func scrollViewWillBeginDragging(with contentOffset: CGPoint) {
-    guard scrollingListening else { return }
+    guard scrollingListening, yAnimation?.interruptTriggers.contains(.scrollDragging) ?? true else {
+      scrollingState = .empty
+      return
+    }
+
     scrollingState = .dragging(lastContentOffset: contentOffset)
     stopYAnimation()
     sendWillBeginUpdatingY(with: .scrollDragging)
@@ -357,6 +376,7 @@ extension DynamicBottomSheet {
   func scrollViewDidScroll(contentOffset: CGPoint, contentInset: UIEdgeInsets) {
     guard
       scrollingListening,
+      yAnimation?.interruptTriggers.contains(.scrollDragging) ?? true,
       case let .dragging(lastContentOffset) = scrollingState
     else {
 
@@ -419,7 +439,7 @@ extension DynamicBottomSheet {
     withVelocity velocity: CGPoint,
     targetContentOffset: UnsafeMutablePointer<CGPoint>?
   ) {
-    guard scrollingListening else { return }
+    guard scrollingListening, yAnimation?.interruptTriggers.contains(.scrollDragging) ?? true else { return }
     scrollingState = .empty
     scrollingOffsetUnderLastAnchor = 0
 
@@ -599,6 +619,7 @@ extension DynamicBottomSheet {
     to newY: CGFloat,
     source: YChangeSource,
     animated: Bool,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger = .all,
     velocity: CGFloat? = nil,
     completion: ((Bool) -> Void)? = nil
   ) {
@@ -611,17 +632,22 @@ extension DynamicBottomSheet {
       return
     }
 
+    panRecognizerState = .empty
+    scrollingState = .empty
+
     let yAnimation = DynamicBottomSheetDefaultSpringAnimation(
       initialOrigin: y,
       targetOrigin: newY,
       initialVelocity: velocity ?? 0,
+      interruptTriggers: interruptTriggers,
       parameters: animationParameters,
       onUpdate: { [weak self] value in
         self?.updateY(value, source: source)
       },
       completion: { [weak self] finished in
-        guard self != nil else { return }
-        self?.sendDidEndUpdatingY(with: source)
+        guard let self else { return }
+        self.stopYAnimation()
+        self.sendDidEndUpdatingY(with: source)
         completion?(finished)
       }
     )

@@ -32,6 +32,7 @@ internal final class DynamicBottomSheetDefaultSpringAnimation: DynamicBottomShee
     initialOrigin: CGFloat,
     targetOrigin: CGFloat,
     initialVelocity: CGFloat,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger,
     parameters: DynamicBottomSheet.AnimationParameters,
     onUpdate: @escaping (CGFloat) -> Void,
     completion: @escaping (Bool) -> Void
@@ -39,6 +40,7 @@ internal final class DynamicBottomSheetDefaultSpringAnimation: DynamicBottomShee
     self.currentOrigin = initialOrigin
     self.currentVelocity = initialVelocity
     self.y = targetOrigin
+    self.interruptTriggers = interruptTriggers
     self.parameters = parameters
     self.threshold = 0.5
     self.onUpdate = onUpdate
@@ -62,6 +64,8 @@ internal final class DynamicBottomSheetDefaultSpringAnimation: DynamicBottomShee
   var isDone: Bool {
     return animation?.running ?? false
   }
+
+  var interruptTriggers: DynamicBottomSheet.InterruptTrigger
 
   // MARK: - Private
 

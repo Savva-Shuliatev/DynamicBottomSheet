@@ -49,6 +49,22 @@ struct AllSettingsView: View {
           }
 
           Section("Move") {
+            VStack {
+              Toggle("interrupt by panGesture", isOn: Binding(
+                get: { viewModel.panGestureInterrupt },
+                set: { viewModel.panGestureInterrupt = $0 }
+              ))
+              Toggle("interrupt by scrollDragging", isOn: Binding(
+                get: { viewModel.scrollDraggingInterrupt },
+                set: { viewModel.scrollDraggingInterrupt = $0 }
+              ))
+
+              Toggle("interrupt by program", isOn: Binding(
+                get: { viewModel.programInterrupt },
+                set: { viewModel.programInterrupt = $0 }
+              ))
+            }
+
             Button {
               viewModel.moveTo?(AllSettingsPositions.top.position)
             } label: {

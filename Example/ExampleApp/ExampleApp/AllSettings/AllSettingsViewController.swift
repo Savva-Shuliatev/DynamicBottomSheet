@@ -38,7 +38,26 @@ final class AllSettingsViewController: ExampleViewController {
     }
 
     viewModel.moveTo = { [weak self] position in
-      self?.bottomSheet.detents.move(to: position)
+      guard let self else { return }
+
+      var interruptTriggers: DynamicBottomSheet.InterruptTrigger = []
+
+      if viewModel.panGestureInterrupt {
+        interruptTriggers.insert(.panGesture)
+      }
+
+      if viewModel.scrollDraggingInterrupt {
+        interruptTriggers.insert(.scrollDragging)
+      }
+
+      if viewModel.programInterrupt {
+        interruptTriggers.insert(.program)
+      }
+
+      self.bottomSheet.detents.move(
+        to: position,
+        interruptTriggers: interruptTriggers
+      )
     }
   }
   
