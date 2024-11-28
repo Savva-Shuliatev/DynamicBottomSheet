@@ -15,6 +15,8 @@ final class AllSettingsViewController: ExampleViewController {
 
   private let viewModel = AllSettingsViewModel()
 
+  private let contentViewController = TestContentViewController()
+
   private lazy var bottomSheet: DynamicBottomSheet = {
     let bottomSheet = DynamicBottomSheet()
     bottomSheet.bottomBar.view.backgroundColor = .systemGray2.withAlphaComponent(0.35)
@@ -24,7 +26,6 @@ final class AllSettingsViewController: ExampleViewController {
     bottomSheet.detents.positions = AllSettingsPositions.allCases.map { $0.position }
     bottomSheet.bottomBar.connectedPosition = .fromBottom(200)
 
-    let contentViewController = TestContentViewController()
     contentViewController.delegate = self
     addChild(contentViewController)
     bottomSheet.view.addSubview(contentViewController.view)
@@ -154,6 +155,14 @@ final class AllSettingsViewController: ExampleViewController {
 }
 
 extension AllSettingsViewController: TestContentViewControllerDelegate {
+  func showSecondTableView(_ scrollView: UIScrollView) {
+    bottomSheet.connect(scrollView)
+  }
+  
+  func hideSecondTableView() {
+    bottomSheet.connect(contentViewController)
+  }
+  
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
     bottomSheet.scrollViewWillBeginDragging(with: scrollView.contentOffset)
   }
