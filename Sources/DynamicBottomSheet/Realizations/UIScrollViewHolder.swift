@@ -22,6 +22,8 @@ internal final class UIScrollViewHolder: NSObject, UIScrollViewDelegate {
     self.scrollView = scrollView
     self.bottomSheet = bottomSheet
     observeDelegate(on: scrollView)
+    originalDelegate = scrollView.delegate
+    scrollView.delegate = self
   }
 
   private func observeDelegate(on scrollView: UIScrollView) {
