@@ -20,7 +20,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = scene as? UIWindowScene else { return }
 
     window = UIWindow(windowScene: windowScene)
-    window?.rootViewController = AllSettingsViewController()
+    window?.rootViewController = ViewController()
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      self.window?.rootViewController?.present(AllSettingsViewController(), animated: true)
+    }
     window?.makeKeyAndVisible()
   }
 
