@@ -21,6 +21,10 @@ protocol TestContentViewControllerDelegate: AnyObject {
     withVelocity velocity: CGPoint,
     targetContentOffset: UnsafeMutablePointer<CGPoint>
   )
+
+  /// Just test logic
+  func showSecondTableView(_ scrollView: UIScrollView)
+  func hideSecondTableView()
 }
 
 final class TestContentViewController: UIViewController {
@@ -90,8 +94,10 @@ extension TestContentViewController {
   @objc func segmentChanged(_ sender: UISegmentedControl) {
     if sender.selectedSegmentIndex == 0 {
       tableView2.isHidden = true
+      delegate?.hideSecondTableView()
     } else {
       tableView2.isHidden = false
+      delegate?.showSecondTableView(tableView2)
     }
   }
 
