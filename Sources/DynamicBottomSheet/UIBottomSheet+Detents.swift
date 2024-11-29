@@ -75,6 +75,7 @@ extension DynamicBottomSheet {
     ) {
       guard let bottomSheet, bottomSheet.didLayoutSubviews else {
         initialPosition = position
+        completion?(true)
         return
       }
 
