@@ -100,6 +100,13 @@ final class AllSettingsViewController: ExampleViewController {
     bubbleBar.addGestureRecognizer(panRecognizer)
     panRecognizer.addTarget(bottomSheet, action: #selector(bottomSheet.handlePanRecognizer))
 
+    let bubbleBarLabel = UILabel()
+    bubbleBarLabel.text = "Move bottomSheet with me"
+    bubbleBar.addSubview(bubbleBarLabel)
+    bubbleBarLabel.translatesAutoresizingMaskIntoConstraints = false
+    bubbleBarLabel.centerYAnchor.constraint(equalTo: bubbleBar.centerYAnchor).isActive = true
+    bubbleBarLabel.centerXAnchor.constraint(equalTo: bubbleBar.centerXAnchor).isActive = true
+
     let label = UILabel()
     label.text = "Bottom bar on bar area (with 0.35 alpha)"
     bottomSheet.bottomBar.view.addSubview(label)
