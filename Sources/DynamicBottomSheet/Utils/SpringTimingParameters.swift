@@ -46,7 +46,7 @@ public struct Spring: Equatable, Sendable {
 
 public extension Spring {
   static var `default`: Spring {
-    return Spring(mass: 1, stiffness: 200, dampingRatio: 1)
+    return Spring(mass: 1, stiffness: 250, dampingRatio: 0.75)
   }
 }
 
