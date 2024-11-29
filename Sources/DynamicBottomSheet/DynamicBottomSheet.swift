@@ -310,11 +310,13 @@ extension DynamicBottomSheet {
       }
 
     case .ended:
+      guard case .dragging(_) = panRecognizerState else { return }
       panRecognizerState = .empty
       let velocity = sender.velocity(in: visibleView).y / 1000
       moveYToTheNearestAnchor(with: velocity, source: .panGestureInteraction)
 
     case .cancelled, .failed:
+      guard case .dragging(_) = panRecognizerState else { return }
       panRecognizerState = .empty
       sendDidEndUpdatingY(with: .panGestureInteraction)
 
