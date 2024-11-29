@@ -17,6 +17,17 @@ final class AllSettingsViewController: ExampleViewController {
 
   private let contentViewController = TestContentViewController()
 
+  private var bubbleBar: UIView = {
+    let view = UIView()
+    view.layer.cornerRadius = 12
+    view.backgroundColor = .white
+    view.layer.shadowColor = UIColor.black.cgColor
+    view.layer.shadowOpacity = 0.5
+    view.layer.shadowRadius = 10
+    return view
+  }()
+  private let panRecognizer = UIPanGestureRecognizer()
+
   private lazy var bottomSheet: DynamicBottomSheet = {
     let bottomSheet = DynamicBottomSheet()
     bottomSheet.bottomBar.view.backgroundColor = .systemGray2.withAlphaComponent(0.35)
@@ -79,6 +90,16 @@ final class AllSettingsViewController: ExampleViewController {
     view.addSubview(bottomSheet)
     bottomSheet.constraints([.top, .bottom, .leading, .trailing])
     sink()
+
+    view.addSubview(bubbleBar)
+    bubbleBar.translatesAutoresizingMaskIntoConstraints = false
+    bubbleBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
+    bubbleBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
+    bubbleBar.heightAnchor.constraint(equalToConstant: 32).isActive = true
+    bubbleBar.bottomAnchor.constraint(equalTo: bottomSheet.view.topAnchor, constant: -16).isActive = true
+    bubbleBar.addGestureRecognizer(panRecognizer)
+    panRecognizer.addTarget(bottomSheet, action: #selector(bottomSheet.handlePanRecognizer))
+
   }
 
   private func sink() {
@@ -149,6 +170,11 @@ final class AllSettingsViewController: ExampleViewController {
 
     viewModel.$bottomBarHeight.sink { [weak self] in
       self?.bottomSheet.bottomBar.updateHeight($0)
+    }
+    .store(in: &cancellables)
+
+    viewModel.$additionalContent.sink { [weak self] in
+      self?.bubbleBar.isHidden = !$0
     }
     .store(in: &cancellables)
   }

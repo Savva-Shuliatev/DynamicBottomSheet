@@ -132,6 +132,13 @@ struct AllSettingsView: View {
               set: { viewModel.bottomBarHeight = CGFloat($0) }
             ))
           }
+
+          Section {
+            Toggle("Addtitional content", isOn: Binding(
+              get: { viewModel.additionalContent },
+              set: { viewModel.additionalContent = $0 }
+            ))
+          }
         }
         .padding(.bottom, max(0, viewModel.height - viewModel.bottomSafeAreaInset))
         .navigationTitle("Settings")

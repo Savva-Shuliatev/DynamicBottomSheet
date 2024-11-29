@@ -288,7 +288,8 @@ extension DynamicBottomSheet {
     case dragging(initialY: CGFloat)
   }
 
-  @objc private func handlePanRecognizer(_ sender: UIPanGestureRecognizer) {
+  @objc
+  public func handlePanRecognizer(_ sender: UIPanGestureRecognizer) {
     guard yAnimation?.interruptTriggers.contains(.panGesture) ?? true else {
       panRecognizerState = .empty
       return

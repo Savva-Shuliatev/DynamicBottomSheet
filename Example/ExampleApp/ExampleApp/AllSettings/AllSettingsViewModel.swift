@@ -70,6 +70,8 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var bottomBarHeight: CGFloat = 64
 
+  @Published var additionalContent: Bool = false
+
   func closeDidTap() {
     closeAction?()
   }
