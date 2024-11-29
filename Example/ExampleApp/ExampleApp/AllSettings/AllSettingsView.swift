@@ -18,6 +18,7 @@ struct AllSettingsView: View {
     center: CLLocationCoordinate2D(latitude: 37.3230, longitude: -122.0322),
     span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
   )
+  @State var colorScheme: ColorScheme = .dark
 
   var body: some View {
       NavigationView {
@@ -105,21 +106,38 @@ struct AllSettingsView: View {
             ))
           }
 
-          Section("Shadow") {
-            cell("Color", value: viewModel.shadowColor)
-            stepperCell("Opacity", step: 0.1, transitionStep: 0.02, value: Binding(
-              get: { Double(viewModel.shadowOpacity) },
-              set: { viewModel.shadowOpacity = Float($0) }
-            ))
-            stepperCell("Offset", step: 0.1, transitionStep: 0.02, value: Binding(
-              get: { Double(viewModel.shadowOffset.height) },
-              set: { viewModel.shadowOffset = CGSize(width: $0, height: $0) }
-            ))
-            stepperCell("Radius", step: 0.25, transitionStep: 0.02, value: Binding(
-              get: { Double(viewModel.shadowRadius) },
-              set: { viewModel.shadowRadius = CGFloat($0) }
-            ))
-            cell("Path", value: viewModel.shadowPath)
+          Section("Spring animation") {
+
+            sliderCell(
+              title: "mass",
+              value: Binding(
+                get: { viewModel.mass },
+                set: { viewModel.mass = $0 }
+              ),
+              in: 0...10,
+              step: 0.1
+            )
+
+            sliderCell(
+              title: "stiffness",
+              value: Binding(
+                get: { viewModel.stiffness },
+                set: { viewModel.stiffness = $0 }
+              ),
+              in: 0...1000,
+              step: 10
+            )
+
+            sliderCell(
+              title: "dampingRatio",
+              value: Binding(
+                get: { viewModel.dampingRatio },
+                set: { viewModel.dampingRatio = $0 }
+              ),
+              in: 0...1,
+              step: 0.01
+            )
+
           }
 
           Section("Bottom bar") {
@@ -139,18 +157,52 @@ struct AllSettingsView: View {
               set: { viewModel.additionalContent = $0 }
             ))
           }
+
+          Section("Shadow") {
+            cell("Color", value: viewModel.shadowColor)
+            stepperCell("Opacity", step: 0.1, transitionStep: 0.02, value: Binding(
+              get: { Double(viewModel.shadowOpacity) },
+              set: { viewModel.shadowOpacity = Float($0) }
+            ))
+            stepperCell("Offset", step: 0.1, transitionStep: 0.02, value: Binding(
+              get: { Double(viewModel.shadowOffset.height) },
+              set: { viewModel.shadowOffset = CGSize(width: $0, height: $0) }
+            ))
+            stepperCell("Radius", step: 0.25, transitionStep: 0.02, value: Binding(
+              get: { Double(viewModel.shadowRadius) },
+              set: { viewModel.shadowRadius = CGFloat($0) }
+            ))
+            cell("Path", value: viewModel.shadowPath)
+          }
         }
         .padding(.bottom, max(0, viewModel.height - viewModel.bottomSafeAreaInset))
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
           ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-              withAnimation {
-                showMap = true
+            HStack {
+              Button {
+                withAnimation {
+                  switch colorScheme {
+                  case .light:
+                    colorScheme = .dark
+                  case .dark:
+                    colorScheme = .light
+                  @unknown default:
+                    break
+                  }
+                }
+              } label: {
+                Text("Scheme")
               }
-            } label: {
-              Text("Map")
+
+              Button {
+                withAnimation {
+                  showMap = true
+                }
+              } label: {
+                Text("Map")
+              }
             }
           }
 
@@ -165,6 +217,7 @@ struct AllSettingsView: View {
           }
         }
       }
+      .colorScheme(colorScheme)
       .overlay {
         if showMap {
           Map(coordinateRegion: $region)
@@ -196,6 +249,28 @@ struct AllSettingsView: View {
       Spacer()
       StepperView(step: step, transitionStep: transitionStep, value: value)
       Text("\(value.wrappedValue)")
+    }
+  }
+
+  @ViewBuilder
+  private func sliderCell<V: BinaryFloatingPoint>(
+    title: String,
+    value: Binding<V>,
+    in bounds: ClosedRange<V> = 0...1,
+    step: V.Stride = 1
+  ) -> some View where V.Stride: BinaryFloatingPoint {
+    VStack {
+      Text("\(title) = \(value.wrappedValue)")
+
+      HStack {
+        Text("\(bounds.lowerBound)")
+          .frame(width: 48)
+
+        Slider(value: value, in: bounds, step: step)
+
+        Text("\(bounds.upperBound)")
+          .frame(width: 48)
+      }
     }
   }
 

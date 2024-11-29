@@ -183,6 +183,36 @@ final class AllSettingsViewController: ExampleViewController {
       self?.bubbleBar.isHidden = !$0
     }
     .store(in: &cancellables)
+
+    viewModel.$mass.sink { [weak self] mass in
+      guard let self else { return }
+      self.bottomSheet.animationParameters = .spring(
+        mass: self.viewModel.mass,
+        stiffness: self.viewModel.stiffness,
+        dampingRatio: self.viewModel.dampingRatio
+      )
+    }
+    .store(in: &cancellables)
+
+    viewModel.$stiffness.sink { [weak self] stiffness in
+      guard let self else { return }
+      self.bottomSheet.animationParameters = .spring(
+        mass: self.viewModel.mass,
+        stiffness: self.viewModel.stiffness,
+        dampingRatio: self.viewModel.dampingRatio
+      )
+    }
+    .store(in: &cancellables)
+
+    viewModel.$dampingRatio.sink { [weak self] dampingRatio in
+      guard let self else { return }
+      self.bottomSheet.animationParameters = .spring(
+        mass: self.viewModel.mass,
+        stiffness: self.viewModel.stiffness,
+        dampingRatio: self.viewModel.dampingRatio
+      )
+    }
+    .store(in: &cancellables)
   }
 }
 

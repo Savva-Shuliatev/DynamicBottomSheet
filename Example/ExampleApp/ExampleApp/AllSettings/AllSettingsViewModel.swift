@@ -52,6 +52,10 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var cornerRadius: CGFloat = 10
 
+  @Published var mass: CGFloat = Spring.default.mass
+  @Published var stiffness: CGFloat = Spring.default.stiffness
+  @Published var dampingRatio: CGFloat = Spring.default.dampingRatio
+
   @Published var panGestureInterrupt: Bool = true
   @Published var scrollDraggingInterrupt: Bool = true
   @Published var programInterrupt: Bool = true
