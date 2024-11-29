@@ -34,7 +34,7 @@ final class AllSettingsViewController: ExampleViewController {
     bottomSheet.bottomBar.area.backgroundColor = .systemGray3.withAlphaComponent(0.35)
     bottomSheet.detents.subscribe(self)
     bottomSheet.detents.initialPosition = .fromBottom(200)
-    bottomSheet.detents.positions = AllSettingsPositions.allCases.map { $0.position }
+    bottomSheet.detents.positions = viewModel.positions
     bottomSheet.bottomBar.connectedPosition = .fromBottom(200)
 
     contentViewController.delegate = self
@@ -116,6 +116,11 @@ final class AllSettingsViewController: ExampleViewController {
   }
 
   private func sink() {
+    viewModel.$positions.sink { [weak self] in
+      self?.bottomSheet.detents.positions = $0
+    }
+    .store(in: &cancellables)
+
     viewModel.$bounces.sink { [weak self] in
       self?.bottomSheet.bounces = $0
     }
