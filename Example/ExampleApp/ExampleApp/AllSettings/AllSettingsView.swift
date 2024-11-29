@@ -49,6 +49,25 @@ struct AllSettingsView: View {
             ))
           }
 
+          Section("Detents.positions") {
+            ForEach(viewModel.positions.indices, id: \.self) { index in
+              let position = viewModel.positions[index]
+
+              VStack {
+
+              }
+
+
+            }
+
+            Button {
+
+            } label: {
+              Text("Add")
+            }
+
+          }
+
           Section("Move") {
             VStack {
               Toggle("interrupt by panGesture", isOn: Binding(
@@ -67,25 +86,25 @@ struct AllSettingsView: View {
             }
 
             Button {
-              viewModel.moveTo?(AllSettingsPositions.top.position)
+              //viewModel.moveTo?(AllSettingsPositions.top.position)
             } label: {
               Text("Move to top position")
             }
 
             Button {
-              viewModel.moveTo?(AllSettingsPositions.fromTop120.position)
+              //viewModel.moveTo?(AllSettingsPositions.fromTop120.position)
             } label: {
               Text("Move to fromTop(120) position")
             }
 
             Button {
-              viewModel.moveTo?(AllSettingsPositions.fromBottom200.position)
+              //viewModel.moveTo?(AllSettingsPositions.fromBottom200.position)
             } label: {
               Text("Move to fromBottom(200) position")
             }
 
             Button {
-              viewModel.moveTo?(AllSettingsPositions.fromBottom60.position)
+              //viewModel.moveTo?(AllSettingsPositions.fromBottom60.position)
             } label: {
               Text("Move to fromBottom(60) position")
             }
