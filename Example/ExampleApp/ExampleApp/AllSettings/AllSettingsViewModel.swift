@@ -9,28 +9,14 @@
 import UIKit
 import DynamicBottomSheet
 
-enum AllSettingsPositions: CaseIterable {
-  case top
-  case fromTop120
-  case fromBottom200
-  case fromBottom60
-
-  var position: RelativePosition {
-    switch self {
-    case .top: return .top()
-    case .fromTop120: return .fromTop(120)
-    case .fromBottom200: return .fromBottom(200)
-    case .fromBottom60: return .fromBottom(60)
-    }
-  }
-}
-
 @MainActor
 final class AllSettingsViewModel: ObservableObject {
 
   var closeAction: (() -> Void)?
 
   var moveTo: ((RelativePosition) -> Void)?
+
+  @Published var positions: [RelativePosition] = [.top(), .fromTop(120), .fromBottom(200), .fromBottom(60)]
 
   @Published var y: CGFloat = 0
 
