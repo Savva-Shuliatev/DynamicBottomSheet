@@ -60,3 +60,16 @@ internal struct WeakCollection<T> {
   }
 }
 
+internal struct Weak<T: AnyObject>: Equatable {
+
+  weak var object: T?
+
+  init(_ object: T?) {
+    self.object = object
+  }
+
+  static func ==(lhs: Weak<T>, rhs: Weak<T>) -> Bool {
+    return lhs.object === rhs.object
+  }
+
+}
