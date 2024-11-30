@@ -9,3 +9,9 @@ A highly customizable DynamicBottomSheet UIView for iOS apps, built using Swift.
 * Smooth Animations: Experience seamless transitions with smooth, aesthetically pleasing animations.
 
 * Customization Options: Tailor the appearance and behavior of the bottom sheet with a variety of configuration options.
+
+### TODO: Documentation
+
+## In the meantime, run the ExampleApp
+
+![](Documentation/Assets/PresentBottomSheet.webp)
