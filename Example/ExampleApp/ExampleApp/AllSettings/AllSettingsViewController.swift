@@ -34,7 +34,7 @@ final class AllSettingsViewController: ExampleViewController {
     bottomSheet.bottomBar.area.backgroundColor = .systemGray3.withAlphaComponent(0.35)
     bottomSheet.detents.subscribe(self)
     bottomSheet.detents.initialPosition = .fromBottom(200)
-    bottomSheet.detents.positions = AllSettingsPositions.allCases.map { $0.position }
+    bottomSheet.detents.positions = viewModel.positions
     bottomSheet.bottomBar.connectedPosition = .fromBottom(200)
 
     contentViewController.delegate = self
@@ -51,6 +51,10 @@ final class AllSettingsViewController: ExampleViewController {
 
   override init() {
     super.init()
+
+    viewModel.show = { [weak self] in
+      self?.present($0, animated: true)
+    }
 
     viewModel.closeAction = { [weak self] in
       self?.dismiss(animated: true)
@@ -116,6 +120,21 @@ final class AllSettingsViewController: ExampleViewController {
   }
 
   private func sink() {
+    viewModel.$positions.sink { [weak self] in
+      self?.bottomSheet.detents.positions = $0
+    }
+    .store(in: &cancellables)
+
+    viewModel.$availablePositions.sink { [weak self] in
+      if $0.isEmpty {
+        self?.bottomSheet.detents.availablePositions = nil
+      } else {
+        self?.bottomSheet.detents.availablePositions = $0
+      }
+
+    }
+    .store(in: &cancellables)
+
     viewModel.$bounces.sink { [weak self] in
       self?.bottomSheet.bounces = $0
     }
@@ -224,10 +243,15 @@ final class AllSettingsViewController: ExampleViewController {
 }
 
 extension AllSettingsViewController: TestContentViewControllerDelegate {
+  
   func showSecondTableView(_ scrollView: UIScrollView) {
     bottomSheet.connect(scrollView)
   }
-  
+
+  func hide() {
+    bottomSheet.detents.move(to: .hidden)
+  }
+
   func hideSecondTableView() {
     bottomSheet.connect(contentViewController)
   }

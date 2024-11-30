@@ -49,7 +49,62 @@ struct AllSettingsView: View {
             ))
           }
 
-          Section("Move") {
+          Section("Detents.positions") {
+            ForEach(viewModel.positions.indices, id: \.self) { index in
+              let position = viewModel.positions[index]
+
+              PositionCell(
+                position: position,
+                moveAction: {
+                  viewModel.moveTo?(position)
+                },
+                removeAction: {
+                  let _ = withAnimation {
+                    self.viewModel.positions.remove(at: index)
+                  }
+
+                }
+              )
+            }
+
+            Button {
+              viewModel.showAddPosition(availablePosition: false)
+            } label: {
+              Text("Add")
+            }
+
+          }
+
+          Section {
+            ForEach(viewModel.availablePositions.indices, id: \.self) { index in
+              let position = viewModel.availablePositions[index]
+
+              PositionCell(
+                position: position,
+                moveAction: {
+                  viewModel.moveTo?(position)
+                },
+                removeAction: {
+                  let _ = withAnimation {
+                    self.viewModel.availablePositions.remove(at: index)
+                  }
+
+                }
+              )
+            }
+
+            Button {
+              viewModel.showAddPosition(availablePosition: true)
+            } label: {
+              Text("Add")
+            }
+          } header: {
+            Text("Detents.availablePositions")
+          } footer: {
+            Text("Empty availablePositions means nil for debug")
+          }
+
+          Section("Interruptable") {
             VStack {
               Toggle("interrupt by panGesture", isOn: Binding(
                 get: { viewModel.panGestureInterrupt },
@@ -66,29 +121,6 @@ struct AllSettingsView: View {
               ))
             }
 
-            Button {
-              viewModel.moveTo?(AllSettingsPositions.top.position)
-            } label: {
-              Text("Move to top position")
-            }
-
-            Button {
-              viewModel.moveTo?(AllSettingsPositions.fromTop120.position)
-            } label: {
-              Text("Move to fromTop(120) position")
-            }
-
-            Button {
-              viewModel.moveTo?(AllSettingsPositions.fromBottom200.position)
-            } label: {
-              Text("Move to fromBottom(200) position")
-            }
-
-            Button {
-              viewModel.moveTo?(AllSettingsPositions.fromBottom60.position)
-            } label: {
-              Text("Move to fromBottom(60) position")
-            }
           }
 
           Section("Ignores") {
@@ -270,6 +302,53 @@ struct AllSettingsView: View {
 
         Text("\(bounds.upperBound)")
           .frame(width: 48)
+      }
+    }
+  }
+
+}
+
+private struct PositionCell: View {
+
+  let position: RelativePosition
+
+  var moveAction: () -> Void
+  var removeAction: () -> Void
+
+  var body: some View {
+    VStack(alignment: .leading) {
+      HStack {
+        Text("edge")
+        Spacer()
+        Text("\(position.edge)")
+      }
+      HStack {
+        Text("ignoresSafeArea")
+        Spacer()
+        Text("\(position.ignoresSafeArea)")
+      }
+      HStack {
+        Text("offset")
+        Spacer()
+        Text("\(position.offset)")
+      }
+
+      HStack {
+        Button {
+          moveAction()
+        } label: {
+          Text("  Move  ")
+            .font(.subheadline)
+        }
+        .buttonStyle(.borderedProminent)
+
+        Button {
+          removeAction()
+        } label: {
+          Text("  Remove  ")
+            .font(.subheadline)
+        }
+        .buttonStyle(.borderedProminent)
       }
     }
   }
