@@ -285,7 +285,7 @@ extension DynamicBottomSheet {
 
   private enum PanRecognizerState: Equatable {
     case empty
-    case dragging(initialY: CGFloat)
+    case dragging(initialY: CGFloat, onView: Weak<UIView>)
   }
 
   @objc
@@ -298,19 +298,25 @@ extension DynamicBottomSheet {
     switch sender.state {
     case .began:
       stopYAnimation()
-      panRecognizerState = .dragging(initialY: y)
+      panRecognizerState = .dragging(initialY: y, onView: Weak(sender.view))
       sendWillBeginUpdatingY(with: .panGestureInteraction)
 
     case .changed:
-      let translation = sender.translation(in: visibleView)
+      guard
+        case let .dragging(initialY, onView) = panRecognizerState,
+        onView.object === sender.view
+      else { return }
 
-      if case let .dragging(initialY) = panRecognizerState {
-        let newY = clampY(initialY + translation.y)
-        updateY(newY, source: .panGestureInteraction)
-      }
+      let translation = sender.translation(in: visibleView)
+      let newY = clampY(initialY + translation.y)
+      updateY(newY, source: .panGestureInteraction)
 
     case .ended:
-      guard case .dragging(_) = panRecognizerState else { return }
+      guard
+        case let .dragging(_, onView) = panRecognizerState,
+        onView.object === sender.view
+      else { return }
+      
       panRecognizerState = .empty
       let velocity = sender.velocity(in: visibleView).y / 1000
       moveYToTheNearestAnchor(with: velocity, source: .panGestureInteraction)
