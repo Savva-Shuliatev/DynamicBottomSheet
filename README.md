@@ -14,4 +14,4 @@ A highly customizable DynamicBottomSheet UIView for iOS apps, built using Swift.
 
 ## In the meantime, run the ExampleApp
 
-![](Documentation/Assets/bottomSheetOnSettings.gif)
+![](Documentation/Assets/PresentBottomSheet.webp)
