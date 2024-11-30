@@ -86,7 +86,7 @@ struct AllSettingsView: View {
                 },
                 removeAction: {
                   let _ = withAnimation {
-                    self.viewModel.positions.remove(at: index)
+                    self.viewModel.availablePositions.remove(at: index)
                   }
 
                 }
