@@ -233,10 +233,15 @@ final class AllSettingsViewController: ExampleViewController {
 }
 
 extension AllSettingsViewController: TestContentViewControllerDelegate {
+  
   func showSecondTableView(_ scrollView: UIScrollView) {
     bottomSheet.connect(scrollView)
   }
-  
+
+  func hide() {
+    bottomSheet.detents.move(to: .hidden)
+  }
+
   func hideSecondTableView() {
     bottomSheet.connect(contentViewController)
   }
