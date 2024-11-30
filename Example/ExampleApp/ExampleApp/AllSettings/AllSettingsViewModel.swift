@@ -20,6 +20,8 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var positions: [RelativePosition] = [.top(), .fromTop(120), .fromBottom(200), .fromBottom(60)]
 
+  @Published var availablePositions: [RelativePosition] = []
+
   @Published var y: CGFloat = 0
 
   @Published var height: CGFloat = 0
@@ -68,7 +70,7 @@ final class AllSettingsViewModel: ObservableObject {
     closeAction?()
   }
 
-  func showAddPosition() {
-    show?(UIHostingController(rootView: NewPositionView(viewModel: self)))
+  func showAddPosition(availablePosition: Bool) {
+    show?(UIHostingController(rootView: NewPositionView(viewModel: self, availablePosition: availablePosition)))
   }
 }

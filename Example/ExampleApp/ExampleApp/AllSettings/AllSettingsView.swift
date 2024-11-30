@@ -68,11 +68,40 @@ struct AllSettingsView: View {
             }
 
             Button {
-              viewModel.showAddPosition()
+              viewModel.showAddPosition(availablePosition: false)
             } label: {
               Text("Add")
             }
 
+          }
+
+          Section {
+            ForEach(viewModel.availablePositions.indices, id: \.self) { index in
+              let position = viewModel.availablePositions[index]
+
+              PositionCell(
+                position: position,
+                moveAction: {
+                  viewModel.moveTo?(position)
+                },
+                removeAction: {
+                  let _ = withAnimation {
+                    self.viewModel.positions.remove(at: index)
+                  }
+
+                }
+              )
+            }
+
+            Button {
+              viewModel.showAddPosition(availablePosition: true)
+            } label: {
+              Text("Add")
+            }
+          } header: {
+            Text("Detents.availablePositions")
+          } footer: {
+            Text("Empty availablePositions means nil for debug")
           }
 
           Section("Interruptable") {

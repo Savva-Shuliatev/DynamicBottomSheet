@@ -125,6 +125,16 @@ final class AllSettingsViewController: ExampleViewController {
     }
     .store(in: &cancellables)
 
+    viewModel.$availablePositions.sink { [weak self] in
+      if $0.isEmpty {
+        self?.bottomSheet.detents.availablePositions = nil
+      } else {
+        self?.bottomSheet.detents.availablePositions = $0
+      }
+
+    }
+    .store(in: &cancellables)
+
     viewModel.$bounces.sink { [weak self] in
       self?.bottomSheet.bounces = $0
     }

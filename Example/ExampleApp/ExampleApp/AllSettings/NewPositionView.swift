@@ -15,7 +15,7 @@ struct NewPositionView: View {
 
   @ObservedObject var viewModel: AllSettingsViewModel
 
-  @State private var position: RelativePosition = .hidden
+  let availablePosition: Bool
 
   @State private var edgeType: EdgeType = .top
   @State private var ignoresSafeArea: Bool = false
@@ -118,7 +118,13 @@ struct NewPositionView: View {
     }
 
     withAnimation {
-      viewModel.positions.append(position)
+
+      if availablePosition {
+        viewModel.availablePositions.append(position)
+      } else {
+        viewModel.positions.append(position)
+      }
+
     }
 
     presentationMode.wrappedValue.dismiss()
