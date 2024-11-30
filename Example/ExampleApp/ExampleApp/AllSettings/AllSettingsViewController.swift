@@ -52,6 +52,10 @@ final class AllSettingsViewController: ExampleViewController {
   override init() {
     super.init()
 
+    viewModel.show = { [weak self] in
+      self?.present($0, animated: true)
+    }
+
     viewModel.closeAction = { [weak self] in
       self?.dismiss(animated: true)
     }

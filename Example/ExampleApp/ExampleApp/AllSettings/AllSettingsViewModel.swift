@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import SwiftUI
 import DynamicBottomSheet
 
 @MainActor
 final class AllSettingsViewModel: ObservableObject {
 
   var closeAction: (() -> Void)?
+  var show: ((UIViewController) -> Void)?
 
   var moveTo: ((RelativePosition) -> Void)?
 
@@ -64,5 +66,9 @@ final class AllSettingsViewModel: ObservableObject {
 
   func closeDidTap() {
     closeAction?()
+  }
+
+  func showAddPosition() {
+    show?(UIHostingController(rootView: NewPositionView(viewModel: self)))
   }
 }

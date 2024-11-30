@@ -68,7 +68,7 @@ struct AllSettingsView: View {
             }
 
             Button {
-
+              viewModel.showAddPosition()
             } label: {
               Text("Add")
             }
