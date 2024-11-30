@@ -23,6 +23,8 @@ protocol TestContentViewControllerDelegate: AnyObject {
     targetContentOffset: UnsafeMutablePointer<CGPoint>
   )
 
+  func hide()
+
   /// Just test logic
   func showSecondTableView(_ scrollView: UIScrollView)
   func hideSecondTableView()
@@ -35,6 +37,7 @@ final class TestContentViewController: UIViewController {
   let headerView = UIView()
   let tableView1 = UITableView()
   let tableView2 = SomeTableView()
+  let closeButton = UIButton(type: .close)
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -53,12 +56,14 @@ extension TestContentViewController {
     setupHeaderView()
     setupTableView1()
     tableView2.isHidden = true
+    closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
   }
 
   private func setupHierarchy() {
     view.addSubview(headerView)
     view.addSubview(tableView1)
     view.addSubview(tableView2)
+    view.addSubview(closeButton)
   }
 
   private func layout() {
@@ -70,6 +75,12 @@ extension TestContentViewController {
 
     tableView2.constraints([.bottom, .leading, .trailing])
     tableView2.topAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
+
+    closeButton.translatesAutoresizingMaskIntoConstraints = false
+    closeButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 16).isActive = true
+    closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
+    closeButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
+    closeButton.widthAnchor.constraint(equalToConstant: 36).isActive = true
   }
 
   private func setupHeaderView() {
@@ -100,6 +111,10 @@ extension TestContentViewController {
       tableView2.isHidden = false
       delegate?.showSecondTableView(tableView2)
     }
+  }
+
+  @objc func closeButtonTapped() {
+    delegate?.hide()
   }
 
   func setupTableView1() {
