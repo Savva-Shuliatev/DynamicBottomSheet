@@ -381,6 +381,10 @@ extension DynamicBottomSheet {
     scrollingContentHolder = nil
   }
 
+  public func didConnected() -> Bool {
+    scrollingContentHolder != nil
+  }
+
   @MainActor
   public protocol ScrollingContent: AnyObject {
     var contentOffset: CGPoint { get set }
