@@ -10,14 +10,18 @@ import UIKit
 import MapKit
 import DynamicBottomSheet
 
+enum ExamplePosition {
+  case top
+  case proportion
+  case fromBottom
+}
+
 final class SimpleExampleViewController: UIViewController {
 
   private lazy var bottomSheet: DynamicBottomSheet = {
     let bottomSheet = DynamicBottomSheet()
-    bottomSheet.detents.positions = [.top(), .middle(), .fromBottom(64)]
-    bottomSheet.onFirstAppear = { [weak self] in
-      self?.bottomSheet.detents.move(to: .middle())
-    }
+    bottomSheet.detents.positions = [.top(), .proportion(0.6), .fromBottom(100)]
+    bottomSheet.detents.initialPosition = .top()
     return bottomSheet
   }()
 
