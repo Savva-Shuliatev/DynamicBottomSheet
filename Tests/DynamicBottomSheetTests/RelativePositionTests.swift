@@ -10,7 +10,8 @@ import Testing
 @testable import DynamicBottomSheet
 import UIKit
 
-@Suite("Test RelativePosition calculation and moving") @MainActor
+@Suite("Test RelativePosition calculation and moving")
+@MainActor
 struct RelativePositionTests {
 
   let bottomSheet = DynamicBottomSheet()

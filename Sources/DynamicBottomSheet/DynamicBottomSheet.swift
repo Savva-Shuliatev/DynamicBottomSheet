@@ -244,7 +244,7 @@ extension DynamicBottomSheet {
     grabber.constraint(.centerX)
     grabber.constraint(.height, equalTo: 5)
     grabber.constraint(.width, equalTo: 36)
-    grabber.isHidden = prefersGrabberVisible
+    grabber.isHidden = !prefersGrabberVisible
 
     visibleView.addGestureRecognizer(panRecognizer)
     panRecognizer.addTarget(self, action: #selector(handlePanRecognizer))

@@ -10,7 +10,8 @@ import Testing
 @testable import DynamicBottomSheet
 import UIKit
 
-@Suite("Default values Tests") @MainActor
+@Suite("Default values Tests")
+@MainActor
 struct DefaultValuesTests {
 
   @Test
@@ -33,6 +34,7 @@ struct DefaultValuesTests {
     #expect(bottomSheet.shadowPath == nil)
     #expect(bottomSheet.bottomBar.isHidden)
     #expect(bottomSheet.bottomBar.height == 64)
+    #expect(bottomSheet.prefersGrabberVisible)
   }
 
   @Test
@@ -89,6 +91,7 @@ extension DefaultValuesTests {
     #expect(bottomSheet.detents.positions == values.detentsValues.positions)
     #expect(bottomSheet.detents.availablePositions == values.detentsValues.availablePositions)
     #expect(bottomSheet.bottomBar.connectedPosition == values.detentsValues.bottomBarConnectedPosition)
+    #expect(bottomSheet.prefersGrabberVisible == values.prefersGrabberVisible)
   }
 
   func mockValues() -> DynamicBottomSheet.Values {
@@ -111,6 +114,7 @@ extension DefaultValuesTests {
     values.detentsValues.positions = [.hidden]
     values.detentsValues.availablePositions = [.hidden]
     values.detentsValues.bottomBarConnectedPosition = .hidden
+    values.prefersGrabberVisible = false
     return values
   }
 }

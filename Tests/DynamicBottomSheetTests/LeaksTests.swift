@@ -11,9 +11,10 @@ import Testing
 import UIKit
 
 @Suite("Leaks Tests")
+@MainActor
 struct LeaksTests {
 
-  @Test @MainActor
+  @Test
   func memoryLeak() async throws {
     var bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
     weak var weakBottomSheet: DynamicBottomSheet? = bottomSheet
@@ -31,19 +32,19 @@ struct LeaksTests {
     #expect(weakBottomSheet == nil)
   }
 
-  @Test @MainActor
+  @Test
   func detentsLeak() {
     let bottomSheet = DynamicBottomSheet()
     #expect(bottomSheet.detents.bottomSheet === bottomSheet)
   }
 
-  @Test @MainActor
+  @Test
   func bottomBarLeak() {
     let bottomSheet = DynamicBottomSheet()
     #expect(bottomSheet.bottomBar.bottomSheet === bottomSheet)
   }
 
-  @Test @MainActor
+  @Test
   func scrollViewIntegrationLeakTests() {
     let bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
     var scrollView: UIScrollView? = UIScrollView()
@@ -54,7 +55,7 @@ struct LeaksTests {
     #expect(scrollView == nil)
   }
 
-  @Test @MainActor
+  @Test
   func scrollingContentIntegrationLeakTests() {
     let bottomSheet: DynamicBottomSheet? = DynamicBottomSheet()
     var scrollView: TestScrollContent? = TestScrollContent()
