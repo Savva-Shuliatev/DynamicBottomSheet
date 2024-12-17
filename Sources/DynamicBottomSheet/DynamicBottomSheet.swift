@@ -244,6 +244,7 @@ extension DynamicBottomSheet {
     grabber.constraint(.centerX)
     grabber.constraint(.height, equalTo: 5)
     grabber.constraint(.width, equalTo: 36)
+    grabber.isHidden = prefersGrabberVisible
 
     visibleView.addGestureRecognizer(panRecognizer)
     panRecognizer.addTarget(self, action: #selector(handlePanRecognizer))
@@ -322,7 +323,7 @@ extension DynamicBottomSheet {
       moveYToTheNearestAnchor(with: velocity, source: .panGestureInteraction)
 
     case .cancelled, .failed:
-      guard case .dragging(_) = panRecognizerState else { return }
+      guard case .dragging = panRecognizerState else { return }
       panRecognizerState = .empty
       sendDidEndUpdatingY(with: .panGestureInteraction)
 
