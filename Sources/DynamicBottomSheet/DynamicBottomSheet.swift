@@ -643,7 +643,7 @@ extension DynamicBottomSheet {
 
 extension DynamicBottomSheet {
   private func updateY(_ newY: CGFloat, source: YChangeSource) {
-    y = newY
+    y = min(bounds.height, newY)
     updateViewTopAnchor()
     updateViewHeight()
     updateBottomBarAreaHeight()
