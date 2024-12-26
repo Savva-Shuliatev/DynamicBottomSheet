@@ -8,11 +8,12 @@
 
 import UIKit
 
-open class DynamicBottomSheetController: UIViewController {
+// TODO: Future realization!
+private class DynamicBottomSheetController: UIViewController {
 
   open var bottonSheet = DynamicBottomSheet()
 
-  public init(_ bottonSheet: DynamicBottomSheet = DynamicBottomSheet()) {
+  private init(_ bottonSheet: DynamicBottomSheet = DynamicBottomSheet()) {
     self.bottonSheet = bottonSheet
     super.init(nibName: nil, bundle: nil)
     modalPresentationStyle = .overFullScreen
