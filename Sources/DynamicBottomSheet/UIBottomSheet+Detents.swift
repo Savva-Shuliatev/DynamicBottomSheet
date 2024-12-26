@@ -23,6 +23,15 @@ public protocol DynamicBottomSheetDetentsSubscriber: DynamicBottomSheetSubscribe
     bottomSafeAreaInset: CGFloat,
     source: DynamicBottomSheet.YChangeSource
   )
+
+  func bottomSheet(
+    _ bottomSheet: DynamicBottomSheet,
+    willMoveTo position: RelativePosition,
+    source: DynamicBottomSheet.YChangeSource,
+    animated: Bool,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger,
+    velocity: CGFloat?
+  )
 }
 
 extension DynamicBottomSheet {
@@ -232,7 +241,8 @@ extension DynamicBottomSheet.Detents: DynamicBottomSheetSubscriber {
       )
     }
 
-    positions.forEach { position in
+    let availablePositions = availablePositions ?? positions
+    availablePositions.forEach { position in
       if self.y(for: position).isEqual(to: y, eps: 1) {
         subscribers.forEach {
           $0.bottomSheet(
@@ -260,6 +270,46 @@ extension DynamicBottomSheet.Detents: DynamicBottomSheetSubscriber {
       )
     }
   }
+
+  public func bottomSheet(
+    _ bottomSheet: DynamicBottomSheet,
+    willMoveTo newY: CGFloat,
+    source: DynamicBottomSheet.YChangeSource,
+    animated: Bool,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger,
+    velocity: CGFloat?
+  ) {
+    subscribers.forEach {
+      $0.bottomSheet(
+        bottomSheet,
+        willMoveTo: newY,
+        source: source,
+        animated: animated,
+        interruptTriggers: interruptTriggers,
+        velocity: velocity
+      )
+    }
+
+    let availablePositions = availablePositions ?? positions
+    availablePositions.forEach { position in
+      if self.y(for: position).isEqual(to: newY, eps: 1) {
+        subscribers.forEach {
+          $0.bottomSheet(
+            bottomSheet,
+            willMoveTo: position,
+            source: source,
+            animated: animated,
+            interruptTriggers: interruptTriggers,
+            velocity: velocity
+          )
+        }
+
+        return
+      }
+    }
+
+  }
+
 }
 
 // MARK: Default DynamicBottomSheetDetentsSubscriber
@@ -277,4 +327,14 @@ public extension DynamicBottomSheetDetentsSubscriber {
     bottomSafeAreaInset: CGFloat,
     source: DynamicBottomSheet.YChangeSource
   ) {}
+
+  func bottomSheet(
+    _ bottomSheet: DynamicBottomSheet,
+    willMoveTo position: RelativePosition,
+    source: DynamicBottomSheet.YChangeSource,
+    animated: Bool,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger,
+    velocity: CGFloat?
+  ) {}
+
 }

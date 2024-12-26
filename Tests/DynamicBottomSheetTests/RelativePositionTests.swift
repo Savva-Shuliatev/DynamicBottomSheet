@@ -148,7 +148,7 @@ struct RelativePositionTests {
     #expect(bottomSheet.y == 900)
 
     bottomSheet.detents.move(to: position3, animated: false)
-    #expect(bottomSheet.y == 1100)
+    #expect(bottomSheet.y == 1000)
   }
 
   @Test

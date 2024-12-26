@@ -658,6 +658,13 @@ extension DynamicBottomSheet {
     velocity: CGFloat? = nil,
     completion: ((Bool) -> Void)? = nil
   ) {
+    sendwillMoveToY(
+      to: newY,
+      source: source,
+      animated: animated,
+      interruptTriggers: interruptTriggers,
+      velocity: velocity
+    )
     stopYAnimation()
 
     guard animated else {
@@ -727,4 +734,24 @@ extension DynamicBottomSheet {
       $0.bottomSheet(self, willBeginAnimation: animation, source: source)
     }
   }
+
+  private func sendwillMoveToY(
+    to newY: CGFloat,
+    source: YChangeSource,
+    animated: Bool,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger,
+    velocity: CGFloat?
+  ) {
+    subscribers.forEach {
+      $0.bottomSheet(
+        self,
+        willMoveTo: newY,
+        source: source,
+        animated: animated,
+        interruptTriggers: interruptTriggers,
+        velocity: velocity
+      )
+    }
+  }
+
 }

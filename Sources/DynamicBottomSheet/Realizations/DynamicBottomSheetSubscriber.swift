@@ -34,6 +34,15 @@ public protocol DynamicBottomSheetSubscriber: AnyObject {
     willBeginAnimation animation: DynamicBottomSheetAnimation,
     source: DynamicBottomSheet.YChangeSource
   )
+
+  func bottomSheet(
+    _ bottomSheet: DynamicBottomSheet,
+    willMoveTo newY: CGFloat,
+    source: DynamicBottomSheet.YChangeSource,
+    animated: Bool,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger,
+    velocity: CGFloat?
+  )
 }
 
 // MARK: Default
@@ -61,5 +70,14 @@ public extension DynamicBottomSheetSubscriber {
     _ bottomSheet: DynamicBottomSheet,
     willBeginAnimation animation: DynamicBottomSheetAnimation,
     source: DynamicBottomSheet.YChangeSource
+  ) {}
+
+  func bottomSheet(
+    _ bottomSheet: DynamicBottomSheet,
+    willMoveTo newY: CGFloat,
+    source: DynamicBottomSheet.YChangeSource,
+    animated: Bool,
+    interruptTriggers: DynamicBottomSheet.InterruptTrigger,
+    velocity: CGFloat?
   ) {}
 }
