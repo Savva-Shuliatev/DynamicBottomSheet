@@ -431,10 +431,12 @@ extension DynamicBottomSheet {
     if (
       diff < 0 &&
       contentOffset.y > -contentInset.top &&
-      y.isGreater(than: limits.lowerBound, eps: Self.originEps)
+      y.isGreater(than: limits.lowerBound, eps: Self.originEps) &&
+      scrollingOffsetUnderLastAnchor <= 0 + Self.originEps
     ) || (
       diff > 0 && contentOffset.y < -contentInset.top &&
-      y.isLess(than: limits.upperBound, eps: Self.originEps)
+      y.isLess(than: limits.upperBound, eps: Self.originEps) &&
+      scrollingOffsetUnderLastAnchor <= 0 + Self.originEps
     ) {
       // Drop contentOffset changing
       scrollingListening = false
@@ -454,7 +456,15 @@ extension DynamicBottomSheet {
         scrollingState = .dragging(lastContentOffset: scrollingContent.contentOffset)
       }
 
-    } else if diff > 0, y >= limits.upperBound {
+    } else if (
+      diff > 0 &&
+      y >= limits.upperBound - Self.originEps &&
+      lastContentOffset.y <= 0
+    ) || (
+      diff < 0 &&
+      y >= limits.upperBound - Self.originEps &&
+      lastContentOffset.y >= 0
+    ) {
 
       scrollingListening = false
       scrollingContentHolder?.scrollingContent?.contentOffset.y = contentInset.top
