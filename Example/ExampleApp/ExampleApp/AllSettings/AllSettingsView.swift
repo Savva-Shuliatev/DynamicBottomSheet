@@ -38,6 +38,11 @@ struct AllSettingsView: View {
               set: { viewModel.bouncesFactor = CGFloat(min(max($0, 0), 0.99)) }
             ))
 
+            Toggle("canBeRefreshed", isOn: Binding(
+              get: { viewModel.canBeRefreshed },
+              set: { viewModel.canBeRefreshed = $0 }
+            ))
+
             Toggle("prefersGrabberVisible", isOn: Binding(
               get: { viewModel.prefersGrabberVisible },
               set: { viewModel.prefersGrabberVisible = $0 }

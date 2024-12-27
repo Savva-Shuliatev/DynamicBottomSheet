@@ -32,6 +32,8 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var bouncesFactor: CGFloat = 0.1
 
+  @Published var canBeRefreshed: Bool = false
+
   @Published var viewIgnoresTopSafeArea: Bool = true
 
   @Published var viewIgnoresBottomBarHeight: Bool = false

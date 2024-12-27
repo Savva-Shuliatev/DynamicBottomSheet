@@ -145,6 +145,11 @@ final class AllSettingsViewController: ExampleViewController {
     }
     .store(in: &cancellables)
 
+    viewModel.$canBeRefreshed.sink { [weak self] in
+      self?.bottomSheet.canBeRefreshed = $0
+    }
+    .store(in: &cancellables)
+
     viewModel.$viewIgnoresTopSafeArea.sink { [weak self] in
       self?.bottomSheet.viewIgnoresTopSafeArea = $0
     }

@@ -43,6 +43,8 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
+  open var canBeRefreshed: Bool = false
+
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters = Values.default.animationParameters
 
@@ -416,6 +418,13 @@ extension DynamicBottomSheet {
     else {
 
       if scrollingListening {
+        if let upperBound = anchorLimits?.upperBound,
+            y.isEqual(to: upperBound, eps: Self.originEps),
+            contentOffset.y < 0,
+           canBeRefreshed {
+          return
+        }
+
         if contentOffset.y < 0 {
           scrollingContentHolder?.scrollingContent?.stopScrolling()
         }
@@ -456,7 +465,7 @@ extension DynamicBottomSheet {
         scrollingState = .dragging(lastContentOffset: scrollingContent.contentOffset)
       }
 
-    } else if (
+    } else if ((
       diff > 0 &&
       y >= limits.upperBound - Self.originEps &&
       lastContentOffset.y <= 0
@@ -464,7 +473,7 @@ extension DynamicBottomSheet {
       diff < 0 &&
       y >= limits.upperBound - Self.originEps &&
       lastContentOffset.y >= 0
-    ) {
+    )) && !canBeRefreshed {
 
       scrollingListening = false
       scrollingContentHolder?.scrollingContent?.contentOffset.y = contentInset.top
