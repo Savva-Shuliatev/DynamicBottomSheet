@@ -382,6 +382,7 @@ extension DynamicBottomSheet {
     scrollingListening = true
     scrollingState = .empty
     scrollingContentHolder = nil
+    scrollingOffsetUnderLastAnchor = .zero
   }
 
   public func didConnected() -> Bool {
@@ -473,15 +474,17 @@ extension DynamicBottomSheet {
       diff < 0 &&
       y >= limits.upperBound - Self.originEps &&
       lastContentOffset.y >= 0
-    )) && !canBeRefreshed {
+    )) && !canBeRefreshed, case let .dragging(lastContentOffset) = scrollingState, lastContentOffset == .zero {
 
       scrollingListening = false
       scrollingContentHolder?.scrollingContent?.contentOffset.y = contentInset.top
+      scrollingState = .dragging(lastContentOffset: .init(x: 0, y: contentInset.top))
       scrollingListening = true
 
       let newY = clampY(y + scrollingOffsetUnderLastAnchor + diff)
       scrollingOffsetUnderLastAnchor += diff
       updateY(newY, source: .scrollDragging)
+
     } else {
       if let scrollingContent = scrollingContentHolder?.scrollingContent {
         scrollingState = .dragging(lastContentOffset: scrollingContent.contentOffset)
