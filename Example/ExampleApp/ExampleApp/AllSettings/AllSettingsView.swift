@@ -43,6 +43,12 @@ struct AllSettingsView: View {
               set: { viewModel.canBeRefreshed = $0 }
             ))
 
+            /// This is default scrollView contentInset logic
+            stepperCell("topContentInset", step: 1, transitionStep: 0.1, value: Binding(
+              get: { CGFloat(viewModel.topContentInset) },
+              set: { viewModel.topContentInset = $0 }
+            ))
+
             Toggle("prefersGrabberVisible", isOn: Binding(
               get: { viewModel.prefersGrabberVisible },
               set: { viewModel.prefersGrabberVisible = $0 }
