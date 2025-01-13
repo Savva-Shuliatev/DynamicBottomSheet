@@ -421,12 +421,12 @@ extension DynamicBottomSheet {
       if scrollingListening {
         if let upperBound = anchorLimits?.upperBound,
             y.isEqual(to: upperBound, eps: Self.originEps),
-            contentOffset.y < 0,
+            contentOffset.y < -contentInset.top,
            canBeRefreshed {
           return
         }
 
-        if contentOffset.y < 0 {
+        if contentOffset.y < -contentInset.top {
           scrollingContentHolder?.scrollingContent?.stopScrolling()
         }
       }
@@ -451,7 +451,7 @@ extension DynamicBottomSheet {
       // Drop contentOffset changing
       scrollingListening = false
       if diff > 0 {
-        scrollingContentHolder?.scrollingContent?.contentOffset.y = contentInset.top
+        scrollingContentHolder?.scrollingContent?.contentOffset.y = -contentInset.top
       } else {
         scrollingContentHolder?.scrollingContent?.contentOffset.y += diff
       }
@@ -474,11 +474,11 @@ extension DynamicBottomSheet {
       diff < 0 &&
       y >= limits.upperBound - Self.originEps &&
       lastContentOffset.y >= 0
-    )) && !canBeRefreshed, case let .dragging(lastContentOffset) = scrollingState, lastContentOffset == .zero {
+    )) && !canBeRefreshed, case let .dragging(lastContentOffset) = scrollingState, lastContentOffset == .init(x: 0, y: -contentInset.top) {
 
       scrollingListening = false
-      scrollingContentHolder?.scrollingContent?.contentOffset.y = contentInset.top
-      scrollingState = .dragging(lastContentOffset: .init(x: 0, y: contentInset.top))
+      scrollingContentHolder?.scrollingContent?.contentOffset.y = -contentInset.top
+      scrollingState = .dragging(lastContentOffset: .init(x: 0, y: -contentInset.top))
       scrollingListening = true
 
       let newY = clampY(y + scrollingOffsetUnderLastAnchor + diff)

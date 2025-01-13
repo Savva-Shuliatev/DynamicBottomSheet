@@ -281,7 +281,7 @@ extension TestContentViewController: DynamicBottomSheet.ScrollingContent {
   }
 
   func stopScrolling() {
-    tableView1.setContentOffset(.zero, animated: false)
+    tableView1.setContentOffset(CGPoint(x: 0, y: -scrollView.contentInset.top), animated: false)
   }
 
 }

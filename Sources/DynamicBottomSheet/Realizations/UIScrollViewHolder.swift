@@ -95,7 +95,8 @@ extension UIScrollViewHolder: DynamicBottomSheet.ScrollingContent {
   }
   
   func stopScrolling() {
-    scrollView?.setContentOffset(.zero, animated: false)
+    guard let scrollView else { return }
+    scrollView.setContentOffset(CGPoint(x: 0, y: -scrollView.contentInset.top), animated: false)
   }
 
 }
