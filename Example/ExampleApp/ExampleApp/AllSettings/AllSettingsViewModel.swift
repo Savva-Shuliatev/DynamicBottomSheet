@@ -34,6 +34,8 @@ final class AllSettingsViewModel: ObservableObject {
 
   @Published var canBeRefreshed: Bool = false
 
+  @Published var topContentInset: CGFloat = .zero
+
   @Published var viewIgnoresTopSafeArea: Bool = true
 
   @Published var viewIgnoresBottomBarHeight: Bool = false

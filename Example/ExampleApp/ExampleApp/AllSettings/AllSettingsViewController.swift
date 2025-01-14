@@ -150,6 +150,12 @@ final class AllSettingsViewController: ExampleViewController {
     }
     .store(in: &cancellables)
 
+    viewModel.$topContentInset.sink { [weak self] in
+      self?.contentViewController.tableView1.contentInset = UIEdgeInsets(top: $0, left: .zero, bottom: .zero, right: .zero)
+      self?.contentViewController.tableView2.contentInset = UIEdgeInsets(top: $0, left: .zero, bottom: .zero, right: .zero)
+    }
+    .store(in: &cancellables)
+
     viewModel.$viewIgnoresTopSafeArea.sink { [weak self] in
       self?.bottomSheet.viewIgnoresTopSafeArea = $0
     }
@@ -281,7 +287,7 @@ extension TestContentViewController: DynamicBottomSheet.ScrollingContent {
   }
 
   func stopScrolling() {
-    tableView1.setContentOffset(.zero, animated: false)
+    tableView1.setContentOffset(CGPoint(x: 0, y: -tableView1.contentInset.top), animated: false)
   }
 
 }
