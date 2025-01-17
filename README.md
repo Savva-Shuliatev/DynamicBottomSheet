@@ -12,6 +12,8 @@ A highly customizable DynamicBottomSheet UIView for iOS apps, built using Swift.
 
 ### TODO: Documentation
 
+> My code has no documentation. But it has strong character. — Jason Statham
+
 ## In the meantime, run the ExampleApp
 
 ![](Documentation/Assets/PresentBottomSheet.webp)
