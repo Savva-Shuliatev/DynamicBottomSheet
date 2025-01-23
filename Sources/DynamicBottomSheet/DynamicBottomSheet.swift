@@ -214,6 +214,19 @@ open class DynamicBottomSheet: UIView {
     move(to: newY, source: .program, animated: animated, interruptTriggers: interruptTriggers, completion: completion)
   }
 
+  open func moveToTheNearestAnchor(
+    with velocity: CGFloat = .zero,
+    completion: ((Bool) -> Void)? = nil
+  ) {
+    stopYAnimation()
+    sendWillBeginUpdatingY(with: .program)
+    moveYToTheNearestAnchor(with: velocity, source: .program, completion: completion)
+  }
+
+  open func getTheNearestAnchor(with velocity: CGFloat = .zero) -> CGFloat? {
+    calculateTheNearestAnchor(with: velocity)
+  }
+
   open func subscribe(_ subscriber: DynamicBottomSheetSubscriber) {
     subscribers.subscribe(subscriber)
   }
@@ -537,10 +550,21 @@ extension DynamicBottomSheet {
     source: YChangeSource,
     completion: ((Bool) -> Void)? = nil
   ) {
+    guard let yAnchor = calculateTheNearestAnchor(with: velocity) else {
+      completion?(false)
+      return
+    }
+
+    if !y.isEqual(to: yAnchor, eps: Self.originEps) {
+      move(to: yAnchor, source: source, animated: true, velocity: velocity)
+    }
+  }
+
+  private func calculateTheNearestAnchor(with velocity: CGFloat) -> CGFloat? {
     let decelerationRate = UIScrollView.DecelerationRate.fast.rawValue
     let projection = y.project(initialVelocity: velocity, decelerationRate: decelerationRate)
 
-    guard let projectionAnchor = anchors.nearestElement(to: projection) else { return }
+    guard let projectionAnchor = anchors.nearestElement(to: projection) else { return nil }
 
     let yAnchor: CGFloat
 
@@ -551,9 +575,7 @@ extension DynamicBottomSheet {
       yAnchor = projectionAnchor
     }
 
-    if !y.isEqual(to: yAnchor, eps: Self.originEps) {
-      move(to: yAnchor, source: source, animated: true, velocity: velocity)
-    }
+    return yAnchor
   }
 
   private func selectNextAnchor(to anchor: CGFloat, velocity: CGFloat) -> CGFloat {
