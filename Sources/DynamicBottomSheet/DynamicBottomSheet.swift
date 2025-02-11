@@ -110,7 +110,7 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  internal var anchors: [CGFloat] = []
+  public internal(set) var anchors: [CGFloat] = []
 
   public private(set) var didLayoutSubviews = false
 
@@ -236,7 +236,6 @@ open class DynamicBottomSheet: UIView {
     subscribers.unsubscribe(subscriber)
   }
 
-  public func currentAnchors() -> [CGFloat] { anchors }
 }
 
 // MARK: Setup UI
