@@ -11,6 +11,7 @@
 //
 
 import UIKit
+import Combine
 
 open class DynamicBottomSheet: UIView {
 
@@ -48,8 +49,8 @@ open class DynamicBottomSheet: UIView {
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters = Values.default.animationParameters
 
-  open var onFirstAppear: (() -> Void)?
-  open var onChangeY: ((CGFloat) -> Void)?
+  public let onFirstAppear = PassthroughSubject<Void, Never>()
+  public let onChangeY = PassthroughSubject<CGFloat, Never>()
 
   public let visibleView = UIView()
   public let view = UIView()
@@ -172,7 +173,7 @@ open class DynamicBottomSheet: UIView {
       layer.shadowRadius = shadowRadius
       layer.shadowPath = shadowPath
 
-      onFirstAppear?()
+      onFirstAppear.send()
     }
 
     if lastViewGeometry != ViewGeometry(of: self) {
@@ -761,7 +762,8 @@ extension DynamicBottomSheet {
     subscribers.forEach {
       $0.bottomSheet(self, didUpdateY: y, source: source)
     }
-    onChangeY?(y)
+
+    onChangeY.send(y)
   }
 
   private func sendDidEndUpdatingY(with source: YChangeSource) {
