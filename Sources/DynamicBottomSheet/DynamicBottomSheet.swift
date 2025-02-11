@@ -110,11 +110,11 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  internal var anchors: [CGFloat] = []
+  public var anchors: [CGFloat] = []
 
-  internal var didLayoutSubviews = false
+  public private(set) var didLayoutSubviews = false
 
-  private var anchorLimits: ClosedRange<CGFloat>? {
+  public var anchorLimits: ClosedRange<CGFloat>? {
     if let min = anchors.min(), let max = anchors.max() {
       return min...max
     } else {
