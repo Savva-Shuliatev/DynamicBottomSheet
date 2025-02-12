@@ -11,6 +11,7 @@
 //
 
 import UIKit
+import Combine
 
 open class DynamicBottomSheet: UIView {
 
@@ -48,8 +49,13 @@ open class DynamicBottomSheet: UIView {
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters = Values.default.animationParameters
 
-  open var onFirstAppear: (() -> Void)?
-  open var onChangeY: ((CGFloat) -> Void)?
+  public let onFirstAppear = PassthroughSubject<Void, Never>()
+  public let onWillBeginUpdatingY = PassthroughSubject<WillBeginUpdatingYContext, Never>()
+  public let onDidUpdateY = PassthroughSubject<DidUpdateYContext, Never>()
+  public let onDidEndUpdatingY = PassthroughSubject<DidEndUpdatingYContext, Never>()
+  public let onWillBeginAnimation = PassthroughSubject<WillBeginAnimationContext, Never>()
+  public let onWillMoveToNewY = PassthroughSubject<WillMoveToContext, Never>()
+
 
   public let visibleView = UIView()
   public let view = UIView()
@@ -109,11 +115,11 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  internal var anchors: [CGFloat] = []
+  public internal(set) var anchors: [CGFloat] = []
 
-  internal var didLayoutSubviews = false
+  public private(set) var didLayoutSubviews = false
 
-  private var anchorLimits: ClosedRange<CGFloat>? {
+  public var anchorLimits: ClosedRange<CGFloat>? {
     if let min = anchors.min(), let max = anchors.max() {
       return min...max
     } else {
@@ -172,7 +178,7 @@ open class DynamicBottomSheet: UIView {
       layer.shadowRadius = shadowRadius
       layer.shadowPath = shadowPath
 
-      onFirstAppear?()
+      onFirstAppear.send()
     }
 
     if lastViewGeometry != ViewGeometry(of: self) {
@@ -234,6 +240,7 @@ open class DynamicBottomSheet: UIView {
   open func unsubscribe(_ subscriber: DynamicBottomSheetSubscriber) {
     subscribers.unsubscribe(subscriber)
   }
+
 }
 
 // MARK: Setup UI
@@ -537,7 +544,7 @@ extension DynamicBottomSheet {
 // MARK: Anchors
 
 extension DynamicBottomSheet {
-  public enum YChangeSource {
+  public enum YChangeSource: Sendable {
     case panGestureInteraction
     case scrollDragging
     case program
@@ -755,19 +762,24 @@ extension DynamicBottomSheet {
     subscribers.forEach {
       $0.bottomSheet(self, willBeginUpdatingY: y, source: source)
     }
+
+    onWillBeginUpdatingY.send(WillBeginUpdatingYContext(y: y, source: source))
   }
 
   private func sendDidUpdateY(with source: YChangeSource) {
     subscribers.forEach {
       $0.bottomSheet(self, didUpdateY: y, source: source)
     }
-    onChangeY?(y)
+
+    onDidUpdateY.send(DidUpdateYContext(y: y, source: source))
   }
 
   private func sendDidEndUpdatingY(with source: YChangeSource) {
     subscribers.forEach {
       $0.bottomSheet(self, didEndUpdatingY: y, source: source)
     }
+
+    onDidEndUpdatingY.send(DidEndUpdatingYContext(y: y, source: source))
   }
 
   private func sendWillBeginAnimation(
@@ -777,6 +789,8 @@ extension DynamicBottomSheet {
     subscribers.forEach {
       $0.bottomSheet(self, willBeginAnimation: animation, source: source)
     }
+
+    onWillBeginAnimation.send(WillBeginAnimationContext(animation: animation, source: source))
   }
 
   private func sendwillMoveToY(
@@ -796,6 +810,16 @@ extension DynamicBottomSheet {
         velocity: velocity
       )
     }
+
+    onWillMoveToNewY.send(
+      WillMoveToContext(
+        newY: newY,
+        source: source,
+        animated: animated,
+        interruptTriggers: interruptTriggers,
+        velocity: velocity
+      )
+    )
   }
 
 }

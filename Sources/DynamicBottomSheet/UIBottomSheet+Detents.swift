@@ -8,6 +8,7 @@
 
 
 import Foundation
+import Combine
 
 @MainActor
 public protocol DynamicBottomSheetDetentsSubscriber: DynamicBottomSheetSubscriber {
@@ -58,6 +59,10 @@ extension DynamicBottomSheet {
     }
 
     open var initialPosition: RelativePosition = .fromBottom(0, ignoresSafeArea: true)
+
+    public let onChangePosition = PassthroughSubject<DidChangePositionContext, Never>()
+    public let onChangeHeight = PassthroughSubject<DidChangeHeightContext, Never>()
+    public let onWillMoveToPosition = PassthroughSubject<WillMoveToContext, Never>()
 
     private var subscribers = Subscribers<DynamicBottomSheetDetentsSubscriber>()
 
@@ -218,14 +223,19 @@ extension DynamicBottomSheet.Detents: DynamicBottomSheetSubscriber {
       )
     }
 
+    let height = bottomSheet.bounds.height - y
+    let bottomSafeAreaInset = bottomSheet.safeAreaInsets.bottom
+
     subscribers.forEach {
       $0.bottomSheet(
         bottomSheet,
-        height: bottomSheet.bounds.height - y,
-        bottomSafeAreaInset: bottomSheet.safeAreaInsets.bottom,
+        height: height,
+        bottomSafeAreaInset: bottomSafeAreaInset,
         source: source
       )
     }
+
+    onChangeHeight.send(DidChangeHeightContext(height: height, bottomSafeAreaInset: bottomSafeAreaInset, source: source))
   }
 
   public func bottomSheet(
@@ -252,6 +262,7 @@ extension DynamicBottomSheet.Detents: DynamicBottomSheetSubscriber {
           )
         }
 
+        onChangePosition.send(DidChangePositionContext(position: position, source: source))
         return
       }
     }
@@ -304,6 +315,16 @@ extension DynamicBottomSheet.Detents: DynamicBottomSheetSubscriber {
           )
         }
 
+        onWillMoveToPosition.send(
+          WillMoveToContext(
+            position: position,
+            source: source,
+            animated: animated,
+            interruptTriggers: interruptTriggers,
+            velocity: velocity
+          )
+        )
+
         return
       }
     }
@@ -336,5 +357,59 @@ public extension DynamicBottomSheetDetentsSubscriber {
     interruptTriggers: DynamicBottomSheet.InterruptTrigger,
     velocity: CGFloat?
   ) {}
+
+}
+
+// MARK: Contexts for publishers
+
+extension DynamicBottomSheet.Detents {
+
+  public struct DidChangePositionContext: Sendable, Equatable {
+    public let position: RelativePosition
+    public let source: DynamicBottomSheet.YChangeSource
+
+    public init(position: RelativePosition, source: DynamicBottomSheet.YChangeSource) {
+      self.position = position
+      self.source = source
+    }
+  }
+
+  public struct DidChangeHeightContext: Sendable, Equatable {
+    public let height: CGFloat
+    public let bottomSafeAreaInset: CGFloat
+    public let source: DynamicBottomSheet.YChangeSource
+
+    public init(
+      height: CGFloat,
+      bottomSafeAreaInset: CGFloat,
+      source: DynamicBottomSheet.YChangeSource
+    ) {
+      self.height = height
+      self.bottomSafeAreaInset = bottomSafeAreaInset
+      self.source = source
+    }
+  }
+
+  public struct WillMoveToContext: Sendable, Equatable {
+    public let position: RelativePosition
+    public let source: DynamicBottomSheet.YChangeSource
+    public let animated: Bool
+    public let interruptTriggers: DynamicBottomSheet.InterruptTrigger
+    public let velocity: CGFloat?
+
+    public init(
+      position: RelativePosition,
+      source: DynamicBottomSheet.YChangeSource,
+      animated: Bool,
+      interruptTriggers: DynamicBottomSheet.InterruptTrigger,
+      velocity: CGFloat?
+    ) {
+      self.position = position
+      self.source = source
+      self.animated = animated
+      self.interruptTriggers = interruptTriggers
+      self.velocity = velocity
+    }
+  }
 
 }
