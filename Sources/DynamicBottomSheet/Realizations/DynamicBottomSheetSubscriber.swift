@@ -81,3 +81,71 @@ public extension DynamicBottomSheetSubscriber {
     velocity: CGFloat?
   ) {}
 }
+
+// MARK: Contexts for publishers
+
+extension DynamicBottomSheet {
+
+  public struct WillBeginUpdatingYContext: Sendable, Equatable {
+    public let y: CGFloat
+    public let source: DynamicBottomSheet.YChangeSource
+
+    public init(y: CGFloat, source: DynamicBottomSheet.YChangeSource) {
+      self.y = y
+      self.source = source
+    }
+  }
+
+  public struct DidUpdateYContext: Sendable, Equatable {
+    public let y: CGFloat
+    public let source: DynamicBottomSheet.YChangeSource
+
+    public init(y: CGFloat, source: DynamicBottomSheet.YChangeSource) {
+      self.y = y
+      self.source = source
+    }
+  }
+
+  public struct DidEndUpdatingYContext: Sendable, Equatable {
+    public let y: CGFloat
+    public let source: DynamicBottomSheet.YChangeSource
+
+    public init(y: CGFloat, source: DynamicBottomSheet.YChangeSource) {
+      self.y = y
+      self.source = source
+    }
+  }
+
+  public struct WillBeginAnimationContext {
+    public let animation: DynamicBottomSheetAnimation
+    public let source: DynamicBottomSheet.YChangeSource
+
+    public init(animation: DynamicBottomSheetAnimation, source: DynamicBottomSheet.YChangeSource) {
+      self.animation = animation
+      self.source = source
+    }
+  }
+
+  public struct WillMoveToContext: Sendable, Equatable {
+    public let newY: CGFloat
+    public let source: DynamicBottomSheet.YChangeSource
+    public let animated: Bool
+    public let interruptTriggers: DynamicBottomSheet.InterruptTrigger
+    public let velocity: CGFloat?
+
+    public init(
+      newY: CGFloat,
+      source: DynamicBottomSheet.YChangeSource,
+      animated: Bool,
+      interruptTriggers: DynamicBottomSheet.InterruptTrigger,
+      velocity: CGFloat?
+    ) {
+      self.newY = newY
+      self.source = source
+      self.animated = animated
+      self.interruptTriggers = interruptTriggers
+      self.velocity = velocity
+    }
+  }
+
+}

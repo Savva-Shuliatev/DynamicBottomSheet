@@ -50,7 +50,12 @@ open class DynamicBottomSheet: UIView {
   open var animationParameters: AnimationParameters = Values.default.animationParameters
 
   public let onFirstAppear = PassthroughSubject<Void, Never>()
-  public let onChangeY = PassthroughSubject<CGFloat, Never>()
+  public let onWillBeginUpdatingY = PassthroughSubject<WillBeginUpdatingYContext, Never>()
+  public let onDidUpdateY = PassthroughSubject<DidUpdateYContext, Never>()
+  public let onDidEndUpdatingY = PassthroughSubject<DidEndUpdatingYContext, Never>()
+  public let onWillBeginAnimation = PassthroughSubject<WillBeginAnimationContext, Never>()
+  public let onWillMoveToNewY = PassthroughSubject<WillMoveToContext, Never>()
+
 
   public let visibleView = UIView()
   public let view = UIView()
@@ -539,7 +544,7 @@ extension DynamicBottomSheet {
 // MARK: Anchors
 
 extension DynamicBottomSheet {
-  public enum YChangeSource {
+  public enum YChangeSource: Sendable {
     case panGestureInteraction
     case scrollDragging
     case program
@@ -757,6 +762,8 @@ extension DynamicBottomSheet {
     subscribers.forEach {
       $0.bottomSheet(self, willBeginUpdatingY: y, source: source)
     }
+
+    onWillBeginUpdatingY.send(WillBeginUpdatingYContext(y: y, source: source))
   }
 
   private func sendDidUpdateY(with source: YChangeSource) {
@@ -764,13 +771,15 @@ extension DynamicBottomSheet {
       $0.bottomSheet(self, didUpdateY: y, source: source)
     }
 
-    onChangeY.send(y)
+    onDidUpdateY.send(DidUpdateYContext(y: y, source: source))
   }
 
   private func sendDidEndUpdatingY(with source: YChangeSource) {
     subscribers.forEach {
       $0.bottomSheet(self, didEndUpdatingY: y, source: source)
     }
+
+    onDidEndUpdatingY.send(DidEndUpdatingYContext(y: y, source: source))
   }
 
   private func sendWillBeginAnimation(
@@ -780,6 +789,8 @@ extension DynamicBottomSheet {
     subscribers.forEach {
       $0.bottomSheet(self, willBeginAnimation: animation, source: source)
     }
+
+    onWillBeginAnimation.send(WillBeginAnimationContext(animation: animation, source: source))
   }
 
   private func sendwillMoveToY(
@@ -799,6 +810,16 @@ extension DynamicBottomSheet {
         velocity: velocity
       )
     }
+
+    onWillMoveToNewY.send(
+      WillMoveToContext(
+        newY: newY,
+        source: source,
+        animated: animated,
+        interruptTriggers: interruptTriggers,
+        velocity: velocity
+      )
+    )
   }
 
 }
