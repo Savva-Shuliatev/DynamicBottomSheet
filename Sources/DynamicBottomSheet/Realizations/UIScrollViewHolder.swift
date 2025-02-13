@@ -34,7 +34,8 @@ internal final class UIScrollViewHolder: NSObject, UIScrollViewDelegate {
         newDelegate !== self
       else { return }
 
-      DispatchQueue.main.async {
+      DispatchQueue.main.async { [weak self] in
+        guard let self else { return }
         self.originalDelegate = scrollView.delegate
         scrollView.delegate = self
       }
