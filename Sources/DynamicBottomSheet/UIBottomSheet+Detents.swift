@@ -40,9 +40,14 @@ extension DynamicBottomSheet {
   @MainActor
   open class Detents {
 
-    internal private(set) weak var bottomSheet: DynamicBottomSheet?
+    internal weak var bottomSheet: DynamicBottomSheet? {
+      didSet {
+        oldValue?.unsubscribe(self)
+        bottomSheet?.subscribe(self)
+      }
+    }
 
-    open var positions: [RelativePosition] = DynamicBottomSheet.Values.default.detentsValues.positions {
+    open lazy var positions: [RelativePosition] = configuration.positions {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
         updateAnchors()
@@ -51,7 +56,7 @@ extension DynamicBottomSheet {
 
     /// Restricts the `move` method and filters `positions: [RelativePosition]`.
     /// By default, it is nil, indicating that all positions are available.
-    open var availablePositions: [RelativePosition]? = DynamicBottomSheet.Values.default.detentsValues.availablePositions {
+    open lazy var availablePositions: [RelativePosition]? = configuration.availablePositions {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
         updateAnchors()
@@ -60,15 +65,16 @@ extension DynamicBottomSheet {
 
     open var initialPosition: RelativePosition = .fromBottom(0, ignoresSafeArea: true)
 
+    public let configuration: Configuration
+
     public let onChangePosition = PassthroughSubject<DidChangePositionContext, Never>()
     public let onChangeHeight = PassthroughSubject<DidChangeHeightContext, Never>()
     public let onWillMoveToPosition = PassthroughSubject<WillMoveToContext, Never>()
 
     private var subscribers = Subscribers<DynamicBottomSheetDetentsSubscriber>()
 
-    public init(bottomSheet: DynamicBottomSheet) {
-      self.bottomSheet = bottomSheet
-      bottomSheet.subscribe(self)
+    public init(configuration: Configuration) {
+      self.configuration = configuration
     }
 
     // MARK: - Public methods
