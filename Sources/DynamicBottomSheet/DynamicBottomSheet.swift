@@ -127,6 +127,8 @@ open class DynamicBottomSheet: UIView {
 
   public private(set) var didLayoutSubviews = false
 
+  public private(set) var lastViewGeometry: ViewGeometry = .zero
+
   private var visibleViewYConstraint: NSLayoutConstraint?
   private var viewTopConstraint: NSLayoutConstraint?
   private var viewHeightConstraint: NSLayoutConstraint?
@@ -143,8 +145,6 @@ open class DynamicBottomSheet: UIView {
   private var scrollingOffsetUnderLastAnchor: CGFloat = 0
 
   private var yAnimation: DynamicBottomSheetDefaultSpringAnimation?
-
-  private var lastViewGeometry: ViewGeometry = .zero
 
   private var subscribers = Subscribers<DynamicBottomSheetSubscriber>()
 
