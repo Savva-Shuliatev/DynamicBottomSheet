@@ -16,17 +16,14 @@ import Combine
 open class DynamicBottomSheet: UIView {
 
   public let detents: Detents
-
   public let bottomBar: BottomBar
+
+  public private(set) lazy var visibleView = loadVisibleView()
+  public private(set) lazy var view = loadView()
+  public private(set) lazy var grabber = loadGrabber()
 
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters
-
-  open private(set) var y: CGFloat = 0 {
-    didSet {
-      visibleViewYConstraint?.constant = y
-    }
-  }
 
   /// A Boolean value that controls whether the scroll view bounces past the edge of content and back again.
   open var bounces: Bool
@@ -104,17 +101,6 @@ open class DynamicBottomSheet: UIView {
   public let onWillBeginAnimation = PassthroughSubject<WillBeginAnimationContext, Never>()
   public let onWillMoveToNewY = PassthroughSubject<WillMoveToContext, Never>()
 
-
-  public let visibleView = UIView()
-  public let view = UIView()
-
-  public let grabber: UIView = {
-    let grabber = UIView()
-    grabber.backgroundColor = .tertiaryLabel
-    grabber.layer.cornerRadius = 2.5
-    return grabber
-  }()
-
   public internal(set) var anchors: [CGFloat] = []
 
   public var anchorLimits: ClosedRange<CGFloat>? {
@@ -128,6 +114,12 @@ open class DynamicBottomSheet: UIView {
   public private(set) var didLayoutSubviews = false
 
   public private(set) var lastViewGeometry: ViewGeometry = .zero
+
+  open private(set) var y: CGFloat = 0 {
+    didSet {
+      visibleViewYConstraint?.constant = y
+    }
+  }
 
   private var visibleViewYConstraint: NSLayoutConstraint?
   private var viewTopConstraint: NSLayoutConstraint?
@@ -261,6 +253,21 @@ open class DynamicBottomSheet: UIView {
 
   open func unsubscribe(_ subscriber: DynamicBottomSheetSubscriber) {
     subscribers.unsubscribe(subscriber)
+  }
+
+  open func loadVisibleView() -> UIView {
+    return UIView()
+  }
+
+  open func loadView() -> UIView {
+    return UIView()
+  }
+
+  open func loadGrabber() -> UIView {
+    let grabber = UIView()
+    grabber.backgroundColor = .tertiaryLabel
+    grabber.layer.cornerRadius = 2.5
+    return grabber
   }
 
 }
@@ -572,6 +579,7 @@ extension DynamicBottomSheet {
     case program
   }
 
+  @MainActor
   private static let originEps: CGFloat = 1 / UIScreen.main.scale
 
   private func moveYToTheNearestAnchor(
