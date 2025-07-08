@@ -15,9 +15,9 @@ import Combine
 
 open class DynamicBottomSheet: UIView {
 
-  public var detents: Detents
+  public let detents: Detents
 
-  public var bottomBar: BottomBar
+  public let bottomBar: BottomBar
 
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters
@@ -97,10 +97,10 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
-  public let onFirstAppear = PassthroughSubject<Void, Never>()
-  public let onWillBeginUpdatingY = PassthroughSubject<WillBeginUpdatingYContext, Never>()
   public let onDidUpdateY = PassthroughSubject<DidUpdateYContext, Never>()
   public let onDidEndUpdatingY = PassthroughSubject<DidEndUpdatingYContext, Never>()
+  public let onFirstAppear = PassthroughSubject<Void, Never>()
+  public let onWillBeginUpdatingY = PassthroughSubject<WillBeginUpdatingYContext, Never>()
   public let onWillBeginAnimation = PassthroughSubject<WillBeginAnimationContext, Never>()
   public let onWillMoveToNewY = PassthroughSubject<WillMoveToContext, Never>()
 
