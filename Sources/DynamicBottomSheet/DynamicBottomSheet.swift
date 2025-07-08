@@ -217,7 +217,7 @@ open class DynamicBottomSheet: UIView {
 
   override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
     let visibleRect = CGRect(
-      x: 0.0,
+      x: .zero,
       y: y,
       width: bounds.width,
       height: bounds.height - y
