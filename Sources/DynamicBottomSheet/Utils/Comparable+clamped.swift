@@ -13,7 +13,19 @@
 import Foundation
 
 internal extension Comparable {
-  
+
+  /// Clamps the value to the specified range.
+  /// - Parameter limits: The range to clamp the value to.
+  /// - Returns: The value clamped to the given range.
+  ///
+  /// # Example
+  /// ```swift
+  /// let value = 15
+  /// let clamped = value.clamped(to: 1...10) // Returns 10
+  ///
+  /// let progress = 1.2
+  /// let validProgress = progress.clamped(to: 0.0...1.0) // Returns 1.0
+  /// ```
   func clamped(to limits: ClosedRange<Self>) -> Self {
     return min(max(self, limits.lowerBound), limits.upperBound)
   }
