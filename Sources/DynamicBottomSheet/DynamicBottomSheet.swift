@@ -543,30 +543,34 @@ extension DynamicBottomSheet {
 
   public func scrollViewWillEndDragging(
     withVelocity velocity: CGPoint,
+    yContentOffset: CGFloat,
+    topContentInset: CGFloat,
     targetContentOffset: UnsafeMutablePointer<CGPoint>?
   ) {
     guard scrollingListening, yAnimation?.interruptTriggers.contains(.scrollDragging) ?? true else { return }
     scrollingState = .empty
     scrollingOffsetUnderLastAnchor = 0
 
-    guard let limits = anchorLimits, limits.contains(y, eps: Self.originEps) else {
+    if velocity.y == 0 {
+      moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
 
-      if let limits = anchorLimits, y > limits.upperBound {
-        moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
-        return
+    } else if velocity.y > 0 {
+      if let lowerAnchor = anchors.min() {
+        if y.isGreater(than: lowerAnchor, eps: Self.originEps) {
+          if let scrollingContent = scrollingContentHolder?.scrollingContent {
+            targetContentOffset?.pointee = scrollingContent.contentOffset
+          }
+          moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
+        }
+      }
 
+    } else {
+      if yContentOffset > -topContentInset {
+        moveYToTheNearestAnchor(with: .zero, source: .scrollDragging)
       } else {
-        sendDidEndUpdatingY(with: .scrollDragging)
-        return
+        moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
       }
     }
-
-    // Stop scrolling
-    if let scrollingContent = scrollingContentHolder?.scrollingContent {
-      targetContentOffset?.pointee = scrollingContent.contentOffset
-    }
-
-    moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
   }
 }
 
@@ -593,7 +597,7 @@ extension DynamicBottomSheet {
     }
 
     if !y.isEqual(to: yAnchor, eps: Self.originEps) {
-      move(to: yAnchor, source: source, animated: true, velocity: velocity)
+      move(to: yAnchor, source: source, animated: true, velocity: velocity, completion: completion)
     }
   }
 

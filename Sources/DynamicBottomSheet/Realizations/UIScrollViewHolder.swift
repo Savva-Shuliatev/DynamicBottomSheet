@@ -64,6 +64,8 @@ internal final class UIScrollViewHolder: NSObject, UIScrollViewDelegate {
   ) {
     bottomSheet?.scrollViewWillEndDragging(
       withVelocity: velocity,
+      yContentOffset: scrollView.contentOffset.y,
+      topContentInset: scrollView.contentInset.top,
       targetContentOffset: targetContentOffset
     )
 
