@@ -8,6 +8,10 @@
 
 import UIKit
 
+/// A structure for storing view geometry parameters.
+///
+/// `ViewGeometry` contains the main geometric characteristics of a UIView,
+/// including frame, bounds, and safe area insets.
 public struct ViewGeometry: Equatable, Sendable {
   public let frame: CGRect
   public let bounds: CGRect
