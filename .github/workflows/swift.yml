@@ -8,12 +8,23 @@ on:
 
 jobs:
   build:
-
     runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+    - name: Select Xcode version
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app
+    - name: Build and test (SPM)
+      run: |
+        xcodebuild test -scheme DynamicBottomSheet -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' -enableCodeCoverage YES
+
+    - name: Convert coverage to lcov
+      run: |
+        xcrun llvm-cov export -format=lcov \
+          .build/debug/DynamicBottomSheetPackageTests.xctest/Contents/MacOS/DynamicBottomSheetPackageTests \
+          -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: coverage.lcov

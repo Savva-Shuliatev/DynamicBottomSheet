@@ -1,0 +1,19 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 50%
+        threshold: 5%
+    patch:
+      default:
+        target: 50%
+        threshold: 5%
+
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default
+  require_changes: false
+
+ignore:
+  - "!Sources/**/*"
+  - "*"
