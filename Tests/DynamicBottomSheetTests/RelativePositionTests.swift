@@ -12,7 +12,7 @@ import UIKit
 
 @Suite("Test RelativePosition calculation and moving")
 @MainActor
-struct RelativePositionTests {
+struct BottomSheetWithRelativePositionTests {
 
   let bottomSheet = DynamicBottomSheet()
 

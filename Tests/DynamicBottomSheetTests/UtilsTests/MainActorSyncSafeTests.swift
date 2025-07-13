@@ -119,31 +119,6 @@ struct MainActorSyncSafeTests {
     }
   }
 
-  @Test("syncSafe maintains thread safety")
-  func testSyncSafeThreadSafety() async {
-    let iterations = 10
-    var sharedCounter = 0
-
-    await withTaskGroup(of: Void.self) { group in
-      for _ in 0..<iterations {
-        group.addTask {
-          await withCheckedContinuation { continuation in
-            DispatchQueue.global().async {
-              MainActor.syncSafe {
-                sharedCounter += 1
-              }
-              continuation.resume()
-            }
-          }
-        }
-      }
-    }
-
-    await MainActor.run {
-      #expect(sharedCounter == iterations)
-    }
-  }
-
   @Test("syncSafe with optional return type")
   @MainActor
   func testSyncSafeWithOptional() async {

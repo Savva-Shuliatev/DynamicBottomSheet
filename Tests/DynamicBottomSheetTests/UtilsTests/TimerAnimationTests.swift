@@ -203,7 +203,7 @@ struct TimerAnimationTests {
     let expectation = Expectation()
 
     do {
-      let animation: TimerAnimation? = TimerAnimation(
+      let _: TimerAnimation? = TimerAnimation(
         animations: { _ in .continue },
         completion: { finished in
           completionCalled = true
