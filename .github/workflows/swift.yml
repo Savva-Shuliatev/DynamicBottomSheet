@@ -16,11 +16,35 @@ jobs:
       run: |
         xcodebuild test -scheme DynamicBottomSheet -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.4' -enableCodeCoverage YES
 
+    - name: Debug - List DerivedData contents
+      run: |
+        echo "=== DerivedData structure ==="
+        find ~/Library/Developer/Xcode/DerivedData -name "*DynamicBottomSheet*" -type d 2>/dev/null | head -10
+        echo "=== Profdata files ==="
+        find ~/Library/Developer/Xcode/DerivedData -name "*.profdata" 2>/dev/null | head -5
+        echo "=== Test executables ==="
+        find ~/Library/Developer/Xcode/DerivedData -name "*Tests" -type f 2>/dev/null | head -5
+
     - name: Convert coverage to lcov
       run: |
-        xcrun llvm-cov export -format=lcov \
-          .build/debug/DynamicBottomSheetPackageTests.xctest/Contents/MacOS/DynamicBottomSheetPackageTests \
-          -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
+        # Find the profdata file
+        PROF_DATA=$(find ~/Library/Developer/Xcode/DerivedData -name "*.profdata" -path "*DynamicBottomSheet*" | head -1)
+        # Find the test executable
+        TEST_EXEC=$(find ~/Library/Developer/Xcode/DerivedData -name "DynamicBottomSheetTests" -path "*DynamicBottomSheet*" -type f | head -1)
+        
+        if [ -z "$PROF_DATA" ] || [ -z "$TEST_EXEC" ]; then
+          echo "Error: Could not find profdata or test executable"
+          echo "Available profdata files:"
+          find ~/Library/Developer/Xcode/DerivedData -name "*.profdata" 2>/dev/null
+          echo "Available test executables:"
+          find ~/Library/Developer/Xcode/DerivedData -name "*Tests" -type f 2>/dev/null
+          exit 1
+        fi
+        
+        echo "Using profdata: $PROF_DATA"
+        echo "Using test executable: $TEST_EXEC"
+        
+        xcrun llvm-cov export -format=lcov "$TEST_EXEC" -instr-profile "$PROF_DATA" > coverage.lcov
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
