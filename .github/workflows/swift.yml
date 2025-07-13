@@ -12,8 +12,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Select Xcode version
-      run: sudo xcode-select -s /Applications/Xcode_15.app
     - name: Build and test (SPM)
       run: |
         xcodebuild test -scheme DynamicBottomSheet -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.4' -enableCodeCoverage YES
