@@ -1,5 +1,5 @@
 //
-//  RelativePositionTests.swift
+//  BottomSheetWithRelativePositionTests.swift
 //  DynamicBottomSheet
 //
 //  Copyright (c) 2024 Savva Shuliatev
