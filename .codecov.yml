@@ -1,4 +1,7 @@
 coverage:
+  precision: 2
+  round: down
+  range: "50...100"
   status:
     project:
       default:
@@ -8,6 +11,14 @@ coverage:
       default:
         target: 50%
         threshold: 5%
+
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
 
 comment:
   layout: "reach,diff,flags,files,footer"

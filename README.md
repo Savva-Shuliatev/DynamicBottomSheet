@@ -3,7 +3,7 @@
 ![Swift 5.9](https://img.shields.io/badge/Swift-5.9—6.2-blue.svg)
 ![Platforms](https://img.shields.io/badge/platforms-iOS-blue.svg)
 ![SPM Compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)
-![codecov](https://img.shields.io/codecov/c/github/savvasulatev/DynamicBottomSheet)
+![codecov](https://img.shields.io/codecov/c/github/savvasulatev/DynamicBottomSheet?branch=main)
 
 A highly customizable DynamicBottomSheet UIView for iOS apps, built using Swift. This Swift package provides a flexible and easy-to-integrate bottom sheet view that supports dynamic height selection, allowing developers to create adaptive and interactive UI experiences seamlessly.
 
