@@ -106,7 +106,7 @@ internal extension UIView {
       relatedBy: .equal,
       toItem: nil,
       attribute: .notAnAttribute,
-      multiplier: 0,
+      multiplier: 1.0,
       constant: value
     )
 

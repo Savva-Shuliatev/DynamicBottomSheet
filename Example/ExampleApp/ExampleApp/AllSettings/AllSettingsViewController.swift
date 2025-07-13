@@ -276,7 +276,12 @@ extension AllSettingsViewController: TestContentViewControllerDelegate {
   }
 
   func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-    bottomSheet.scrollViewWillEndDragging(withVelocity: velocity, targetContentOffset: targetContentOffset)
+    bottomSheet.scrollViewWillEndDragging(
+      withVelocity: velocity,
+      yContentOffset: scrollView.contentOffset.y,
+      topContentInset: scrollView.contentInset.top,
+      targetContentOffset: targetContentOffset
+    )
   }
 }
 

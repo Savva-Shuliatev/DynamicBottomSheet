@@ -8,6 +8,25 @@
 
 extension DynamicBottomSheet {
 
+  /// Defines the triggers that can interrupt the bottom sheet's current animation.
+  ///
+  /// `InterruptTrigger` is an option set that allows you to specify which programmatic actions
+  ///  should be able to interrupt the bottom sheet's ongoing animations.
+  ///  This provides fine-grained control over the sheet's responsiveness.
+  ///
+  /// You can combine multiple triggers using set operations to create custom interrupt behaviors.
+  ///
+  /// Example usage:
+  /// ```swift
+  /// // Allow only pan gestures to interrupt
+  /// let trigger: InterruptTrigger = .panGesture
+  ///
+  /// // Allow pan gestures and programmatic changes
+  /// let trigger: InterruptTrigger = [.panGesture, .program]
+  ///
+  /// // Allow all interruptions
+  /// let trigger: InterruptTrigger = .all
+  /// ```
   public struct InterruptTrigger: OptionSet, Sendable {
 
     public let rawValue: Int

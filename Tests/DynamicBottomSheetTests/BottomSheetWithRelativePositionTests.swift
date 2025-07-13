@@ -1,5 +1,5 @@
 //
-//  RelativePositionTests.swift
+//  BottomSheetWithRelativePositionTests.swift
 //  DynamicBottomSheet
 //
 //  Copyright (c) 2024 Savva Shuliatev
@@ -12,7 +12,7 @@ import UIKit
 
 @Suite("Test RelativePosition calculation and moving")
 @MainActor
-struct RelativePositionTests {
+struct BottomSheetWithRelativePositionTests {
 
   let bottomSheet = DynamicBottomSheet()
 

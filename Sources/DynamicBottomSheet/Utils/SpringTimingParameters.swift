@@ -93,7 +93,13 @@ public struct SpringTimingParameters {
         threshold: threshold
       )
     } else {
-      fatalError("dampingRatio should be greater than 0 and less than or equal to 1")
+      assertionFailure("dampingRatio should be greater than 0 and less than or equal to 1")
+      self.impl = UnderdampedSpringTimingParameters(
+        spring: .default,
+        displacement: displacement,
+        initialVelocity: initialVelocity,
+        threshold: threshold
+      )
     }
   }
 }

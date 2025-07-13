@@ -2,12 +2,13 @@
 //  File.swift
 //  DynamicBottomSheet
 //
-//  Created by Savva Shuliatev on 18.12.2024.
+//  Copyright (c) 2024 Savva Shuliatev
+//  This code is covered by the MIT License.
 //
 
+import UIKit
 import Testing
 @testable import DynamicBottomSheet
-import UIKit
 
 @Suite("Grabber Tests")
 @MainActor

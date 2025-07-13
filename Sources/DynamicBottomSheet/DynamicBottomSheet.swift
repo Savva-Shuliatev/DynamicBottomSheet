@@ -15,115 +15,109 @@ import Combine
 
 open class DynamicBottomSheet: UIView {
 
-  open lazy private(set) var detents = Detents(bottomSheet: self)
+  public let detents: Detents
+  public let bottomBar: BottomBar
 
-  open lazy private(set) var bottomBar = BottomBar(bottomSheet: self)
+  public private(set) lazy var visibleView = loadVisibleView()
+  public private(set) lazy var view = loadView()
+  public private(set) lazy var grabber = loadGrabber()
 
-  open private(set) var y: CGFloat = 0 {
-    didSet {
-      visibleViewYConstraint?.constant = y
-    }
-  }
+  /// Animation parameters for the transitions between anchors
+  open var animationParameters: AnimationParameters
 
   /// A Boolean value that controls whether the scroll view bounces past the edge of content and back again.
-  open var bounces: Bool = Values.default.bounces
+  open var bounces: Bool
 
-  open var bouncesFactor: CGFloat = Values.default.bouncesFactor
-
-  open var viewIgnoresTopSafeArea: Bool = Values.default.viewIgnoresTopSafeArea {
-    didSet {
-      guard didLayoutSubviews else { return }
-      updateViewHeight()
-    }
-  }
-
-  open var viewIgnoresBottomSafeArea: Bool = Values.default.viewIgnoresBottomSafeArea {
-    didSet {
-      guard didLayoutSubviews else { return }
-      updateViewHeight()
-    }
-  }
+  open var bouncesFactor: CGFloat
 
   open var canBeRefreshed: Bool = false
 
-  /// Animation parameters for the transitions between anchors
-  open var animationParameters: AnimationParameters = Values.default.animationParameters
-
-  public let onFirstAppear = PassthroughSubject<Void, Never>()
-  public let onWillBeginUpdatingY = PassthroughSubject<WillBeginUpdatingYContext, Never>()
-  public let onDidUpdateY = PassthroughSubject<DidUpdateYContext, Never>()
-  public let onDidEndUpdatingY = PassthroughSubject<DidEndUpdatingYContext, Never>()
-  public let onWillBeginAnimation = PassthroughSubject<WillBeginAnimationContext, Never>()
-  public let onWillMoveToNewY = PassthroughSubject<WillMoveToContext, Never>()
-
-
-  public let visibleView = UIView()
-  public let view = UIView()
-
-  public let grabber: UIView = {
-    let grabber = UIView()
-    grabber.backgroundColor = .tertiaryLabel
-    grabber.layer.cornerRadius = 2.5
-    return grabber
-  }()
-
-  open var prefersGrabberVisible = Values.default.prefersGrabberVisible {
-    didSet {
-      grabber.isHidden = !prefersGrabberVisible
-    }
-  }
-
-  open var cornerRadius: CGFloat = Values.default.cornerRadius {
+  open var cornerRadius: CGFloat {
     didSet {
       guard didLayoutSubviews else { return }
       updateCornerRadius()
     }
   }
 
-  open var shadowColor: CGColor? = Values.default.shadowColor {
+  open var viewIgnoresBottomSafeArea: Bool {
+    didSet {
+      guard didLayoutSubviews else { return }
+      updateViewHeight()
+    }
+  }
+
+  open var viewIgnoresTopSafeArea: Bool {
+    didSet {
+      guard didLayoutSubviews else { return }
+      updateViewHeight()
+    }
+  }
+
+  open var prefersGrabberVisible: Bool {
+    didSet {
+      grabber.isHidden = !prefersGrabberVisible
+    }
+  }
+
+  open var shadowColor: CGColor? {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowColor = shadowColor
     }
   }
 
-  open var shadowOpacity: Float = Values.default.shadowOpacity {
+  open var shadowOpacity: Float {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowOpacity = shadowOpacity
     }
   }
 
-  open var shadowOffset: CGSize = Values.default.shadowOffset {
+  open var shadowOffset: CGSize {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowOffset = shadowOffset
     }
   }
 
-  open var shadowRadius: CGFloat = Values.default.shadowRadius {
-    didSet {
-      guard didLayoutSubviews else { return }
-      layer.shadowRadius = shadowRadius
-    }
-  }
-
-  open var shadowPath: CGPath? = Values.default.shadowPath {
+  open var shadowPath: CGPath? {
     didSet {
       guard didLayoutSubviews else { return }
       layer.shadowPath = shadowPath
     }
   }
 
-  public internal(set) var anchors: [CGFloat] = []
+  open var shadowRadius: CGFloat {
+    didSet {
+      guard didLayoutSubviews else { return }
+      layer.shadowRadius = shadowRadius
+    }
+  }
 
-  public private(set) var didLayoutSubviews = false
+  public let onDidUpdateY = PassthroughSubject<DidUpdateYContext, Never>()
+  public let onDidEndUpdatingY = PassthroughSubject<DidEndUpdatingYContext, Never>()
+  public let onFirstAppear = PassthroughSubject<Void, Never>()
+  public let onWillBeginUpdatingY = PassthroughSubject<WillBeginUpdatingYContext, Never>()
+  public let onWillBeginAnimation = PassthroughSubject<WillBeginAnimationContext, Never>()
+  public let onWillMoveToNewY = PassthroughSubject<WillMoveToContext, Never>()
+
+  public internal(set) var anchors: [CGFloat] = []
 
   public var anchorLimits: ClosedRange<CGFloat>? {
     if let min = anchors.min(), let max = anchors.max() {
       return min...max
     } else {
       return nil
+    }
+  }
+
+  public private(set) var didLayoutSubviews = false
+
+  public private(set) var lastViewGeometry: ViewGeometry = .zero
+
+  open private(set) var y: CGFloat = 0 {
+    didSet {
+      visibleViewYConstraint?.constant = y
     }
   }
 
@@ -144,14 +138,34 @@ open class DynamicBottomSheet: UIView {
 
   private var yAnimation: DynamicBottomSheetDefaultSpringAnimation?
 
-  private var lastViewGeometry: ViewGeometry = .zero
-
   private var subscribers = Subscribers<DynamicBottomSheetSubscriber>()
 
   // MARK: - Init
 
-  public init() {
+  public init(configuration: Configuration? = nil) {
+    let configuration = configuration ?? DynamicBottomSheet.globalConfiguration
+    self.animationParameters = configuration.animationParameters
+    self.bounces = configuration.bounces
+    self.bouncesFactor = configuration.bouncesFactor
+    self.cornerRadius = configuration.cornerRadius
+    self.viewIgnoresBottomSafeArea = configuration.viewIgnoresBottomSafeArea
+    self.viewIgnoresTopSafeArea = configuration.viewIgnoresTopSafeArea
+    self.prefersGrabberVisible = configuration.prefersGrabberVisible
+    self.shadowColor = configuration.shadowColor
+    self.shadowOpacity = configuration.shadowOpacity
+    self.shadowOffset = configuration.shadowOffset
+    self.shadowPath = configuration.shadowPath
+    self.shadowRadius = configuration.shadowRadius
+
+    self.detents = Detents(configuration: configuration.detentsConfiguration)
+    self.bottomBar = BottomBar(configuration: configuration)
+
     super.init(frame: .zero)
+
+    // TODO: Make tests for check it
+    detents.bottomSheet = self
+    bottomBar.bottomSheet = self
+
     setupUI()
   }
 
@@ -160,7 +174,7 @@ open class DynamicBottomSheet: UIView {
     fatalError("init(coder:) has not been implemented")
   }
 
-  // MARK: - UIView
+  // MARK: - UIView methods
 
   open override func layoutSubviews() {
     super.layoutSubviews()
@@ -195,7 +209,7 @@ open class DynamicBottomSheet: UIView {
 
   override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
     let visibleRect = CGRect(
-      x: 0.0,
+      x: .zero,
       y: y,
       width: bounds.width,
       height: bounds.height - y
@@ -239,6 +253,21 @@ open class DynamicBottomSheet: UIView {
 
   open func unsubscribe(_ subscriber: DynamicBottomSheetSubscriber) {
     subscribers.unsubscribe(subscriber)
+  }
+
+  open func loadVisibleView() -> UIView {
+    return UIView()
+  }
+
+  open func loadView() -> UIView {
+    return UIView()
+  }
+
+  open func loadGrabber() -> UIView {
+    let grabber = UIView()
+    grabber.backgroundColor = .tertiaryLabel
+    grabber.layer.cornerRadius = 2.5
+    return grabber
   }
 
 }
@@ -514,30 +543,34 @@ extension DynamicBottomSheet {
 
   public func scrollViewWillEndDragging(
     withVelocity velocity: CGPoint,
+    yContentOffset: CGFloat,
+    topContentInset: CGFloat,
     targetContentOffset: UnsafeMutablePointer<CGPoint>?
   ) {
     guard scrollingListening, yAnimation?.interruptTriggers.contains(.scrollDragging) ?? true else { return }
     scrollingState = .empty
     scrollingOffsetUnderLastAnchor = 0
 
-    guard let limits = anchorLimits, limits.contains(y, eps: Self.originEps) else {
+    if velocity.y == 0 {
+      moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
 
-      if let limits = anchorLimits, y > limits.upperBound {
-        moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
-        return
+    } else if velocity.y > 0 {
+      if let lowerAnchor = anchors.min() {
+        if y.isGreater(than: lowerAnchor, eps: Self.originEps) {
+          if let scrollingContent = scrollingContentHolder?.scrollingContent {
+            targetContentOffset?.pointee = scrollingContent.contentOffset
+          }
+          moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
+        }
+      }
 
+    } else {
+      if yContentOffset > -topContentInset {
+        moveYToTheNearestAnchor(with: .zero, source: .scrollDragging)
       } else {
-        sendDidEndUpdatingY(with: .scrollDragging)
-        return
+        moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
       }
     }
-
-    // Stop scrolling
-    if let scrollingContent = scrollingContentHolder?.scrollingContent {
-      targetContentOffset?.pointee = scrollingContent.contentOffset
-    }
-
-    moveYToTheNearestAnchor(with: -velocity.y, source: .scrollDragging)
   }
 }
 
@@ -550,6 +583,7 @@ extension DynamicBottomSheet {
     case program
   }
 
+  @MainActor
   private static let originEps: CGFloat = 1 / UIScreen.main.scale
 
   private func moveYToTheNearestAnchor(
@@ -563,7 +597,7 @@ extension DynamicBottomSheet {
     }
 
     if !y.isEqual(to: yAnchor, eps: Self.originEps) {
-      move(to: yAnchor, source: source, animated: true, velocity: velocity)
+      move(to: yAnchor, source: source, animated: true, velocity: velocity, completion: completion)
     }
   }
 

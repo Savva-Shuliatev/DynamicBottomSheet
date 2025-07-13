@@ -18,20 +18,20 @@ extension DynamicBottomSheet {
     public let area = UIView()
     public let view = UIView()
 
-    open private(set) var height: CGFloat = Values.default.bottomBarHeight {
+    open private(set) var height: CGFloat {
       didSet {
         bottomSheet?.bottomBarHeightConstraint?.constant = height
       }
     }
 
-    open var viewIgnoresBottomBarHeight: Bool = Values.default.viewIgnoresBottomBarHeight {
+    open var viewIgnoresBottomBarHeight: Bool {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
         bottomSheet.updateViewHeight()
       }
     }
 
-    open var isHidden: Bool = Values.default.bottomBarIsHidden {
+    open var isHidden: Bool {
       didSet {
         guard let bottomSheet else { return }
         area.isHidden = isHidden
@@ -42,15 +42,18 @@ extension DynamicBottomSheet {
     }
 
     /// If value is nil, then substitute the last position from positions or full height of container
-    open var connectedPosition: RelativePosition? = Values.default.detentsValues.bottomBarConnectedPosition {
+    open var connectedPosition: RelativePosition? {
       didSet {
         guard let bottomSheet, bottomSheet.didLayoutSubviews else { return }
         bottomSheet.updateBottomBarAreaHeight()
       }
     }
 
-    public init(bottomSheet: DynamicBottomSheet) {
-      self.bottomSheet = bottomSheet
+    public init(configuration: Configuration) {
+      self.connectedPosition = configuration.detentsConfiguration.bottomBarConnectedPosition
+      self.height = configuration.bottomBarHeight
+      self.viewIgnoresBottomBarHeight = configuration.viewIgnoresBottomBarHeight
+      self.isHidden = configuration.bottomBarIsHidden
     }
 
     open func updateHeight(_ height: CGFloat) {

@@ -8,18 +8,22 @@
 
 import UIKit
 
-internal struct ViewGeometry: Equatable, Sendable {
-  let frame: CGRect
-  let bounds: CGRect
-  let safeAreaInsets: UIEdgeInsets
+/// A structure for storing view geometry parameters.
+///
+/// `ViewGeometry` contains the main geometric characteristics of a UIView,
+/// including frame, bounds, and safe area insets.
+public struct ViewGeometry: Equatable, Sendable {
+  public let frame: CGRect
+  public let bounds: CGRect
+  public let safeAreaInsets: UIEdgeInsets
 
-  static let zero = ViewGeometry(
+  public static let zero = ViewGeometry(
     frame: .zero,
     bounds: .zero,
     safeAreaInsets: .zero
   )
 
-  init(
+  public init(
     frame: CGRect,
     bounds: CGRect,
     safeAreaInsets: UIEdgeInsets
@@ -30,7 +34,7 @@ internal struct ViewGeometry: Equatable, Sendable {
   }
 
   @MainActor
-  init(of view: UIView) {
+  public init(of view: UIView) {
     self.frame = view.frame
     self.bounds = view.bounds
     self.safeAreaInsets = view.safeAreaInsets
