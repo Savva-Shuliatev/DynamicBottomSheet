@@ -13,11 +13,16 @@
 import Foundation
 
 internal extension FloatingPoint {
-  
+  /// Projects a deceleration to its final position.
+  /// - Parameters:
+  ///   - initialVelocity: The initial velocity value (points per second).
+  ///   - decelerationRate: The deceleration rate (must be in range 0..<1).
+  /// - Returns: The final projected position. In Release, returns `0` if decelerationRate is invalid.
+  @inlinable
   static func project(initialVelocity: Self, decelerationRate: Self) -> Self {
-    if decelerationRate >= 1 {
-      assertionFailure()
-      return initialVelocity
+    guard decelerationRate >= 0 && decelerationRate < 1 else {
+      assert(decelerationRate >= 0 && decelerationRate < 1, "Deceleration rate must be in range 0..<1")
+        return 0
     }
 
     return initialVelocity * decelerationRate / (1 - decelerationRate)
