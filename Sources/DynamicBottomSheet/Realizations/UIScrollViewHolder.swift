@@ -14,7 +14,7 @@ internal final class UIScrollViewHolder: NSObject, UIScrollViewDelegate {
   private weak var scrollView: UIScrollView?
   private weak var bottomSheet: DynamicBottomSheet?
 
-  nonisolated(unsafe) private weak var originalDelegate: UIScrollViewDelegate?
+  private weak var originalDelegate: UIScrollViewDelegate?
   private var observeDelegate: NSKeyValueObservation?
 
   init(scrollView: UIScrollView, bottomSheet: DynamicBottomSheet) {
@@ -34,7 +34,7 @@ internal final class UIScrollViewHolder: NSObject, UIScrollViewDelegate {
         newDelegate !== self
       else { return }
 
-      DispatchQueue.main.async { [weak self] in
+      MainActor.syncSafe { [weak self] in
         guard let self else { return }
         self.originalDelegate = scrollView.delegate
         scrollView.delegate = self
