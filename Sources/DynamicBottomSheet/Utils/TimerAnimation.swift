@@ -31,7 +31,13 @@ internal final class TimerAnimation {
 
     self.firstFrameTimestamp = CACurrentMediaTime()
 
-    let displayLink = CADisplayLink(target: self, selector: #selector(handleFrame(_:)))
+    let proxy = DisplayLinkProxy()
+    proxy.target = self
+
+    let displayLink = CADisplayLink(
+      target: proxy,
+      selector: #selector(DisplayLinkProxy.handleFrame(_:))
+    )
     displayLink.add(to: .main, forMode: RunLoop.Mode.common)
     self.displayLink = displayLink
   }
@@ -40,10 +46,10 @@ internal final class TimerAnimation {
     invalidate()
   }
 
-  func invalidate(withColmpletion: Bool = true) {
+  func invalidate(withCompletion: Bool = true) {
     guard running else { return }
     running = false
-    if withColmpletion {
+    if withCompletion {
       completion?(false)
     }
     displayLink?.invalidate()
@@ -53,11 +59,11 @@ internal final class TimerAnimation {
 
   private let animations: Animations
   private let completion: Completion?
-  private weak var displayLink: CADisplayLink?
+  private var displayLink: CADisplayLink?
 
   private let firstFrameTimestamp: CFTimeInterval
 
-  @objc private func handleFrame(_ displayLink: CADisplayLink) {
+  @objc fileprivate func handleFrame(_ displayLink: CADisplayLink) {
     guard running else { return }
     let elapsed = CACurrentMediaTime() - firstFrameTimestamp
 
@@ -70,5 +76,16 @@ internal final class TimerAnimation {
       completion?(true)
       displayLink.invalidate()
     }
+  }
+}
+
+// MARK: - DisplayLinkProxy
+
+private final class DisplayLinkProxy {
+
+  weak var target: TimerAnimation?
+
+  @objc func handleFrame(_ displayLink: CADisplayLink) {
+    target?.handleFrame(displayLink)
   }
 }

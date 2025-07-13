@@ -80,7 +80,7 @@ internal final class DynamicBottomSheetDefaultSpringAnimation: DynamicBottomShee
   private func updateAnimation() {
     guard !isDone else { return }
 
-    animation?.invalidate(withColmpletion: false)
+    animation?.invalidate(withCompletion: false)
 
     let to = y
     let timingParameters = makeTimingParameters()
