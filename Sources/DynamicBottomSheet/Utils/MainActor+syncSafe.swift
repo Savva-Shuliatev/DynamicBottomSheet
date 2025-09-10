@@ -10,7 +10,7 @@ import Foundation
 
 extension MainActor {
   @discardableResult
-  public static func syncSafe<T: Sendable>(_ action: @MainActor () -> T) -> T {
+  internal static func syncSafe<T: Sendable>(_ action: @MainActor () -> T) -> T {
     Thread.isMainThread
     ? MainActor.assumeIsolated(action)
     : DispatchQueue.main.sync(execute: action)
