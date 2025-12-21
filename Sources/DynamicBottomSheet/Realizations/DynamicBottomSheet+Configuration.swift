@@ -26,6 +26,7 @@ extension DynamicBottomSheet {
     public var shadowOpacity: Float
     public var shadowOffset: CGSize
     public var shadowRadius: CGFloat
+    public var shadowMode: ShadowMode
     public var shadowPath: CGPath?
     public var bottomBarIsHidden: Bool
     public var bottomBarHeight: CGFloat
@@ -44,6 +45,7 @@ extension DynamicBottomSheet {
       shadowOpacity: Float = Configuration.default.shadowOpacity,
       shadowOffset: CGSize = Configuration.default.shadowOffset,
       shadowRadius: CGFloat = Configuration.default.shadowRadius,
+      shadowMode: ShadowMode = Configuration.default.shadowMode,
       shadowPath: CGPath? = Configuration.default.shadowPath,
       bottomBarIsHidden: Bool = Configuration.default.bottomBarIsHidden,
       bottomBarHeight: CGFloat = Configuration.default.bottomBarHeight,
@@ -61,6 +63,7 @@ extension DynamicBottomSheet {
       self.shadowOpacity = shadowOpacity
       self.shadowOffset = shadowOffset
       self.shadowRadius = shadowRadius
+      self.shadowMode = shadowMode
       self.shadowPath = shadowPath
       self.bottomBarIsHidden = bottomBarIsHidden
       self.bottomBarHeight = bottomBarHeight
@@ -80,6 +83,7 @@ extension DynamicBottomSheet {
       shadowOpacity: 0.5,
       shadowOffset: CGSize(width: 1.5, height: 1.5),
       shadowRadius: 3.0,
+      shadowMode: .optimized,
       shadowPath: nil,
       bottomBarIsHidden: true,
       bottomBarHeight: 64.0,

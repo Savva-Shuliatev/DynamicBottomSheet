@@ -62,35 +62,42 @@ open class DynamicBottomSheet: UIView {
   open var shadowColor: CGColor? {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowColor = shadowColor
+      updateShadows()
     }
   }
 
   open var shadowOpacity: Float {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowOpacity = shadowOpacity
+      updateShadows()
     }
   }
 
   open var shadowOffset: CGSize {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowOffset = shadowOffset
+      updateShadows()
+    }
+  }
+
+  open var shadowMode: ShadowMode {
+    didSet {
+      guard didLayoutSubviews else { return }
+      updateShadows()
     }
   }
 
   open var shadowPath: CGPath? {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowPath = shadowPath
+      updateShadows()
     }
   }
 
   open var shadowRadius: CGFloat {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowRadius = shadowRadius
+      updateShadows()
     }
   }
 
@@ -154,6 +161,7 @@ open class DynamicBottomSheet: UIView {
     self.shadowColor = configuration.shadowColor
     self.shadowOpacity = configuration.shadowOpacity
     self.shadowOffset = configuration.shadowOffset
+    self.shadowMode = configuration.shadowMode
     self.shadowPath = configuration.shadowPath
     self.shadowRadius = configuration.shadowRadius
 
@@ -162,7 +170,6 @@ open class DynamicBottomSheet: UIView {
 
     super.init(frame: .zero)
 
-    // TODO: Make tests for check it
     detents.bottomSheet = self
     bottomBar.bottomSheet = self
 
@@ -186,13 +193,9 @@ open class DynamicBottomSheet: UIView {
       detents.updateAnchors()
       updateCornerRadius()
 
-      layer.shadowColor = shadowColor
-      layer.shadowOpacity = shadowOpacity
-      layer.shadowOffset = shadowOffset
-      layer.shadowRadius = shadowRadius
-      layer.shadowPath = shadowPath
-
       onFirstAppear.send()
+      /// Layout visibleView for shadows by `updateShadows`
+      visibleView.layoutIfNeeded()
     }
 
     if lastViewGeometry != ViewGeometry(of: self) {
@@ -203,7 +206,11 @@ open class DynamicBottomSheet: UIView {
       updateViewHeight()
       updateViewTopAnchor()
       updateBottomBarAreaHeight()
+      /// Layout visibleView for shadows by `updateShadows`
+      visibleView.layoutIfNeeded()
     }
+
+    updateShadows()
 
   }
 
@@ -327,6 +334,50 @@ extension DynamicBottomSheet {
     visibleView.layer.cornerRadius = cornerRadius
     visibleView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     visibleView.layer.masksToBounds = true
+  }
+
+  private func updateShadows() {
+    guard didLayoutSubviews else { return }
+
+    if layer.shadowColor != shadowColor {
+      self.layer.shadowColor = shadowColor
+    }
+
+    if layer.shadowOpacity != shadowOpacity {
+      layer.shadowOpacity = shadowOpacity
+    }
+
+    if layer.shadowOffset != shadowOffset {
+      layer.shadowOffset = shadowOffset
+    }
+
+    if layer.shadowRadius != shadowRadius {
+      layer.shadowRadius = shadowRadius
+    }
+
+    if shadowPath != nil {
+      if layer.shadowPath != shadowPath {
+        layer.shadowPath = shadowPath
+      }
+    } else {
+      switch shadowMode {
+      case .automatic:
+        if layer.shadowPath != nil {
+          layer.shadowPath = nil
+        }
+
+      case .optimized:
+        let path = UIBezierPath(
+          roundedRect: visibleView.frame,
+          cornerRadius: cornerRadius
+        ).cgPath
+
+        if layer.shadowPath != path {
+          layer.shadowPath = path
+        }
+      }
+    }
+
   }
 }
 
