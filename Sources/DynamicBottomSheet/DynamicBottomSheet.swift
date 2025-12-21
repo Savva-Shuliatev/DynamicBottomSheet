@@ -317,17 +317,16 @@ extension DynamicBottomSheet {
   }
 
   private func updateCornerRadius() {
-    guard didLayoutSubviews else { return }
     let cornerRadius = max(0, cornerRadius)
 
-    let path = UIBezierPath(
-      roundedRect: bounds,
-      byRoundingCorners: [.topLeft, .topRight],
-      cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
-    )
-    let mask = CAShapeLayer()
-    mask.path = path.cgPath
-    visibleView.layer.mask = mask
+    guard
+      didLayoutSubviews,
+      visibleView.layer.cornerRadius != cornerRadius
+    else { return }
+
+    visibleView.layer.cornerRadius = cornerRadius
+    visibleView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+    visibleView.layer.masksToBounds = true
   }
 }
 
