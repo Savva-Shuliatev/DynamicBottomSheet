@@ -22,6 +22,13 @@ open class DynamicBottomSheet: UIView {
   public private(set) lazy var view = loadView()
   public private(set) lazy var grabber = loadGrabber()
 
+  public var areAnimationsEnabled: Bool
+
+#if DEBUG
+  @MainActor
+  public static var slowAnimations = false
+#endif
+
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters
 
@@ -36,6 +43,7 @@ open class DynamicBottomSheet: UIView {
     didSet {
       guard didLayoutSubviews else { return }
       updateCornerRadius()
+      updateShadows()
     }
   }
 
@@ -62,35 +70,42 @@ open class DynamicBottomSheet: UIView {
   open var shadowColor: CGColor? {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowColor = shadowColor
+      updateShadows()
     }
   }
 
   open var shadowOpacity: Float {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowOpacity = shadowOpacity
+      updateShadows()
     }
   }
 
   open var shadowOffset: CGSize {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowOffset = shadowOffset
+      updateShadows()
+    }
+  }
+
+  open var shadowMode: ShadowMode {
+    didSet {
+      guard didLayoutSubviews else { return }
+      updateShadows()
     }
   }
 
   open var shadowPath: CGPath? {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowPath = shadowPath
+      updateShadows()
     }
   }
 
   open var shadowRadius: CGFloat {
     didSet {
       guard didLayoutSubviews else { return }
-      layer.shadowRadius = shadowRadius
+      updateShadows()
     }
   }
 
@@ -144,6 +159,7 @@ open class DynamicBottomSheet: UIView {
 
   public init(configuration: Configuration? = nil) {
     let configuration = configuration ?? DynamicBottomSheet.globalConfiguration
+    self.areAnimationsEnabled = configuration.areAnimationsEnabled
     self.animationParameters = configuration.animationParameters
     self.bounces = configuration.bounces
     self.bouncesFactor = configuration.bouncesFactor
@@ -154,6 +170,7 @@ open class DynamicBottomSheet: UIView {
     self.shadowColor = configuration.shadowColor
     self.shadowOpacity = configuration.shadowOpacity
     self.shadowOffset = configuration.shadowOffset
+    self.shadowMode = configuration.shadowMode
     self.shadowPath = configuration.shadowPath
     self.shadowRadius = configuration.shadowRadius
 
@@ -162,7 +179,6 @@ open class DynamicBottomSheet: UIView {
 
     super.init(frame: .zero)
 
-    // TODO: Make tests for check it
     detents.bottomSheet = self
     bottomBar.bottomSheet = self
 
@@ -186,12 +202,6 @@ open class DynamicBottomSheet: UIView {
       detents.updateAnchors()
       updateCornerRadius()
 
-      layer.shadowColor = shadowColor
-      layer.shadowOpacity = shadowOpacity
-      layer.shadowOffset = shadowOffset
-      layer.shadowRadius = shadowRadius
-      layer.shadowPath = shadowPath
-
       onFirstAppear.send()
     }
 
@@ -204,6 +214,8 @@ open class DynamicBottomSheet: UIView {
       updateViewTopAnchor()
       updateBottomBarAreaHeight()
     }
+
+    updateShadows()
 
   }
 
@@ -317,17 +329,67 @@ extension DynamicBottomSheet {
   }
 
   private func updateCornerRadius() {
-    guard didLayoutSubviews else { return }
     let cornerRadius = max(0, cornerRadius)
 
-    let path = UIBezierPath(
-      roundedRect: bounds,
-      byRoundingCorners: [.topLeft, .topRight],
-      cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
-    )
-    let mask = CAShapeLayer()
-    mask.path = path.cgPath
-    visibleView.layer.mask = mask
+    guard
+      didLayoutSubviews,
+      visibleView.layer.cornerRadius != cornerRadius
+    else { return }
+
+    visibleView.layer.cornerRadius = cornerRadius
+    visibleView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+    visibleView.layer.masksToBounds = true
+  }
+
+  private func updateShadows() {
+    guard didLayoutSubviews else { return }
+
+    if layer.shadowColor != shadowColor {
+      self.layer.shadowColor = shadowColor
+    }
+
+    if layer.shadowOpacity != shadowOpacity {
+      layer.shadowOpacity = shadowOpacity
+    }
+
+    if layer.shadowOffset != shadowOffset {
+      layer.shadowOffset = shadowOffset
+    }
+
+    if layer.shadowRadius != shadowRadius {
+      layer.shadowRadius = shadowRadius
+    }
+
+    if shadowPath != nil {
+      if layer.shadowPath != shadowPath {
+        layer.shadowPath = shadowPath
+      }
+    } else {
+      switch shadowMode {
+      case .automatic:
+        if layer.shadowPath != nil {
+          layer.shadowPath = nil
+        }
+
+      case .optimized:
+        let targetRect = CGRect(
+          x: 0,
+          y: y,
+          width: bounds.width,
+          height: max(0, bounds.height - y)
+        )
+
+        let path = UIBezierPath(
+          roundedRect: targetRect,
+          cornerRadius: cornerRadius
+        ).cgPath
+
+        if layer.shadowPath != path {
+          layer.shadowPath = path
+        }
+      }
+    }
+
   }
 }
 
@@ -743,6 +805,8 @@ extension DynamicBottomSheet {
     velocity: CGFloat? = nil,
     completion: ((Bool) -> Void)? = nil
   ) {
+    let testableAnimated = areAnimationsEnabled && UIView.areAnimationsEnabled && animated
+
     sendwillMoveToY(
       to: newY,
       source: source,
@@ -752,7 +816,7 @@ extension DynamicBottomSheet {
     )
     stopYAnimation()
 
-    guard animated else {
+    guard testableAnimated else {
       updateY(newY, source: source)
       sendDidEndUpdatingY(with: source)
       completion?(true)

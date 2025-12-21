@@ -10,7 +10,7 @@
 //  This code is also covered by the MIT License.
 //
 
-import Foundation
+import UIKit
 import QuartzCore
 
 internal final class TimerAnimation {
@@ -28,8 +28,6 @@ internal final class TimerAnimation {
   init(animations: @escaping Animations, completion: Completion? = nil) {
     self.animations = animations
     self.completion = completion
-
-    self.firstFrameTimestamp = CACurrentMediaTime()
 
     let proxy = DisplayLinkProxy()
     proxy.target = self
@@ -61,13 +59,22 @@ internal final class TimerAnimation {
   private let completion: Completion?
   private var displayLink: CADisplayLink?
 
-  private let firstFrameTimestamp: CFTimeInterval
+  private var accumulatedTime: TimeInterval = 0
 
+  @MainActor
   @objc fileprivate func handleFrame(_ displayLink: CADisplayLink) {
     guard running else { return }
-    let elapsed = CACurrentMediaTime() - firstFrameTimestamp
 
-    let targetState = animations(elapsed)
+    let speed = DynamicBottomSheet.slowAnimations ? 0.1 : 1.0
+
+    assert(speed > 0, "Speed of TimerAnimation in DynamicBottomSheet must be > 0")
+
+    let frameDuration = displayLink.targetTimestamp - displayLink.timestamp
+
+    accumulatedTime += frameDuration * Double(speed)
+
+    let targetState = animations(accumulatedTime)
+
     switch targetState {
     case .continue:
       break
@@ -85,6 +92,7 @@ private final class DisplayLinkProxy {
 
   weak var target: TimerAnimation?
 
+  @MainActor
   @objc func handleFrame(_ displayLink: CADisplayLink) {
     target?.handleFrame(displayLink)
   }

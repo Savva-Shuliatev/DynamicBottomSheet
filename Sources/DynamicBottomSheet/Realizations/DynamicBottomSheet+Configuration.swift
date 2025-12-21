@@ -26,9 +26,11 @@ extension DynamicBottomSheet {
     public var shadowOpacity: Float
     public var shadowOffset: CGSize
     public var shadowRadius: CGFloat
+    public var shadowMode: ShadowMode
     public var shadowPath: CGPath?
     public var bottomBarIsHidden: Bool
     public var bottomBarHeight: CGFloat
+    public var areAnimationsEnabled: Bool
     public var animationParameters: DynamicBottomSheet.AnimationParameters
     public var detentsConfiguration: Detents.Configuration
 
@@ -44,9 +46,11 @@ extension DynamicBottomSheet {
       shadowOpacity: Float = Configuration.default.shadowOpacity,
       shadowOffset: CGSize = Configuration.default.shadowOffset,
       shadowRadius: CGFloat = Configuration.default.shadowRadius,
+      shadowMode: ShadowMode = Configuration.default.shadowMode,
       shadowPath: CGPath? = Configuration.default.shadowPath,
       bottomBarIsHidden: Bool = Configuration.default.bottomBarIsHidden,
       bottomBarHeight: CGFloat = Configuration.default.bottomBarHeight,
+      areAnimationsEnabled: Bool = Configuration.default.areAnimationsEnabled,
       animationParameters: DynamicBottomSheet.AnimationParameters = Configuration.default.animationParameters,
       detentsConfiguration: Detents.Configuration = Detents.Configuration.default
     ) {
@@ -61,9 +65,11 @@ extension DynamicBottomSheet {
       self.shadowOpacity = shadowOpacity
       self.shadowOffset = shadowOffset
       self.shadowRadius = shadowRadius
+      self.shadowMode = shadowMode
       self.shadowPath = shadowPath
       self.bottomBarIsHidden = bottomBarIsHidden
       self.bottomBarHeight = bottomBarHeight
+      self.areAnimationsEnabled = areAnimationsEnabled
       self.animationParameters = animationParameters
       self.detentsConfiguration = detentsConfiguration
     }
@@ -80,9 +86,11 @@ extension DynamicBottomSheet {
       shadowOpacity: 0.5,
       shadowOffset: CGSize(width: 1.5, height: 1.5),
       shadowRadius: 3.0,
+      shadowMode: .optimized,
       shadowPath: nil,
       bottomBarIsHidden: true,
       bottomBarHeight: 64.0,
+      areAnimationsEnabled: true,
       animationParameters: .spring(.default),
       detentsConfiguration: .default
     )
