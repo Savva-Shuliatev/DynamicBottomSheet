@@ -30,6 +30,7 @@ extension DynamicBottomSheet {
     public var shadowPath: CGPath?
     public var bottomBarIsHidden: Bool
     public var bottomBarHeight: CGFloat
+    public var areAnimationsEnabled: Bool
     public var animationParameters: DynamicBottomSheet.AnimationParameters
     public var detentsConfiguration: Detents.Configuration
 
@@ -49,6 +50,7 @@ extension DynamicBottomSheet {
       shadowPath: CGPath? = Configuration.default.shadowPath,
       bottomBarIsHidden: Bool = Configuration.default.bottomBarIsHidden,
       bottomBarHeight: CGFloat = Configuration.default.bottomBarHeight,
+      areAnimationsEnabled: Bool = Configuration.default.areAnimationsEnabled,
       animationParameters: DynamicBottomSheet.AnimationParameters = Configuration.default.animationParameters,
       detentsConfiguration: Detents.Configuration = Detents.Configuration.default
     ) {
@@ -67,6 +69,7 @@ extension DynamicBottomSheet {
       self.shadowPath = shadowPath
       self.bottomBarIsHidden = bottomBarIsHidden
       self.bottomBarHeight = bottomBarHeight
+      self.areAnimationsEnabled = areAnimationsEnabled
       self.animationParameters = animationParameters
       self.detentsConfiguration = detentsConfiguration
     }
@@ -87,6 +90,7 @@ extension DynamicBottomSheet {
       shadowPath: nil,
       bottomBarIsHidden: true,
       bottomBarHeight: 64.0,
+      areAnimationsEnabled: true,
       animationParameters: .spring(.default),
       detentsConfiguration: .default
     )

@@ -22,6 +22,8 @@ open class DynamicBottomSheet: UIView {
   public private(set) lazy var view = loadView()
   public private(set) lazy var grabber = loadGrabber()
 
+  public var areAnimationsEnabled: Bool
+
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters
 
@@ -151,6 +153,7 @@ open class DynamicBottomSheet: UIView {
 
   public init(configuration: Configuration? = nil) {
     let configuration = configuration ?? DynamicBottomSheet.globalConfiguration
+    self.areAnimationsEnabled = configuration.areAnimationsEnabled
     self.animationParameters = configuration.animationParameters
     self.bounces = configuration.bounces
     self.bouncesFactor = configuration.bouncesFactor
@@ -793,6 +796,8 @@ extension DynamicBottomSheet {
     velocity: CGFloat? = nil,
     completion: ((Bool) -> Void)? = nil
   ) {
+    let testableAnimated = areAnimationsEnabled && UIView.areAnimationsEnabled && animated
+
     sendwillMoveToY(
       to: newY,
       source: source,
@@ -802,7 +807,7 @@ extension DynamicBottomSheet {
     )
     stopYAnimation()
 
-    guard animated else {
+    guard testableAnimated else {
       updateY(newY, source: source)
       sendDidEndUpdatingY(with: source)
       completion?(true)
