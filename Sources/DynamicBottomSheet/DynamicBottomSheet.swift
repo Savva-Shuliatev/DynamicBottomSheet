@@ -43,6 +43,7 @@ open class DynamicBottomSheet: UIView {
     didSet {
       guard didLayoutSubviews else { return }
       updateCornerRadius()
+      updateShadows()
     }
   }
 
@@ -202,8 +203,6 @@ open class DynamicBottomSheet: UIView {
       updateCornerRadius()
 
       onFirstAppear.send()
-      /// Layout visibleView for shadows by `updateShadows`
-      visibleView.layoutIfNeeded()
     }
 
     if lastViewGeometry != ViewGeometry(of: self) {
@@ -214,8 +213,6 @@ open class DynamicBottomSheet: UIView {
       updateViewHeight()
       updateViewTopAnchor()
       updateBottomBarAreaHeight()
-      /// Layout visibleView for shadows by `updateShadows`
-      visibleView.layoutIfNeeded()
     }
 
     updateShadows()
@@ -375,8 +372,15 @@ extension DynamicBottomSheet {
         }
 
       case .optimized:
+        let targetRect = CGRect(
+          x: 0,
+          y: y,
+          width: bounds.width,
+          height: max(0, bounds.height - y)
+        )
+
         let path = UIBezierPath(
-          roundedRect: visibleView.frame,
+          roundedRect: targetRect,
           cornerRadius: cornerRadius
         ).cgPath
 
