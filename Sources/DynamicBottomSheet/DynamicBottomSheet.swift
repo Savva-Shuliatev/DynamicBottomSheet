@@ -24,6 +24,11 @@ open class DynamicBottomSheet: UIView {
 
   public var areAnimationsEnabled: Bool
 
+#if DEBUG
+  @MainActor
+  public static var slowAnimations = false
+#endif
+
   /// Animation parameters for the transitions between anchors
   open var animationParameters: AnimationParameters
 
