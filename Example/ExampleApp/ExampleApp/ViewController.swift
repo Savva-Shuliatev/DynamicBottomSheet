@@ -11,6 +11,9 @@ import SwiftUI
 
 enum Example {
   case allSettings
+  case glass
+  case nativeBottomSheet
+  case testNativeBottomSheet
 
   case appleMaps
   case voiceMemos
@@ -51,6 +54,12 @@ final class ViewController: UIViewController {
     case .allSettings:
       show(AllSettingsViewController())
 
+    case .glass:
+      show(MapViewController())
+
+    case .nativeBottomSheet:
+      show(NativeBottomSheetViewController())
+
     case .appleMaps:
       break
 
@@ -75,17 +84,27 @@ final class ViewController: UIViewController {
     case .theme:
       let themeViewController = ThemeViewController()
       themeViewController.modalPresentationStyle = .overFullScreen
-      show(themeViewController)
+      show(MapViewController())
 
     case .changeScrollContent:
       break
 
     case .changeStaticToScrollContent:
       break
+
+    case .testNativeBottomSheet:
+      show(
+        UIHostingController(rootView: SUIView()),
+        modalPresentationStyle: .automatic
+      )
     }
   }
 
-  private func show(_ viewController: UIViewController) {
+  private func show(
+    _ viewController: UIViewController,
+    modalPresentationStyle: UIModalPresentationStyle = .fullScreen
+  ) {
+    viewController.modalPresentationStyle = modalPresentationStyle
     present(viewController, animated: true)
   }
 }
@@ -99,6 +118,9 @@ struct ListView: View {
       List {
         Section {
           Button("All settings", action: show(.allSettings))
+          Button("Glass Style", action: show(.glass))
+          Button("Native Bottom Sheet", action: show(.nativeBottomSheet))
+          Button("Native Bottom Sheet", action: show(.testNativeBottomSheet))
         }
 
         Section(header: Text("Apps")) {

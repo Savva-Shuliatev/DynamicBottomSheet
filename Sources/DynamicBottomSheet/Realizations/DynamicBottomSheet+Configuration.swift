@@ -15,6 +15,7 @@ extension DynamicBottomSheet {
 
 extension DynamicBottomSheet {
   public struct Configuration {
+    public var scrollViewIntegrationMode: ScrollViewIntegrationMode
     public var bounces: Bool
     public var bouncesFactor: CGFloat
     public var viewIgnoresTopSafeArea: Bool
@@ -35,6 +36,7 @@ extension DynamicBottomSheet {
     public var detentsConfiguration: Detents.Configuration
 
     public init(
+      scrollViewIntegrationMode: ScrollViewIntegrationMode = Configuration.default.scrollViewIntegrationMode,
       bounces: Bool = Configuration.default.bounces,
       bouncesFactor: CGFloat = Configuration.default.bouncesFactor,
       viewIgnoresTopSafeArea: Bool = Configuration.default.viewIgnoresTopSafeArea,
@@ -54,6 +56,7 @@ extension DynamicBottomSheet {
       animationParameters: DynamicBottomSheet.AnimationParameters = Configuration.default.animationParameters,
       detentsConfiguration: Detents.Configuration = Detents.Configuration.default
     ) {
+      self.scrollViewIntegrationMode = scrollViewIntegrationMode
       self.bounces = bounces
       self.bouncesFactor = bouncesFactor
       self.viewIgnoresTopSafeArea = viewIgnoresTopSafeArea
@@ -75,6 +78,7 @@ extension DynamicBottomSheet {
     }
 
     public static let `default` = Configuration(
+      scrollViewIntegrationMode: .auto,
       bounces: true,
       bouncesFactor: 0.1,
       viewIgnoresTopSafeArea: true,

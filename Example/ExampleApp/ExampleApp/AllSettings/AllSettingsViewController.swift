@@ -42,7 +42,7 @@ final class AllSettingsViewController: ExampleViewController {
     bottomSheet.view.addSubview(contentViewController.view)
     contentViewController.view.constraints([.top, .bottom, .leading, .trailing])
     contentViewController.didMove(toParent: self)
-    bottomSheet.connect(contentViewController)
+    //bottomSheet.connect(contentViewController)
 
     return bottomSheet
   }()
@@ -256,7 +256,7 @@ final class AllSettingsViewController: ExampleViewController {
 extension AllSettingsViewController: TestContentViewControllerDelegate {
   
   func showSecondTableView(_ scrollView: UIScrollView) {
-    bottomSheet.connect(scrollView)
+   //bottomSheet.connect(scrollView)
   }
 
   func hide() {
@@ -264,7 +264,7 @@ extension AllSettingsViewController: TestContentViewControllerDelegate {
   }
 
   func hideSecondTableView() {
-    bottomSheet.connect(contentViewController)
+   //bottomSheet.connect(contentViewController)
   }
   
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
