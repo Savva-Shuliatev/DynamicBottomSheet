@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 protocol TestContentViewControllerDelegate: AnyObject {
   func scrollViewWillBeginDragging(
@@ -38,6 +39,9 @@ final class TestContentViewController: UIViewController {
   let tableView1 = UITableView()
   let tableView2 = SomeTableView()
   let closeButton = UIButton(type: .close)
+  lazy var hostingController: UIHostingController<SUIView> = {
+    UIHostingController(rootView: SUIView())
+  }()
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -56,6 +60,7 @@ extension TestContentViewController {
     setupHeaderView()
     setupTableView1()
     tableView2.isHidden = true
+    addHostingController()
     closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
   }
 
@@ -83,6 +88,16 @@ extension TestContentViewController {
     closeButton.widthAnchor.constraint(equalToConstant: 36).isActive = true
   }
 
+  private func addHostingController() {
+    addChild(hostingController)
+    let hostingView = hostingController.view!
+    view.addSubview(hostingView)
+    hostingView.constraints([.bottom, .leading, .trailing])
+    hostingView.topAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
+    hostingView.isHidden = true
+    hostingController.didMove(toParent: self)
+  }
+
   private func setupHeaderView() {
     let titleLabel = UILabel()
     titleLabel.text = "Some static UIVIew"
@@ -91,7 +106,7 @@ extension TestContentViewController {
     titleLabel.constraint(.centerX)
     titleLabel.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 24).isActive = true
 
-    let items = ["ScrollingContent", "ScrollView"]
+    let items = ["ScrollingContent", "ScrollView", "SUI"]
     let segmentedControl = UISegmentedControl(items: items)
     segmentedControl.selectedSegmentIndex = 0
     headerView.addSubview(segmentedControl)
@@ -105,11 +120,19 @@ extension TestContentViewController {
 
   @objc func segmentChanged(_ sender: UISegmentedControl) {
     if sender.selectedSegmentIndex == 0 {
+      tableView1.isHidden = false
       tableView2.isHidden = true
+      hostingController.view.isHidden = true
       delegate?.hideSecondTableView()
-    } else {
+    } else if sender.selectedSegmentIndex == 1 {
+      tableView1.isHidden = true
       tableView2.isHidden = false
+      hostingController.view.isHidden = true
       delegate?.showSecondTableView(tableView2)
+    } else {
+      tableView1.isHidden = true
+      tableView2.isHidden = true
+      hostingController.view.isHidden = false
     }
   }
 

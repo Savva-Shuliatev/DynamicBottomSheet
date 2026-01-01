@@ -11,7 +11,7 @@ import UIKit
 @MainActor
 internal final class UIScrollViewHolder: NSObject, UIScrollViewDelegate {
 
-  private weak var scrollView: UIScrollView?
+  private(set) weak var scrollView: UIScrollView?
   private weak var bottomSheet: DynamicBottomSheet?
 
   private weak var originalDelegate: UIScrollViewDelegate?

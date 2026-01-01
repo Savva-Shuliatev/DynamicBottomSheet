@@ -217,8 +217,11 @@ struct AllSettingsView: View {
             ))
             cell("Path", value: viewModel.shadowPath)
           }
+
+          Color.clear
+            .frame(height: max(0, viewModel.height - viewModel.bottomSafeAreaInset))
+            .listRowInsets(EdgeInsets())
         }
-        .padding(.bottom, max(0, viewModel.height - viewModel.bottomSafeAreaInset))
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

@@ -22,6 +22,8 @@ open class DynamicBottomSheet: UIView {
   public private(set) lazy var view = loadView()
   public private(set) lazy var grabber = loadGrabber()
 
+  public var scrollViewIntegrationMode: ScrollViewIntegrationMode
+
   public var areAnimationsEnabled: Bool
 
 #if DEBUG
@@ -159,6 +161,7 @@ open class DynamicBottomSheet: UIView {
 
   public init(configuration: Configuration? = nil) {
     let configuration = configuration ?? DynamicBottomSheet.globalConfiguration
+    self.scrollViewIntegrationMode = configuration.scrollViewIntegrationMode
     self.areAnimationsEnabled = configuration.areAnimationsEnabled
     self.animationParameters = configuration.animationParameters
     self.bounces = configuration.bounces
@@ -311,6 +314,7 @@ extension DynamicBottomSheet {
 
     visibleView.addGestureRecognizer(panRecognizer)
     panRecognizer.addTarget(self, action: #selector(handlePanRecognizer))
+    panRecognizer.delegate = self
   }
 
   private func setInitialLayout() {
@@ -474,6 +478,17 @@ extension DynamicBottomSheet {
 extension DynamicBottomSheet {
 
   public func connect(_ scrollView: UIScrollView) {
+    if let currentScrollingContentHolder = scrollingContentHolder {
+      switch currentScrollingContentHolder {
+      case .scrollViewHolder(let scrollViewHolder):
+        if scrollViewHolder.scrollView === scrollView {
+          return
+        }
+      case .scrollingContent(let weakscrollingContentBox):
+        break
+      }
+    }
+
     let scrollViewHolder = UIScrollViewHolder(
       scrollView: scrollView,
       bottomSheet: self
@@ -920,4 +935,73 @@ extension DynamicBottomSheet {
     )
   }
 
+}
+
+// MARK: UIGestureRecognizerDelegate
+
+extension DynamicBottomSheet: UIGestureRecognizerDelegate {
+
+  public func gestureRecognizer(
+    _ gestureRecognizer: UIGestureRecognizer,
+    shouldReceive touch: UITouch
+  ) -> Bool {
+    guard let touchedView = touch.view else { return false }
+
+    if let scrollView = findVerticalScrollView(from: touchedView, inside: self) {
+      switch scrollViewIntegrationMode {
+      case .auto:
+        connect(scrollView)
+
+      case .manual:
+        break
+      }
+
+      return false
+    }
+
+    return true
+  }
+
+}
+
+// MARK: Find ScrollView
+
+extension DynamicBottomSheet {
+  private func findVerticalScrollView(
+    from touchView: UIView?,
+    inside rootView: UIView
+  ) -> UIScrollView? {
+    var current = touchView
+    var fallbackScrollView: UIScrollView?
+
+    while let view = current {
+      if view == rootView { break }
+
+      if let scrollView = view as? UIScrollView {
+
+        // 1. Ignore Wrappers
+        if scrollView.superview is UITableView {
+          current = view.superview
+          continue
+        }
+
+        let isHorizontal = scrollView.contentSize.width > scrollView.frame.width + 1
+        let isVertical = scrollView.isScrollEnabled && (scrollView.contentSize.height > scrollView.frame.height + 1 || scrollView.alwaysBounceVertical)
+
+        if isVertical {
+          return scrollView
+        } else if isHorizontal {
+          if fallbackScrollView == nil { fallbackScrollView = scrollView }
+        } else {
+          if fallbackScrollView == nil || (fallbackScrollView?.contentSize.width ?? 0) > (fallbackScrollView?.frame.width ?? 0) {
+            fallbackScrollView = scrollView
+          }
+        }
+      }
+
+      current = view.superview
+    }
+
+    return fallbackScrollView
+  }
 }
