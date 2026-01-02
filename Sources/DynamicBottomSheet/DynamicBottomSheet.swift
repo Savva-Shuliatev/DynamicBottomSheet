@@ -955,8 +955,6 @@ extension DynamicBottomSheet: UIGestureRecognizerDelegate {
       case .manual:
         break
       }
-
-      return false
     }
 
     return true
