@@ -65,9 +65,7 @@ internal final class TimerAnimation {
   @objc fileprivate func handleFrame(_ displayLink: CADisplayLink) {
     guard running else { return }
 
-    let speed = DynamicBottomSheet.slowAnimations ? 0.1 : 1.0
-
-    assert(speed > 0, "Speed of TimerAnimation in DynamicBottomSheet must be > 0")
+    let speed = getSpeed()
 
     let frameDuration = displayLink.targetTimestamp - displayLink.timestamp
 
@@ -86,7 +84,7 @@ internal final class TimerAnimation {
   }
 }
 
-// MARK: - DisplayLinkProxy
+// MARK: DisplayLinkProxy
 
 private final class DisplayLinkProxy {
 
@@ -95,5 +93,23 @@ private final class DisplayLinkProxy {
   @MainActor
   @objc func handleFrame(_ displayLink: CADisplayLink) {
     target?.handleFrame(displayLink)
+  }
+}
+
+// MARK: Helpers
+
+extension TimerAnimation {
+  @MainActor
+  func getSpeed() -> Double {
+    let speed: Double
+
+#if DEBUG
+    speed = DynamicBottomSheet.slowAnimations ? 0.1 : 1.0
+    assert(speed > 0, "Speed of TimerAnimation in DynamicBottomSheet must be > 0")
+#else
+    speed = 1
+#endif
+
+    return speed
   }
 }
