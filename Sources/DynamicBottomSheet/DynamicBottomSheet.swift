@@ -128,6 +128,8 @@ open class DynamicBottomSheet: UIView {
     }
   }
 
+  public var onAnimation: Bool { yAnimation != nil }
+
   public private(set) var didLayoutSubviews = false
 
   public private(set) var lastViewGeometry: ViewGeometry = .zero
